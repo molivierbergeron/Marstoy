@@ -33,6 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       resolved: ${{ steps.summary.outputs.resolved }}
+      pages: ${{ steps.pages.outcome }}
     steps:
       - uses: actions/checkout@v4
 
@@ -101,13 +102,34 @@ jobs:
           echo "::error::Aucun produit résolu — voir data/recon.json dans le dépôt."
           exit 1
 
-      - uses: actions/configure-pages@v5
+      # Tant que Pages n'est pas activé (Settings → Pages → Source : GitHub
+      # Actions), cette étape échoue. Le catalogue est déjà commité à ce
+      # stade, donc on ne fait pas échouer le run pour ça : on le signale.
+      - id: pages
+        uses: actions/configure-pages@v5
+        continue-on-error: true
+
+      - name: Rappeler d'activer Pages
+        if: steps.pages.outcome == 'failure'
+        run: |
+          echo "::warning::GitHub Pages n'est pas activé. Settings → Pages → Source : GitHub Actions, puis relancer ce workflow."
+          {
+            echo '## ⚠ Site non publié'
+            echo 'GitHub Pages n'"'"'est pas activé pour ce dépôt.'
+            echo '1. **Settings → Pages → Build and deployment → Source : `GitHub Actions`**'
+            echo '2. Relancer ce workflow.'
+            echo ''
+            echo 'Le catalogue a bien été construit et commité (`site/data/catalog.json`).'
+          } >> "$GITHUB_STEP_SUMMARY"
+
       - uses: actions/upload-pages-artifact@v3
+        if: steps.pages.outcome == 'success'
         with:
           path: site
 
   deploy:
     needs: build
+    if: needs.build.outputs.pages == 'success'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
