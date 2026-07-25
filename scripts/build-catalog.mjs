@@ -62,24 +62,27 @@ const overrides = await readJson('overrides.json', {});
 const resolved = [];
 const unresolved = [];
 
-// Marstoy annonce un nombre de pièces sur ses fiches : un gros écart avec le set
-// LEGO trouvé signale une correspondance douteuse. On le garde pour l'afficher
-// et on compte les cas suspects dans le rapport.
-const suspicious = [];
+// Marstoy annonce un nombre de pièces sur chaque fiche. Sur les vrais clones il
+// correspond exactement à celui du set LEGO, donc un écart net veut dire que la
+// correspondance est fausse : on rejette au lieu de publier une erreur.
+const PARTS_TOLERANCE = 0.2;
+const rejected = [];
 
 for (const item of products) {
   const set = resolveFromIndex(item.code, index, overrides);
   if (set.ok) {
     if (item.marstoyParts && set.numParts) {
       const delta = Math.abs(item.marstoyParts - set.numParts) / set.numParts;
-      if (delta > 0.2) {
-        suspicious.push({
+      if (delta > PARTS_TOLERANCE) {
+        rejected.push({
           code: item.code,
           num: set.num,
           name: set.name,
+          marstoyTitle: item.title,
           marstoyParts: item.marstoyParts,
           legoParts: set.numParts,
         });
+        continue;
       }
     }
     resolved.push({
@@ -130,7 +133,7 @@ const catalog = {
     discovered: products.length,
     resolved: resolved.length,
     unresolved: unresolved.length,
-    suspicious: suspicious.length,
+    rejected: rejected.length,
     published: products_.length,
   },
   products: products_,
@@ -139,7 +142,7 @@ const catalog = {
 await writeJson('site/data/catalog.json', catalog);
 await writeJson(
   'data/recon.json',
-  { ...recon, unresolved: unresolved.slice(0, 200), suspicious: suspicious.slice(0, 100) },
+  { ...recon, unresolved: unresolved.slice(0, 200), rejected: rejected.slice(0, 100) },
   { pretty: true },
 );
 
@@ -148,8 +151,8 @@ log(`  Marstoy : ${resolved.length} résolus, ${unresolved.length} non résolus`
 if (unresolved.length) {
   log('  exemples non résolus :', unresolved.slice(0, 10).map((item) => item.code).join(', '));
 }
-if (suspicious.length) {
-  log(`  ${suspicious.length} correspondance(s) au nombre de pièces douteux — voir data/recon.json`);
+if (rejected.length) {
+  log(`  ${rejected.length} correspondance(s) rejetée(s) sur le nombre de pièces — voir data/recon.json`);
 }
 
 if (!products_.length) {

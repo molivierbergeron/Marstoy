@@ -87,23 +87,19 @@ const metaContent = (html, key) =>
   ) || null;
 
 /**
- * Marstoy tourne sur ShopLine, dont beaucoup de fiches n'ont la référence ni
- * dans l'URL ni dans le titre : elle est plus loin dans la page (SKU, blocs de
- * données produit). On balaie donc tout le HTML et on garde la référence la plus
- * fréquente, ce qui écarte les mentions isolées d'un produit suggéré.
+ * Le catalogue Marstoy contient deux familles :
+ *
+ *  - les clones de sets LEGO officiels, dont l'URL est de la forme
+ *    `moc-m70334-parts-kit` et le titre « MOC M70334 Parts Kit » ;
+ *  - les MOC maison de Marstoy (« Moc The JEEP », « The Rack Railway »), dont
+ *    les codes `M03xxx` sont une numérotation interne : aucun set LEGO ne leur
+ *    correspond et les inverser produit n'importe quoi.
+ *
+ * On n'accepte donc une référence que si elle est attachée au produit lui-même —
+ * URL ou titre. Balayer tout le HTML attraperait les codes des produits
+ * suggérés en bas de page et fabriquerait de fausses correspondances.
  */
 export function extractProductDetails(html, url) {
-  const counts = new Map();
-  for (const code of extractCodes(html)) counts.set(code, 0);
-  for (const [code] of counts) {
-    const matches = html.match(new RegExp(`[Mm]${code.slice(1)}(?!\\d)`, 'g'));
-    counts.set(code, matches ? matches.length : 0);
-  }
-  // La référence de l'URL fait foi quand elle existe.
-  const fromUrl = extractCodes(url.split('/').pop().replaceAll('-', ' '))[0];
-  const code =
-    fromUrl || [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || null;
-
   const rawTitle = metaContent(html, 'og:title') ||
     decodeEntities(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.trim() || '') || null;
 
@@ -115,10 +111,15 @@ export function extractProductDetails(html, url) {
     html.match(/"price"\s*:\s*"?([\d.]+)"?/)?.[1] ||
     null;
 
+  const title = rawTitle ? rawTitle.replace(/\s*-\s*marstoy\s*$/i, '').trim() : null;
+  // Uniquement ce qui appartient au produit : le slug de son URL, puis son titre.
+  const slug = url.split('?')[0].replace(/\/$/, '').split('/').pop() || '';
+  const code = extractCodes(slug.replaceAll('-', ' '))[0] || extractCodes(title || '')[0] || null;
+
   return {
     code,
     // « The Rack Railway-marstoy » -> « The Rack Railway »
-    title: rawTitle ? rawTitle.replace(/\s*-\s*marstoy\s*$/i, '').trim() : null,
+    title,
     image: metaContent(html, 'og:image') || metaContent(html, 'og:image:secure_url'),
     marstoyParts: partsMatch ? Number(partsMatch[1].replace(/[\s,]/g, '')) || null : null,
     price,
