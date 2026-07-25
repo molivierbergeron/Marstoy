@@ -16,6 +16,7 @@ import { fileURLToPath } from 'node:url';
 
 import { discoverCatalog } from './lib/marstoy.mjs';
 import { loadLegoIndex, resolveFromIndex } from './lib/legodata.mjs';
+import { buildFromLegoIndex } from './lib/reverse-catalog.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const log = (...args) => console.log('▸', ...args);
@@ -61,14 +62,32 @@ const overrides = await readJson('overrides.json', {});
 const resolved = [];
 const unresolved = [];
 
+// Marstoy annonce un nombre de pièces sur ses fiches : un gros écart avec le set
+// LEGO trouvé signale une correspondance douteuse. On le garde pour l'afficher
+// et on compte les cas suspects dans le rapport.
+const suspicious = [];
+
 for (const item of products) {
   const set = resolveFromIndex(item.code, index, overrides);
   if (set.ok) {
+    if (item.marstoyParts && set.numParts) {
+      const delta = Math.abs(item.marstoyParts - set.numParts) / set.numParts;
+      if (delta > 0.2) {
+        suspicious.push({
+          code: item.code,
+          num: set.num,
+          name: set.name,
+          marstoyParts: item.marstoyParts,
+          legoParts: set.numParts,
+        });
+      }
+    }
     resolved.push({
       code: item.code,
       marstoyTitle: item.title,
       marstoyUrl: item.url,
       marstoyImage: item.image,
+      marstoyParts: item.marstoyParts,
       price: item.price,
       num: set.num,
       setNum: set.setNum,
@@ -85,33 +104,66 @@ for (const item of products) {
   }
 }
 
+// Marstoy nous a fermé la porte (protection anti-robot, changement de site) :
+// on retourne le problème et on part du catalogue LEGO, dont on déduit la
+// référence Marstoy. On perd les prix et la certitude que le set est en vente,
+// mais on garde l'essentiel : chercher par vrai nom et obtenir le code.
+let mode = 'catalogue Marstoy';
+let products_ = resolved;
+
+if (!resolved.length) {
+  log('Aucun produit Marstoy exploitable — repli sur le catalogue LEGO complet.');
+  products_ = buildFromLegoIndex(index);
+  mode = 'catalogue LEGO (Marstoy inaccessible)';
+  log(`  ${products_.length} sets retenus (≥ 200 pièces, depuis 1998)`);
+}
+
 // Les plus récents d'abord : c'est ce qu'on cherche en général.
-resolved.sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name));
+products_.sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name));
 
 const catalog = {
   generatedAt: new Date().toISOString(),
   source: recon.origin,
   strategy: recon.strategyUsed,
+  mode,
   counts: {
     discovered: products.length,
     resolved: resolved.length,
     unresolved: unresolved.length,
+    suspicious: suspicious.length,
+    published: products_.length,
   },
-  products: resolved,
+  products: products_,
 };
 
 await writeJson('site/data/catalog.json', catalog);
-await writeJson('data/recon.json', { ...recon, unresolved: unresolved.slice(0, 200) }, { pretty: true });
+await writeJson(
+  'data/recon.json',
+  { ...recon, unresolved: unresolved.slice(0, 200), suspicious: suspicious.slice(0, 100) },
+  { pretty: true },
+);
 
-log(`Catalogue : ${resolved.length} résolus, ${unresolved.length} non résolus`);
+log(`Mode : ${mode} — ${products_.length} entrées publiées`);
+log(`  Marstoy : ${resolved.length} résolus, ${unresolved.length} non résolus`);
 if (unresolved.length) {
-  log('Exemples non résolus :', unresolved.slice(0, 10).map((item) => item.code).join(', '));
+  log('  exemples non résolus :', unresolved.slice(0, 10).map((item) => item.code).join(', '));
+}
+if (suspicious.length) {
+  log(`  ${suspicious.length} correspondance(s) au nombre de pièces douteux — voir data/recon.json`);
+}
+
+if (!products_.length) {
+  console.error(
+    "\nCatalogue vide, même en repli. Voir data/recon.json : il contient le détail des\n" +
+      'tentatives et des extraits des réponses de marstoy.com.',
+  );
+  process.exit(1);
 }
 
 if (!resolved.length) {
-  console.error(
-    "\nAucun produit résolu. Voir data/recon.json : il contient le détail des tentatives\n" +
-      'et des extraits des réponses de marstoy.com pour adapter le scraper.',
+  console.warn(
+    "\n⚠ marstoy.com n'a rien donné : le site est publié depuis le catalogue LEGO,\n" +
+      'avec les références Marstoy calculées. Voir data/recon.json pour les codes HTTP\n' +
+      'obtenus et adapter le scraper.',
   );
-  process.exit(1);
 }

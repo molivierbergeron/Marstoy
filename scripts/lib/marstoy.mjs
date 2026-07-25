@@ -10,12 +10,14 @@ import { extractCodes } from '../../src/setnum.js';
 const ORIGIN = process.env.MARSTOY_ORIGIN || 'https://www.marstoy.com';
 
 /** Produit normalisé, quelle que soit la stratégie. */
-const product = ({ code, title, url, image, price, source }) => ({
+const product = ({ code, title, url, image, price, marstoyParts, source }) => ({
   code,
   title: title?.trim() || null,
   url: url || null,
   image: image || null,
   price: price ?? null,
+  // Nombre de pièces annoncé par Marstoy : sert à vérifier la correspondance.
+  marstoyParts: marstoyParts ?? null,
   source,
 });
 
@@ -68,8 +70,63 @@ async function fromShopifyJson(recon) {
   return products;
 }
 
+const decodeEntities = (value) =>
+  String(value ?? '')
+    .replaceAll('&amp;', '&')
+    .replaceAll('&lt;', '<')
+    .replaceAll('&gt;', '>')
+    .replaceAll('&quot;', '"')
+    .replaceAll('&#39;', "'")
+    .replaceAll('&nbsp;', ' ');
+
+const metaContent = (html, key) =>
+  decodeEntities(
+    html.match(
+      new RegExp(`<meta[^>]+(?:property|name)="${key}"[^>]+content="([^"]*)"`, 'i'),
+    )?.[1] || '',
+  ) || null;
+
 /**
- * Stratégie 2 — sitemap produits, puis titre de chaque fiche. Plus lente mais
+ * Marstoy tourne sur ShopLine, dont beaucoup de fiches n'ont la référence ni
+ * dans l'URL ni dans le titre : elle est plus loin dans la page (SKU, blocs de
+ * données produit). On balaie donc tout le HTML et on garde la référence la plus
+ * fréquente, ce qui écarte les mentions isolées d'un produit suggéré.
+ */
+export function extractProductDetails(html, url) {
+  const counts = new Map();
+  for (const code of extractCodes(html)) counts.set(code, 0);
+  for (const [code] of counts) {
+    const matches = html.match(new RegExp(`[Mm]${code.slice(1)}(?!\\d)`, 'g'));
+    counts.set(code, matches ? matches.length : 0);
+  }
+  // La référence de l'URL fait foi quand elle existe.
+  const fromUrl = extractCodes(url.split('/').pop().replaceAll('-', ' '))[0];
+  const code =
+    fromUrl || [...counts.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+
+  const rawTitle = metaContent(html, 'og:title') ||
+    decodeEntities(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.trim() || '') || null;
+
+  const description = metaContent(html, 'og:description') || metaContent(html, 'description') || '';
+  const partsMatch = description.match(/(?:Pcs|Pieces|pcs)\s*[:：]?\s*(?:about\s*)?([\d\s,]{2,9})\s*(?:pcs|pieces)?/i);
+  const price =
+    metaContent(html, 'product:price:amount') ||
+    metaContent(html, 'og:price:amount') ||
+    html.match(/"price"\s*:\s*"?([\d.]+)"?/)?.[1] ||
+    null;
+
+  return {
+    code,
+    // « The Rack Railway-marstoy » -> « The Rack Railway »
+    title: rawTitle ? rawTitle.replace(/\s*-\s*marstoy\s*$/i, '').trim() : null,
+    image: metaContent(html, 'og:image') || metaContent(html, 'og:image:secure_url'),
+    marstoyParts: partsMatch ? Number(partsMatch[1].replace(/[\s,]/g, '')) || null : null,
+    price,
+  };
+}
+
+/**
+ * Stratégie 2 — sitemap produits, puis fiche de chaque produit. Plus lente mais
  * quasi universelle (et le sitemap est fait pour être lu par des robots).
  */
 async function fromSitemap(recon) {
@@ -103,33 +160,54 @@ async function fromSitemap(recon) {
   recon.counts.sitemapProductUrls = urls.size;
   if (!urls.size) return [];
 
-  // Beaucoup d'URLs portent déjà la référence : pas besoin de charger la fiche.
-  const direct = [];
-  const needsFetch = [];
-  for (const url of urls) {
-    const code = extractCodes(url.split('/').pop().replaceAll('-', ' '))[0];
-    if (code) direct.push(product({ code, url, source: 'sitemap-url' }));
-    else needsFetch.push(url);
-  }
-  recon.counts.sitemapCodesFromUrl = direct.length;
+  recon.counts.sitemapCodesFromUrl = [...urls].filter(
+    (url) => extractCodes(url.split('/').pop().replaceAll('-', ' ')).length,
+  ).length;
 
-  const fetched = await mapLimit(needsFetch.slice(0, 400), 4, async (url) => {
+  // On charge chaque fiche : c'est le seul endroit où se trouvent le titre, la
+  // photo, le prix, et — pour la majorité du catalogue — la référence elle-même.
+  const limit = Number(process.env.MARSTOY_PAGE_LIMIT || 0);
+  const targets = limit > 0 ? [...urls].slice(0, limit) : [...urls];
+  recon.counts.pagesFetched = targets.length;
+
+  const httpErrors = new Map();
+  const withoutCode = [];
+
+  const fetched = await mapLimit(targets, 4, async (url) => {
     try {
       const response = await get(url, { accept: 'text/html' });
-      if (!response.ok) return null;
+      if (!response.ok) {
+        httpErrors.set(response.status, (httpErrors.get(response.status) || 0) + 1);
+        return null;
+      }
       const html = await response.text();
-      if (!recon.samples.productPage) recon.samples.productPage = html.slice(0, 4000);
-      const title = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1];
-      const code = extractCodes(`${title || ''} ${url}`)[0];
-      if (!code) return null;
-      const image = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i)?.[1];
-      return product({ code, title, url, image, source: 'sitemap-page' });
-    } catch {
+      const details = extractProductDetails(html, url);
+
+      // Deux pages entières en échantillon : une qui a livré une référence et
+      // une qui n'en a pas, pour pouvoir affiner sans deviner.
+      if (details.code && !recon.samples.productPageWithCode) {
+        recon.samples.productPageWithCode = html.slice(0, 12000);
+      }
+      if (!details.code && !recon.samples.productPageWithoutCode) {
+        recon.samples.productPageWithoutCode = html.slice(0, 12000);
+      }
+
+      if (!details.code) {
+        if (withoutCode.length < 60) withoutCode.push({ url, title: details.title, parts: details.marstoyParts });
+        return null;
+      }
+      return product({ ...details, url, source: 'sitemap-page' });
+    } catch (error) {
+      httpErrors.set(String(error?.message || error).slice(0, 60), 1);
       return null;
     }
   });
 
-  return [...direct, ...fetched.filter(Boolean)];
+  recon.counts.pagesWithoutCode = withoutCode.length;
+  recon.httpErrors = Object.fromEntries(httpErrors);
+  recon.samples.urlsWithoutCode = withoutCode.slice(0, 25);
+
+  return fetched.filter(Boolean);
 }
 
 /** Stratégie 3 — pages collection en HTML, dernier recours. */
