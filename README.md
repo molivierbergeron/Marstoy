@@ -35,6 +35,46 @@ l'affichage d'origine d'un tap, pratique au moment de commander.
 
 ---
 
+## Tester par étapes
+
+Chaque étape valide une brique de plus. Arrête-toi dès que quelque chose cloche :
+tu sauras exactement où.
+
+### Étape 1 — la clé et l'inversion des chiffres (30 s, aucun déploiement)
+
+```bash
+npm install
+cp .dev.vars.example .dev.vars   # mets ta clé Rebrickable dedans
+npm run check M67201 M29157 M914
+```
+
+```
+✅ M67201 → LEGO 10276 · Colosseum (2020, 9036 pièces)
+   image : https://cdn.rebrickable.com/media/sets/10276-1.jpg
+   fiche : https://rebrickable.com/sets/10276-1/
+```
+
+Prends 3-4 références sur marstoy.com dont tu connais le vrai set et compare.
+Un `❌` affiche les candidats essayés ; corrige alors dans `overrides.json`.
+
+### Étape 2 — le proxy sur le vrai marstoy.com (2 min, en local)
+
+```bash
+npm run dev      # puis ouvre http://localhost:8787 dans ton navigateur
+```
+
+C'est **l'étape qui compte** : elle confronte la réécriture au vrai HTML de la
+boutique. Vérifie une page collection (la grille), une fiche produit et la
+recherche. Si des vignettes gardent la photo Marstoy alors que le titre est
+corrigé, c'est le repérage des cartes produit qu'il faut ajuster
+(`CARD_SELECTOR` dans `src/client.js`).
+
+### Étape 3 — sur l'iPhone
+
+`npx wrangler deploy`, puis voir la section suivante.
+
+---
+
 ## Installation (≈ 10 min, gratuit)
 
 ### 1. Prérequis
@@ -152,6 +192,7 @@ corrige aussi le `<title>` des onglets et les aperçus de partage.
 
 ```bash
 cp .dev.vars.example .dev.vars   # ignoré par git, mets ta clé dedans
+npm run check M67201             # diagnostic d'une référence, sans déploiement
 npm run dev                      # http://localhost:8787
 npm test                         # tests unitaires + intégration workerd
 npm run tail                     # logs du Worker déployé

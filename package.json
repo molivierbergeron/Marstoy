@@ -5,6 +5,7 @@
   "type": "module",
   "description": "Proxy Cloudflare Worker qui affiche marstoy.com avec les vrais noms et visuels des sets LEGO.",
   "scripts": {
+    "check": "node scripts/check.mjs",
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
     "tail": "wrangler tail",

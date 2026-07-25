@@ -3,7 +3,9 @@
  * avec cache et limitation de concurrence pour rester dans le quota Rebrickable.
  */
 
-import overrides from '../overrides.json';
+// Attribut d'import explicite : le module doit rester chargeable par Node
+// (script de diagnostic) autant que par esbuild/wrangler.
+import overrides from '../overrides.json' with { type: 'json' };
 import { candidateGroups, candidateSetNumbers, codeDigits } from './setnum.js';
 import { getSet, pickBestSet, searchSet } from './rebrickable.js';
 import { cacheGet, cacheSet } from './store.js';
@@ -55,14 +57,19 @@ export async function resolveCodes(codes, env) {
   return results;
 }
 
-async function resolveOne(code, env) {
+const resolveOne = (code, env) => resolveUncached(code, env.REBRICKABLE_API_KEY);
+
+/**
+ * Résolution d'une référence sans cache ni binding Worker, donc utilisable
+ * aussi depuis Node (voir `scripts/check.mjs`).
+ */
+export async function resolveUncached(code, apiKey) {
   const override = Object.prototype.hasOwnProperty.call(overrides, code) ? overrides[code] : undefined;
   if (override === null) {
     return { ok: false, code, reason: 'ignoré via overrides.json' };
   }
 
   const digits = codeDigits(code);
-  const apiKey = env.REBRICKABLE_API_KEY;
 
   if (override) {
     const forced = typeof override === 'string' ? override : override.num;
