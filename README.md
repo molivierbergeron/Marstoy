@@ -1,7 +1,21 @@
 # marstoy-real
 
-Naviguer sur **marstoy.com depuis l'iPhone** en voyant les **vrais noms et les
+Consulter le catalogue **Marstoy depuis l'iPhone** avec les **vrais noms et les
 vraies images des sets LEGO**.
+
+Deux voies, indépendantes — prends celle qui te convient :
+
+| | **A. Site statique** (GitHub Pages) | **B. Proxy live** (Cloudflare Worker) |
+|---|---|---|
+| À installer | rien | un compte Cloudflare |
+| Ce que tu vois | un catalogue à toi, recherche + tri | le vrai marstoy.com, réécrit à la volée |
+| Clé Rebrickable | **inutile** | requise (secret du Worker) |
+| Panier / commande | lien vers la fiche Marstoy | directement dans le site |
+| Mise à jour | hebdomadaire (workflow) | temps réel |
+
+La voie A est la plus simple et ne demande aucune clé : les données LEGO viennent
+des **exports publics** de Rebrickable, et la résolution a lieu à la compilation
+— le site livré à ton navigateur ne contient donc aucun secret.
 
 Marstoy nomme ses boîtes `M` + les chiffres du set LEGO **à l'envers** :
 
@@ -35,7 +49,42 @@ l'affichage d'origine d'un tap, pratique au moment de commander.
 
 ---
 
-## Tester par étapes
+## Voie A — le site statique (rien à installer)
+
+Un workflow GitHub va chercher le catalogue Marstoy, le croise avec les exports
+Rebrickable, et publie une PWA sur GitHub Pages. Tu l'ajoutes à ton écran
+d'accueil et c'est fini.
+
+### Activer une fois
+
+1. **Settings → Pages → Build and deployment → Source : `GitHub Actions`.**
+2. **Actions → « Construire le catalogue et publier le site » → Run workflow.**
+
+À la fin du run, l'URL du site s'affiche dans le job `deploy` (typiquement
+`https://molivierbergeron.github.io/Marstoy/`).
+
+### Sur l'iPhone
+
+Ouvre l'URL dans Safari → **Partager** → **Sur l'écran d'accueil**. L'appli
+fonctionne ensuite hors ligne (service worker) et se met à jour toute seule.
+
+### Dans le site
+
+- Recherche par nom, n° LEGO, référence `M…`, thème ou année.
+- **Touche une image** pour basculer entre le visuel LEGO officiel et la photo
+  Marstoy : de quoi vérifier que c'est bien la même boîte avant de commander.
+- **Touche la référence `M…`** pour la copier.
+- « Commander » ouvre la fiche produit sur marstoy.com.
+
+### Si le catalogue sort vide
+
+Le workflow écrit `data/recon.json` dans le dépôt : il contient les stratégies
+tentées, les codes HTTP obtenus et des extraits des réponses de marstoy.com.
+C'est fait pour ça — ouvre-le, ou donne-le moi, et on adapte le scraper.
+
+---
+
+## Voie B — le proxy live : tester par étapes
 
 Chaque étape valide une brique de plus. Arrête-toi dès que quelque chose cloche :
 tu sauras exactement où.
@@ -193,10 +242,22 @@ corrige aussi le `<title>` des onglets et les aperçus de partage.
 ```bash
 cp .dev.vars.example .dev.vars   # ignoré par git, mets ta clé dedans
 npm run check M67201             # diagnostic d'une référence, sans déploiement
-npm run dev                      # http://localhost:8787
+npm run dev                      # proxy sur http://localhost:8787
 npm test                         # tests unitaires + intégration workerd
 npm run tail                     # logs du Worker déployé
+node scripts/build-catalog.mjs   # reconstruit site/data/catalog.json en local
 ```
+
+### Organisation
+
+| Chemin | Rôle |
+| --- | --- |
+| `src/setnum.js` | conversion `M…` → n° LEGO, partagée par les deux voies |
+| `src/` (reste) | le Worker proxy (voie B) |
+| `scripts/` | scraper Marstoy + build du catalogue statique (voie A) |
+| `site/` | la PWA publiée sur GitHub Pages (voie A) |
+| `.github/workflows/` | construction et publication automatiques |
+| `overrides.json` | corrections manuelles, utilisées par les deux voies |
 
 Les tests d'intégration (`test/worker.test.js`) exécutent le Worker complet dans
 workerd via Miniflare, avec un faux marstoy.com et une fausse API Rebrickable :
