@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+# Secrets locaux (clé Rebrickable) — ne doit jamais partir dans git.
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.DS_Store

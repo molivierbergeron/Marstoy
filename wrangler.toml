@@ -1,0 +1,22 @@
+name = "marstoy-real"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+[vars]
+UPSTREAM_HOST = "www.marstoy.com"
+# Placeholders disponibles : {name} {num} {setNum} {code} {year} {parts}
+LABEL_FORMAT = "{name} — LEGO {num} · {code}"
+
+# Cache partagé entre datacenters (recommandé, gratuit).
+# 1. npx wrangler kv namespace create MR_CACHE
+# 2. décommenter et coller l'id renvoyé
+# [[kv_namespaces]]
+# binding = "MR_CACHE"
+# id = "REMPLACER_PAR_L_ID"
+
+# Secrets (jamais dans ce fichier, jamais dans git) :
+#   npx wrangler secret put REBRICKABLE_API_KEY
+#   npx wrangler secret put ACCESS_TOKEN        # optionnel, verrouille le proxy
+
+[observability]
+enabled = true

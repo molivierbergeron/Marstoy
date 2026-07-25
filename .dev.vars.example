@@ -1,0 +1,6 @@
+# Copier en `.dev.vars` (ignoré par git) pour `npx wrangler dev`.
+# En production, utiliser `npx wrangler secret put ...` : la clé est alors
+# stockée chiffrée chez Cloudflare et n'apparaît nulle part dans le dépôt.
+REBRICKABLE_API_KEY=ta_cle_rebrickable
+# Optionnel : verrouille le proxy pour toi seul.
+ACCESS_TOKEN=
