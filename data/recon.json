@@ -1,0 +1,31 @@
+{
+  "origin": "https://www.marstoy.com",
+  "startedAt": "2026-07-25T13:10:58.398Z",
+  "attempts": [
+    {
+      "strategy": "products.json",
+      "page": 1,
+      "status": 403
+    },
+    {
+      "strategy": "sitemap",
+      "url": "https://www.marstoy.com/sitemap.xml",
+      "status": 200
+    }
+  ],
+  "counts": {
+    "products.json": 0,
+    "sitemapProductUrls": 2901,
+    "sitemapCodesFromUrl": 309,
+    "sitemap": 309,
+    "unique": 308
+  },
+  "samples": {
+    "sitemap": "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><!--This is the parent sitemap linking to additional sitemaps for products, collections and pages as shown below. The sitemap can not be edited manually, but is kept up to date in real time.--><sitemap><loc>https://www.marstoy.com/sitemap_page_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_blogs_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_products_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_collections_1.xml</loc></sitemap></sitemapindex>",
+    "productPage": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    \n\n\n\n<meta charset=\"UTF-8\"/>\n<meta\n  name=\"viewport\"\n  content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no\"\n/>\n<meta http-equiv=\"x-dns-prefetch-control\" content=\"on\"/>\n\n\n  <meta name=\"description\" content=\" \t100% Brand New \tPcs: about 1987 pcs \tSecure payments \tSent without original box \tHigh quality, ABS material \tSend with paper instruction manual \tTax include, shipping cost calculated at checkout page. -marstoy\"/>\n\n\n\n\n\n  <link rel=\"icon\" type=\"image/png\" href=\"https://img.myshopline.com/image/store/1752723592316/marstoy-logo.png?w=32&amp;h=32\"/>\n\n\n<link rel=\"canonical\" href=\"https://www.marstoy.com/products/the-rack-railway\"/>\n\n\n\n\n<meta property=\"og:site_name\" content=\"marstoy\" />\n<meta property=\"og:url\" content=\"https://www.marstoy.com/products/the-rack-railway\" />\n<meta property=\"og:title\" content=\"The Rack Railway-marstoy\" />\n<meta property=\"og:type\" content=\"product\" />\n<meta property=\"og:description\" content=\" \t100% Brand New \tPcs: about 1987 pcs \tSecure payments \tSent without original box \tHigh quality, ABS material \tSend with paper instruction manual \tTax include, shipping cost calculated at checkout page. -marstoy\" />\n  <meta property=\"og:image\" content=\"https://img.myshopline.com/image/store/1752723592316/f231a8a31155da52418e36f18e1d00f9.jpeg?w=2000&amp;h=2000\" />\n  <meta property=\"og:image:secure_url\" content=\"https://img.myshopline.com/image/store/1752723592316/f231a8a31155da52418e36f18e1d00f9.jpeg?w=2000&amp;h=2000\" />\n  <meta property=\"og:image:width\" content=\"2000\" />\n  <meta property=\"og:image:height\" content=\"2000\" />\n\n  <meta property=\"og:price:amount\" content=\"32.00\" />\n  <meta property=\"og:price:currency\" content=\"\" />\n\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<meta name=\"twitter:title\" content=\"The Rack Railway-marstoy\" />\n<meta name=\"twitter:description\" content=\" \t100% Brand New \tPcs: about 1987 pcs \tSecure payments \tSent without original box \tHigh quality, ABS material \tSend with paper instruction manual \tTax include, shipping cost calculated at checkout page. -marstoy\" />\n\n<title>\n  The Rack Railway-marstoy\n  \n  \n</title>\n\n\n    \n<style>\n  @font-face {\n  font-family: 'Anton';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff') format('woff'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff2') format('woff2');\n}\n  \n  \n  \n  @font-face {\n  font-family: 'Anton';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff') format('woff'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff2') format('woff2');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff') format('woff'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff2') format('woff2');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 500;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:500_v21.woff') format('woff'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:500_v21.woff2') format('woff2');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 600;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:600_v21.woff') format('woff'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:600_v21.woff2') format('woff2');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 700;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:700_v21.woff') format('woff'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:700_v21.woff2') format('woff2');\n}\n  @font-face {\n  font-fam"
+  },
+  "strategyUsed": "sitemap",
+  "error": null,
+  "finishedAt": "2026-07-25T13:12:32.681Z",
+  "unresolved": []
+}
