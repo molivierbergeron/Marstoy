@@ -1,0 +1,318 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Marstoy réel — vrais sets LEGO</title>
+<meta name="description" content="Le catalogue Marstoy avec les vrais noms et visuels des sets LEGO.">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="./icon.svg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Marstoy réel">
+<meta name="theme-color" content="#0b1220">
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --border: #e3e6ea;
+    --text: #14181f;
+    --muted: #5f6875;
+    --accent: #1d5fd6;
+    --chip: #eef1f5;
+    --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 4px 12px rgba(16, 24, 40, .05);
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0b1220; --surface: #151c2b; --border: #263148; --text: #e8ecf4;
+      --muted: #98a3b6; --accent: #74a8ff; --chip: #1e2739;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f7f9; --surface: #fff; --border: #e3e6ea; --text: #14181f;
+    --muted: #5f6875; --accent: #1d5fd6; --chip: #eef1f5;
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b1220; --surface: #151c2b; --border: #263148; --text: #e8ecf4;
+    --muted: #98a3b6; --accent: #74a8ff; --chip: #1e2739;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+  }
+
+  header {
+    position: sticky; top: 0; z-index: 10;
+    padding: max(12px, env(safe-area-inset-top)) 16px 12px;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: saturate(180%) blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .brand img { width: 28px; height: 28px; }
+  .brand h1 { font-size: 17px; margin: 0; letter-spacing: -.01em; }
+  .brand .meta { margin-left: auto; font-size: 12px; color: var(--muted); text-align: right; }
+
+  .controls { display: flex; gap: 8px; }
+  input[type="search"], select {
+    font: inherit; color: var(--text); background: var(--surface);
+    border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px;
+    -webkit-appearance: none; appearance: none;
+  }
+  input[type="search"] { flex: 1; min-width: 0; }
+  select { max-width: 42%; }
+
+  main { padding: 14px 16px calc(28px + env(safe-area-inset-bottom)); }
+  .status { color: var(--muted); font-size: 13px; padding: 4px 0 12px; }
+
+  .grid {
+    display: grid; gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  @media (min-width: 700px) {
+    .grid { grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); }
+  }
+
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; box-shadow: var(--shadow);
+    overflow: hidden; display: flex; flex-direction: column;
+  }
+  .thumb {
+    position: relative; aspect-ratio: 4 / 3; background: var(--chip);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .thumb .fallback { font-size: 12px; color: var(--muted); padding: 8px; text-align: center; }
+  .badge {
+    position: absolute; top: 6px; left: 6px;
+    background: rgba(11, 18, 32, .82); color: #fff;
+    font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: 999px;
+  }
+
+  .body { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .name { font-size: 14px; font-weight: 600; line-height: 1.3; }
+  .facts { font-size: 12px; color: var(--muted); }
+  .theme {
+    font-size: 11px; color: var(--muted);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .row { display: flex; align-items: center; gap: 6px; margin-top: auto; flex-wrap: wrap; }
+  .chip {
+    font: 600 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+    background: var(--chip); border: 1px solid var(--border); color: var(--text);
+    padding: 6px 8px; border-radius: 8px; cursor: pointer;
+  }
+  .chip.copied { background: var(--accent); color: #fff; border-color: transparent; }
+  .price { font-size: 12px; color: var(--muted); }
+  .links { display: flex; gap: 10px; font-size: 12px; }
+  a { color: var(--accent); text-decoration: none; }
+  a:active { opacity: .6; }
+
+  .empty { text-align: center; color: var(--muted); padding: 48px 16px; }
+  .empty code {
+    display: block; margin-top: 10px; font-size: 12px;
+    background: var(--chip); padding: 10px; border-radius: 8px; overflow-x: auto;
+  }
+  #sentinel { height: 1px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <img src="./icon.svg" alt="">
+    <h1>Marstoy réel</h1>
+    <div class="meta" id="meta"></div>
+  </div>
+  <div class="controls">
+    <input type="search" id="q" placeholder="Nom, n° LEGO, référence M…, thème" autocomplete="off"
+           enterkeyhint="search" aria-label="Rechercher">
+    <select id="sort" aria-label="Tri">
+      <option value="year">Plus récents</option>
+      <option value="parts">Plus de pièces</option>
+      <option value="name">Nom A→Z</option>
+      <option value="num">N° LEGO</option>
+    </select>
+  </div>
+</header>
+
+<main>
+  <div class="status" id="status">Chargement du catalogue…</div>
+  <div class="grid" id="grid"></div>
+  <div id="sentinel"></div>
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  const PAGE = 60;
+  const grid = document.getElementById('grid');
+  const statusEl = document.getElementById('status');
+  const metaEl = document.getElementById('meta');
+  const queryEl = document.getElementById('q');
+  const sortEl = document.getElementById('sort');
+
+  let products = [];
+  let filtered = [];
+  let rendered = 0;
+  let showMarstoyPhoto = localStorage.getItem('mr:photo') === 'marstoy';
+
+  const escapeHtml = (value) =>
+    String(value ?? '').replace(/[&<>"']/g, (char) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
+
+  const normalize = (value) =>
+    String(value ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  function haystack(item) {
+    if (!item._h) {
+      item._h = normalize([item.name, item.num, item.setNum, item.code, item.theme, item.year,
+        item.marstoyTitle].join(' '));
+    }
+    return item._h;
+  }
+
+  const comparators = {
+    year: (a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name),
+    parts: (a, b) => (b.numParts ?? 0) - (a.numParts ?? 0),
+    name: (a, b) => a.name.localeCompare(b.name),
+    num: (a, b) => Number(a.num) - Number(b.num),
+  };
+
+  function apply() {
+    const terms = normalize(queryEl.value).split(/\s+/).filter(Boolean);
+    filtered = terms.length
+      ? products.filter((item) => terms.every((term) => haystack(item).includes(term)))
+      : products.slice();
+    filtered.sort(comparators[sortEl.value] || comparators.year);
+
+    grid.replaceChildren();
+    rendered = 0;
+
+    if (!filtered.length) {
+      statusEl.textContent = 'Aucun résultat.';
+      return;
+    }
+    statusEl.textContent =
+      `${filtered.length} set${filtered.length > 1 ? 's' : ''}` +
+      (terms.length ? ` sur ${products.length}` : '') +
+      ` · image ${showMarstoyPhoto ? 'Marstoy' : 'LEGO officielle'} (touche l'image pour comparer)`;
+    renderMore();
+  }
+
+  function cardHtml(item) {
+    const image = showMarstoyPhoto ? item.marstoyImage : item.imgUrl;
+    const facts = [
+      `LEGO ${escapeHtml(item.num)}`,
+      item.year || null,
+      item.numParts ? `${item.numParts} pièces` : null,
+    ].filter(Boolean).join(' · ');
+
+    return `
+      <article class="card">
+        <div class="thumb" data-toggle="1">
+          ${image
+            ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(item.name)}" loading="lazy"
+                    referrerpolicy="no-referrer">`
+            : '<div class="fallback">pas d\'image</div>'}
+          ${showMarstoyPhoto ? '<span class="badge">photo Marstoy</span>' : ''}
+        </div>
+        <div class="body">
+          <div class="name">${escapeHtml(item.name)}</div>
+          <div class="facts">${facts}</div>
+          ${item.theme ? `<div class="theme">${escapeHtml(item.theme)}</div>` : ''}
+          <div class="row">
+            <button class="chip" data-copy="${escapeHtml(item.code)}"
+                    title="Copier la référence">${escapeHtml(item.code)}</button>
+            ${item.price ? `<span class="price">${escapeHtml(item.price)}</span>` : ''}
+          </div>
+          <div class="links">
+            ${item.marstoyUrl ? `<a href="${escapeHtml(item.marstoyUrl)}" target="_blank"
+                                    rel="noopener">Commander</a>` : ''}
+            <a href="${escapeHtml(item.setUrl)}" target="_blank" rel="noopener">Rebrickable</a>
+          </div>
+        </div>
+      </article>`;
+  }
+
+  function renderMore() {
+    const slice = filtered.slice(rendered, rendered + PAGE);
+    if (!slice.length) return;
+    const fragment = document.createElement('template');
+    fragment.innerHTML = slice.map(cardHtml).join('');
+    grid.append(fragment.content);
+    rendered += slice.length;
+  }
+
+  new IntersectionObserver((entries) => {
+    if (entries.some((entry) => entry.isIntersecting)) renderMore();
+  }, { rootMargin: '600px' }).observe(document.getElementById('sentinel'));
+
+  // Touche l'image : bascule entre visuel LEGO officiel et photo Marstoy, utile
+  // pour vérifier qu'on commande bien la bonne boîte.
+  grid.addEventListener('click', (event) => {
+    const copy = event.target.closest('[data-copy]');
+    if (copy) {
+      navigator.clipboard?.writeText(copy.dataset.copy);
+      copy.classList.add('copied');
+      setTimeout(() => copy.classList.remove('copied'), 900);
+      return;
+    }
+    if (event.target.closest('[data-toggle]')) {
+      showMarstoyPhoto = !showMarstoyPhoto;
+      localStorage.setItem('mr:photo', showMarstoyPhoto ? 'marstoy' : 'lego');
+      const scroll = window.scrollY;
+      apply();
+      window.scrollTo(0, scroll);
+    }
+  });
+
+  let timer;
+  queryEl.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(apply, 120);
+  });
+  sortEl.addEventListener('change', apply);
+
+  fetch('./data/catalog.json', { cache: 'no-cache' })
+    .then((response) => {
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return response.json();
+    })
+    .then((catalog) => {
+      products = catalog.products || [];
+      const date = catalog.generatedAt
+        ? new Date(catalog.generatedAt).toLocaleDateString('fr-CA')
+        : '—';
+      metaEl.innerHTML = `${products.length} sets<br>maj ${escapeHtml(date)}`;
+
+      if (!products.length) {
+        statusEl.innerHTML = 'Catalogue vide — lance le workflow ' +
+          '<em>Construire le catalogue et publier le site</em> dans l\'onglet Actions.';
+        return;
+      }
+      apply();
+    })
+    .catch((error) => {
+      statusEl.innerHTML =
+        `<div class="empty">Catalogue introuvable (${escapeHtml(error.message)}).` +
+        '<code>Actions → Construire le catalogue et publier le site → Run workflow</code></div>';
+    });
+
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  }
+})();
+</script>
+</body>
+</html>

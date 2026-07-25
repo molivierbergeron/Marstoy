@@ -1,0 +1,117 @@
+name: Construire le catalogue et publier le site
+
+# Le runner GitHub a un accès Internet complet : c'est lui qui va chercher le
+# catalogue Marstoy et les exports Rebrickable, résout les références, puis
+# publie le site statique sur GitHub Pages.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Rafraîchit le catalogue une fois par semaine.
+    - cron: '17 6 * * 1'
+  push:
+    paths:
+      - 'scripts/**'
+      - 'src/setnum.js'
+      - 'site/**'
+      - 'overrides.json'
+      - '.github/workflows/build-catalog.yml'
+      # Évite de se redéclencher sur ses propres commits de données.
+      - '!site/data/**'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: catalog
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      resolved: ${{ steps.summary.outputs.resolved }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Construire le catalogue
+        id: build
+        # Le repli API n'est utilisé que pour les références absentes du dump
+        # public ; le secret est optionnel.
+        env:
+          REBRICKABLE_API_KEY: ${{ secrets.REBRICKABLE_API_KEY }}
+        run: node scripts/build-catalog.mjs
+        continue-on-error: true
+
+      - name: Résumé de la reconnaissance
+        id: summary
+        if: always()
+        run: |
+          if [ -f data/recon.json ]; then
+            echo "## Reconnaissance marstoy.com" >> "$GITHUB_STEP_SUMMARY"
+            echo '```json' >> "$GITHUB_STEP_SUMMARY"
+            node -e "
+              const r = require('./data/recon.json');
+              console.log(JSON.stringify({
+                strategyUsed: r.strategyUsed,
+                counts: r.counts,
+                attempts: r.attempts.slice(0, 30),
+                sampleKeys: Object.keys(r.samples || {}),
+                unresolvedSample: (r.unresolved || []).slice(0, 15),
+              }, null, 2));
+            " | tee -a "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'Aucun data/recon.json produit.' >> "$GITHUB_STEP_SUMMARY"
+          fi
+          if [ -f site/data/catalog.json ]; then
+            node -e "
+              const c = require('./site/data/catalog.json');
+              console.log('resolved=' + c.counts.resolved);
+              console.log(JSON.stringify(c.products.slice(0, 8), null, 2));
+            " | tee /tmp/head.txt
+            echo "resolved=$(node -p "require('./site/data/catalog.json').counts.resolved")" >> "$GITHUB_OUTPUT"
+          else
+            echo "resolved=0" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commiter le catalogue et le rapport
+        if: always()
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -f data/recon.json site/data/catalog.json 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo 'Rien à commiter.'
+          else
+            # [skip ci] : ce commit ne doit pas relancer le workflow.
+            git commit -m "Rafraîchit le catalogue Marstoy [skip ci]"
+            git push
+          fi
+
+      - name: Échouer si le catalogue est vide
+        if: steps.summary.outputs.resolved == '0'
+        run: |
+          echo "::error::Aucun produit résolu — voir data/recon.json dans le dépôt."
+          exit 1
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - id: deploy
+        uses: actions/deploy-pages@v4

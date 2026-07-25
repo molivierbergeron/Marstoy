@@ -6,3 +6,7 @@ node_modules/
 !.dev.vars.example
 .env
 .DS_Store
+
+# Rapport de reconnaissance : produit par le workflow (qui le force-add),
+# pas par les exécutions locales.
+data/recon.json
