@@ -135,6 +135,10 @@ const catalog = {
     unresolved: unresolved.length,
     rejected: rejected.length,
     published: products_.length,
+    // Pour situer la couverture : l'essentiel du catalogue Marstoy est fait de
+    // leurs propres MOC, qui ne clonent aucun set officiel.
+    marstoyProducts: recon.counts.sitemapProductUrls ?? null,
+    marstoyOwnMocs: recon.counts.marstoyOwnMocs ?? null,
   },
   products: products_,
 };

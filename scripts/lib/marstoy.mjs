@@ -173,6 +173,9 @@ async function fromSitemap(recon) {
 
   const httpErrors = new Map();
   const withoutCode = [];
+  // Compté à part de l'échantillon : la grande majorité du catalogue Marstoy est
+  // faite de leurs propres MOC, sans équivalent LEGO.
+  let withoutCodeTotal = 0;
 
   const fetched = await mapLimit(targets, 4, async (url) => {
     try {
@@ -194,6 +197,7 @@ async function fromSitemap(recon) {
       }
 
       if (!details.code) {
+        withoutCodeTotal += 1;
         if (withoutCode.length < 60) withoutCode.push({ url, title: details.title, parts: details.marstoyParts });
         return null;
       }
@@ -204,7 +208,7 @@ async function fromSitemap(recon) {
     }
   });
 
-  recon.counts.pagesWithoutCode = withoutCode.length;
+  recon.counts.marstoyOwnMocs = withoutCodeTotal;
   recon.httpErrors = Object.fromEntries(httpErrors);
   recon.samples.urlsWithoutCode = withoutCode.slice(0, 25);
 

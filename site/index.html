@@ -165,6 +165,7 @@
   let products = [];
   let filtered = [];
   let rendered = 0;
+  let coverage = '';
   let showMarstoyPhoto = localStorage.getItem('mr:photo') === 'marstoy';
 
   const escapeHtml = (value) =>
@@ -205,7 +206,7 @@
     }
     statusEl.textContent =
       `${filtered.length} set${filtered.length > 1 ? 's' : ''}` +
-      (terms.length ? ` sur ${products.length}` : '') +
+      (terms.length ? ` sur ${products.length}` : coverage) +
       ` · image ${showMarstoyPhoto ? 'Marstoy' : 'LEGO officielle'} (touche l'image pour comparer)`;
     renderMore();
   }
@@ -295,6 +296,13 @@
         ? new Date(catalog.generatedAt).toLocaleDateString('fr-CA')
         : '—';
       metaEl.innerHTML = `${products.length} sets<br>maj ${escapeHtml(date)}`;
+
+      // Le reste du catalogue Marstoy, ce sont leurs MOC maison : aucun set
+      // officiel derrière, donc rien à corriger. Autant le dire.
+      const total = catalog.counts && catalog.counts.marstoyProducts;
+      if (total && total > products.length) {
+        coverage = ` clonant un set LEGO, sur ${total} produits Marstoy`;
+      }
 
       if (!products.length) {
         statusEl.innerHTML = 'Catalogue vide — lance le workflow ' +
