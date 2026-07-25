@@ -76,6 +76,47 @@ fonctionne ensuite hors ligne (service worker) et se met à jour toute seule.
 - **Touche la référence `M…`** pour la copier.
 - « Commander » ouvre la fiche produit sur marstoy.com.
 
+### Mise à jour
+
+Le catalogue se reconstruit **chaque lundi à 02 h 17** (heure de Montréal), à
+chaque modification du scraper, et à la demande. Un passage complet dure
+**environ 3 minutes** (2901 fiches chargées), plus ~1 minute de file d'attente
+et de publication.
+
+L'appli va rechercher le catalogue à chaque ouverture quand tu as du réseau : tu
+vois donc toujours le dernier build. Hors ligne, elle sert le dernier état connu.
+
+> GitHub désactive les workflows planifiés après **60 jours sans activité sur le
+> dépôt**. Il envoie un courriel et un clic suffit à réactiver.
+
+#### À la demande, depuis un navigateur
+
+Actions → « Construire le catalogue et publier le site » → **Run workflow**.
+
+#### À la demande, depuis l'iPhone (raccourci)
+
+L'app GitHub n'expose pas « Run workflow ». Un raccourci iOS le fait en un tap,
+et le jeton reste sur ton téléphone.
+
+1. Crée un **fine-grained token** sur
+   <https://github.com/settings/personal-access-tokens/new> :
+   - *Repository access* → **Only select repositories** → `Marstoy`
+   - *Permissions* → *Repository permissions* → **Actions : Read and write**
+   - rien d'autre : ce jeton ne peut que déclencher des workflows sur ce dépôt.
+2. App **Raccourcis** → nouveau raccourci → action **Obtenir le contenu de l'URL** :
+
+   | Champ | Valeur |
+   | --- | --- |
+   | URL | `https://api.github.com/repos/molivierbergeron/Marstoy/actions/workflows/build-catalog.yml/dispatches` |
+   | Méthode | `POST` |
+   | En-têtes | `Authorization: Bearer <TON_JETON>`<br>`Accept: application/vnd.github+json` |
+   | Corps de la requête | JSON : `ref` = `claude/marstoy-iphone-lego-images-r7u3nd` |
+
+3. Ajoute le raccourci à l'écran d'accueil.
+
+Un `204` sans contenu veut dire que c'est parti ; le catalogue est à jour ~4
+minutes plus tard.
+
 ### Si le catalogue sort vide
 
 Le workflow écrit `data/recon.json` dans le dépôt : il contient les stratégies
