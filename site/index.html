@@ -89,8 +89,13 @@
   .thumb {
     position: relative; aspect-ratio: 4 / 3; background: var(--chip);
     display: flex; align-items: center; justify-content: center;
+    /* Sans ça, le texte alternatif d'une image manquante étire la carte. */
+    overflow: hidden;
   }
-  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .thumb img {
+    width: 100%; height: 100%; object-fit: contain;
+    font-size: 11px; color: var(--muted); text-align: center;
+  }
   .thumb .fallback { font-size: 12px; color: var(--muted); padding: 8px; text-align: center; }
   .badge {
     position: absolute; top: 6px; left: 6px;
@@ -169,9 +174,12 @@
   let priceNote = '';
   let sourceCurrency = 'USD';
 
-  const cadFormat = new Intl.NumberFormat('fr-CA', {
-    style: 'currency', currency: 'CAD', maximumFractionDigits: 2,
+  // En fr-CA, Intl rend CAD par un « $ » nu. Comme les prix viennent d'une
+  // autre devise, on garde le « $ CA » explicite pour lever l'ambiguïté.
+  const amountFormat = new Intl.NumberFormat('fr-CA', {
+    minimumFractionDigits: 2, maximumFractionDigits: 2,
   });
+  const formatCad = (value) => `${amountFormat.format(value)} $ CA`;
   let showMarstoyPhoto = localStorage.getItem('mr:photo') === 'marstoy';
 
   const escapeHtml = (value) =>
@@ -225,7 +233,7 @@
     if (item.priceCad != null) {
       const original = item.price != null ? `${item.price} ${sourceCurrency}` : '';
       return `<span class="price" title="Prix Marstoy : ${escapeHtml(original)} — conversion indicative">` +
-        `≈ ${escapeHtml(cadFormat.format(item.priceCad))}</span>`;
+        `≈ ${escapeHtml(formatCad(item.priceCad))}</span>`;
     }
     if (item.price != null) {
       return `<span class="price">${escapeHtml(item.price)} ${escapeHtml(sourceCurrency)}</span>`;
