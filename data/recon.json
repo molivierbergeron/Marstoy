@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-07-26T13:49:53.120Z",
+  "startedAt": "2026-07-26T13:54:37.950Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -18,7 +18,7 @@
     "sitemapProductUrls": 2901,
     "sitemapCodesFromUrl": 309,
     "pagesFetched": 2901,
-    "marstoyOwnMocs": 2587,
+    "marstoyOwnMocs": 2588,
     "sitemap": 311,
     "unique": 310,
     "legoPricesCached": 302,
@@ -35,11 +35,6 @@
         "parts": 604
       },
       {
-        "url": "https://www.marstoy.com/products/the-roman-colosseum",
-        "title": "The Roman Colosseum",
-        "parts": 3146
-      },
-      {
         "url": "https://www.marstoy.com/products/the-1087x-drift-car",
         "title": "The 1087X Drift Car",
         "parts": 392
@@ -48,6 +43,16 @@
         "url": "https://www.marstoy.com/products/the-rack-railway",
         "title": "The Rack Railway",
         "parts": 1987
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-roman-colosseum",
+        "title": "The Roman Colosseum",
+        "parts": 3146
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-60tp-tank",
+        "title": "The 60tp Tank",
+        "parts": 1128
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-jeep",
@@ -60,9 +65,9 @@
         "parts": 307
       },
       {
-        "url": "https://www.marstoy.com/products/the-60tp-tank",
-        "title": "The 60tp Tank",
-        "parts": 1128
+        "url": "https://www.marstoy.com/products/the-bumper-boats",
+        "title": "The Bumper Boats",
+        "parts": 2044
       },
       {
         "url": "https://www.marstoy.com/products/the-su-7",
@@ -70,19 +75,9 @@
         "parts": 725
       },
       {
-        "url": "https://www.marstoy.com/products/the-mill-house",
-        "title": "The Mill House",
-        "parts": 1873
-      },
-      {
         "url": "https://www.marstoy.com/products/the-rolling-waves-ride",
         "title": "The Rolling Waves Ride",
         "parts": 2118
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-bumper-boats",
-        "title": "The Bumper Boats",
-        "parts": 2044
       },
       {
         "url": "https://www.marstoy.com/products/the-chinese-style-garage",
@@ -95,14 +90,19 @@
         "parts": 1707
       },
       {
-        "url": "https://www.marstoy.com/products/the-great-white",
-        "title": "The Great White",
-        "parts": 2932
-      },
-      {
         "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
         "title": "The Castle Roller Coaster",
         "parts": 2584
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-mill-house",
+        "title": "The Mill House",
+        "parts": 1873
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-great-white",
+        "title": "The Great White",
+        "parts": 2932
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-st-joseph",
@@ -115,14 +115,14 @@
         "parts": null
       },
       {
-        "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
-        "title": "The 1:20 Fierce Chariot",
-        "parts": 474
-      },
-      {
         "url": "https://www.marstoy.com/products/moc-the-church-jesus",
         "title": "Moc The Church Jesus",
         "parts": null
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
+        "title": "The 1:20 Fierce Chariot",
+        "parts": 474
       },
       {
         "url": "https://www.marstoy.com/products/the-1-20-sports-car",
@@ -135,33 +135,33 @@
         "parts": 391
       },
       {
-        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
-        "title": "The Dragon Motobcycle",
-        "parts": 585
-      },
-      {
         "url": "https://www.marstoy.com/products/the-atlantic-defensive-position",
         "title": "The Atlantic Defensive Position",
         "parts": 1232
       },
       {
-        "url": "https://www.marstoy.com/products/the-harley-motorcycle",
-        "title": "The Harley Motorcycle",
-        "parts": 467
+        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
+        "title": "The Dragon Motobcycle",
+        "parts": 585
       },
       {
         "url": "https://www.marstoy.com/products/the-wukongs-car",
         "title": "The Wukong's Car",
         "parts": 716
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-harley-motorcycle",
+        "title": "The Harley Motorcycle",
+        "parts": 467
       }
     ]
   },
   "strategyUsed": "sitemap",
   "error": null,
   "httpErrors": {
-    "403": 3
+    "403": 2
   },
-  "finishedAt": "2026-07-26T13:52:03.459Z",
+  "finishedAt": "2026-07-26T13:56:38.696Z",
   "bricksetStatus": {},
   "unresolved": [],
   "rejected": [
@@ -171,7 +171,17 @@
       "name": "Modular Space Station",
       "marstoyTitle": "MOC M24024 Parts Kit",
       "marstoyParts": 1401,
-      "legoParts": 1099
+      "legoParts": 1099,
+      "reason": "nombre de pièces trop éloigné"
+    },
+    {
+      "code": "M142",
+      "num": "241",
+      "name": "4.5v Idea Book",
+      "marstoyTitle": "The M142",
+      "marstoyParts": 629,
+      "legoParts": 0,
+      "reason": "le set LEGO ne contient aucune pièce"
     },
     {
       "code": "M760",
@@ -179,7 +189,8 @@
       "name": "Mobile Crane",
       "marstoyTitle": "The M760",
       "marstoyParts": 398,
-      "legoParts": 56
+      "legoParts": 56,
+      "reason": "nombre de pièces trop éloigné"
     },
     {
       "code": "M1000",
@@ -187,7 +198,8 @@
       "name": "Guarded Inn",
       "marstoyTitle": "M1000RR",
       "marstoyParts": 901,
-      "legoParts": 256
+      "legoParts": 256,
+      "reason": "nombre de pièces trop éloigné"
     },
     {
       "code": "M939",
@@ -195,7 +207,8 @@
       "name": "Mini Tow Truck",
       "marstoyTitle": "Moc The M939 Cargo - 6x6 US Army Truck",
       "marstoyParts": 439,
-      "legoParts": 138
+      "legoParts": 138,
+      "reason": "nombre de pièces trop éloigné"
     },
     {
       "code": "M136",
@@ -203,7 +216,8 @@
       "name": "Doors and Windows",
       "marstoyTitle": "The AT-4 M136 Antitank Grenade Launcher",
       "marstoyParts": 1748,
-      "legoParts": 52
+      "legoParts": 52,
+      "reason": "nombre de pièces trop éloigné"
     },
     {
       "code": "M416",
@@ -211,7 +225,8 @@
       "name": "Crab",
       "marstoyTitle": "The M416",
       "marstoyParts": 1188,
-      "legoParts": 78
+      "legoParts": 78,
+      "reason": "nombre de pièces trop éloigné"
     },
     {
       "code": "M64467",
@@ -219,7 +234,8 @@
       "name": "Knight Bus Adventure",
       "marstoyTitle": "MOC M25467 Parts Kit",
       "marstoyParts": 795,
-      "legoParts": 499
+      "legoParts": 499,
+      "reason": "nombre de pièces trop éloigné"
     },
     {
       "code": "M33467",
@@ -227,7 +243,8 @@
       "name": "Mandrake",
       "marstoyTitle": "MOC M74301 Parts Kit",
       "marstoyParts": 373,
-      "legoParts": 579
+      "legoParts": 579,
+      "reason": "nombre de pièces trop éloigné"
     }
   ]
 }
