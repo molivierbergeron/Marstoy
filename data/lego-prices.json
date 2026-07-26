@@ -1,0 +1,1512 @@
+{
+  "241": {
+    "price": null,
+    "currency": null,
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "4184": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "7662": {
+    "price": 140.85,
+    "currency": "USD→CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "9474": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10190": {
+    "price": 126.76,
+    "currency": "USD→CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10194": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10195": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10197": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10210": {
+    "price": 229.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10211": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10217": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10218": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10220": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10221": {
+    "price": 499.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10224": {
+    "price": 249.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10228": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10232": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10236": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10243": {
+    "price": 189.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10246": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10251": {
+    "price": 219.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10252": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10255": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10258": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10260": {
+    "price": 219.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10261": {
+    "price": 479.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10264": {
+    "price": 269.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10265": {
+    "price": 209.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10270": {
+    "price": 249.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10272": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10274": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10275": {
+    "price": 139.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10276": {
+    "price": 649.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10278": {
+    "price": 269.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10284": {
+    "price": 449.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10290": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10291": {
+    "price": 139.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10292": {
+    "price": 229.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10293": {
+    "price": 139.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10295": {
+    "price": 209.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10297": {
+    "price": 289.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10299": {
+    "price": 499.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10300": {
+    "price": 249.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10302": {
+    "price": 239.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10303": {
+    "price": 499.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10305": {
+    "price": 499.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10307": {
+    "price": 799.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10311": {
+    "price": 69.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10312": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10316": {
+    "price": 669.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10318": {
+    "price": 259.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10323": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10326": {
+    "price": 389.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10332": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10333": {
+    "price": 599.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10335": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10339": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10343": {
+    "price": 39.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10351": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10354": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10356": {
+    "price": 489.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10357": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10358": {
+    "price": 229.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10362": {
+    "price": 99.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10363": {
+    "price": 64.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10365": {
+    "price": 449.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10366": {
+    "price": 599.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10367": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10369": {
+    "price": 39.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10372": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "10937": {
+    "price": 209.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11370": {
+    "price": 399.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11371": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11372": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11373": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11377": {
+    "price": 929.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11384": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11389": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11503": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11504": {
+    "price": 64.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11505": {
+    "price": 114.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "11509": {
+    "price": 44.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21020": {
+    "price": 59.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21026": {
+    "price": 39.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21028": {
+    "price": 74.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21032": {
+    "price": 39.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21033": {
+    "price": 49.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21034": {
+    "price": 49.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21039": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21043": {
+    "price": 69.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21044": {
+    "price": 69.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21052": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21056": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21057": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21058": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21062": {
+    "price": 209.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21063": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21064": {
+    "price": 99.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21161": {
+    "price": 99.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21178": {
+    "price": 32.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21302": {
+    "price": 69.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21310": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21311": {
+    "price": 229.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21330": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21332": {
+    "price": 289.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21333": {
+    "price": 219.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21335": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21338": {
+    "price": 239.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21341": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21343": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21344": {
+    "price": 389.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21348": {
+    "price": 469.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21349": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21353": {
+    "price": 429.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21356": {
+    "price": 429.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21358": {
+    "price": 219.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21359": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21360": {
+    "price": 279.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21361": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21362": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21363": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21365": {
+    "price": 64.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21366": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21376": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "31149": {
+    "price": 39.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "31197": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "31202": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "31205": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "31212": {
+    "price": 259.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "31216": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "31218": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "31220": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "40460": {
+    "price": 19.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "40588": {
+    "price": null,
+    "currency": null,
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "40693": {
+    "price": null,
+    "currency": null,
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "40761": {
+    "price": null,
+    "currency": null,
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "40805": {
+    "price": 54.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "40806": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "40820": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "40824": {
+    "price": 44.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "41732": {
+    "price": 219.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "41843": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42043": {
+    "price": 269.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42056": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42083": {
+    "price": 399.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42111": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42115": {
+    "price": 559.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42126": {
+    "price": 139.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42165": {
+    "price": 34.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42171": {
+    "price": 289.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42172": {
+    "price": 589.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42207": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42221": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "42228": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43014": {
+    "price": 119.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43019": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43020": {
+    "price": 249.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43222": {
+    "price": 519.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43230": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43247": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43263": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43269": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43288": {
+    "price": 64.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43300": {
+    "price": 189.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "43307": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "60095": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "60104": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "60109": {
+    "price": 99.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "60266": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "60368": {
+    "price": 209.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "60380": {
+    "price": 259.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "60445": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "60473": {
+    "price": 259.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "70618": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "70751": {
+    "price": 229.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "70840": {
+    "price": 399.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71016": {
+    "price": 229.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71043": {
+    "price": 589.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71391": {
+    "price": 139.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71411": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71458": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71469": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71500": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71799": {
+    "price": 479.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71848": {
+    "price": 259.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "71861": {
+    "price": 399.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75021": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75055": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75059": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75060": {
+    "price": 229.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75151": {
+    "price": 139.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75189": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75190": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75192": {
+    "price": 1049.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75252": {
+    "price": 849.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75255": {
+    "price": 139.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75274": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75275": {
+    "price": 259.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75288": {
+    "price": 209.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75290": {
+    "price": 499.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75292": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75305": {
+    "price": 69.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75308": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75312": {
+    "price": 69.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75313": {
+    "price": 1049.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75318": {
+    "price": 109.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75328": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75331": {
+    "price": 759.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75337": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75343": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75347": {
+    "price": 84.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75350": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75351": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75355": {
+    "price": 319.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75357": {
+    "price": 209.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75360": {
+    "price": 44.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75367": {
+    "price": 849.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75375": {
+    "price": 109.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75381": {
+    "price": 84.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75382": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75389": {
+    "price": 239.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75394": {
+    "price": 209.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75397": {
+    "price": 649.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75403": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75407": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75408": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75409": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75413": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75415": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75416": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75417": {
+    "price": 259.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75419": {
+    "price": 1299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75429": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75430": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75433": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75435": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75551": {
+    "price": 69.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75639": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75640": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75827": {
+    "price": 399.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75930": {
+    "price": 149.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75947": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75955": {
+    "price": 99.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75978": {
+    "price": 559.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76108": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76178": {
+    "price": 449.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76191": {
+    "price": 99.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76199": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76208": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76210": {
+    "price": 699.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76211": {
+    "price": 64.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76214": {
+    "price": 119.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76217": {
+    "price": 69.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76218": {
+    "price": 309.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76223": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76240": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76250": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76251": {
+    "price": 99.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76252": {
+    "price": 519.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76255": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76262": {
+    "price": 259,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76269": {
+    "price": 669.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76271": {
+    "price": 389.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76282": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76294": {
+    "price": 429.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76297": {
+    "price": 59.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76326": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76327": {
+    "price": 79.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76328": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76329": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76330": {
+    "price": 99.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76342": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76344": {
+    "price": 169.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76388": {
+    "price": 119.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76389": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76391": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76405": {
+    "price": 619.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76407": {
+    "price": 119.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76414": {
+    "price": 89.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76417": {
+    "price": 559.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76421": {
+    "price": 44.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76439": {
+    "price": 119.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76440": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76444": {
+    "price": 259.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76452": {
+    "price": 129.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76457": {
+    "price": 489.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76466": {
+    "price": 219.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76964": {
+    "price": 49.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76968": {
+    "price": 329.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77015": {
+    "price": 199.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77078": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77242": {
+    "price": 34.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77243": {
+    "price": 34.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77245": {
+    "price": 34.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77248": {
+    "price": 34.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77249": {
+    "price": 34.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77250": {
+    "price": 34.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77251": {
+    "price": 34.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "77252": {
+    "price": 34.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "910029": {
+    "price": 484.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "910032": {
+    "price": 419.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "5004590": {
+    "price": null,
+    "currency": null,
+    "fetchedAt": "2026-07-26T13:33:14.358Z"
+  }
+}

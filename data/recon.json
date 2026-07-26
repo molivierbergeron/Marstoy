@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-07-26T13:25:22.968Z",
+  "startedAt": "2026-07-26T13:30:44.367Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -56,14 +56,14 @@
         "parts": 1128
       },
       {
-        "url": "https://www.marstoy.com/products/moc-the-jeep",
-        "title": "Moc The JEEP",
-        "parts": 522
-      },
-      {
         "url": "https://www.marstoy.com/products/the-block-gun",
         "title": "The Block Gun",
         "parts": 307
+      },
+      {
+        "url": "https://www.marstoy.com/products/moc-the-jeep",
+        "title": "Moc The JEEP",
+        "parts": 522
       },
       {
         "url": "https://www.marstoy.com/products/the-su-7",
@@ -96,6 +96,11 @@
         "parts": 1707
       },
       {
+        "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
+        "title": "The Castle Roller Coaster",
+        "parts": 2584
+      },
+      {
         "url": "https://www.marstoy.com/products/the-great-white",
         "title": "The Great White",
         "parts": 2932
@@ -106,13 +111,13 @@
         "parts": null
       },
       {
-        "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
-        "title": "The Castle Roller Coaster",
-        "parts": 2584
-      },
-      {
         "url": "https://www.marstoy.com/products/moc-the-jesus-the-shepherd",
         "title": "Moc The Jesus the Shepherd",
+        "parts": null
+      },
+      {
+        "url": "https://www.marstoy.com/products/moc-the-church-jesus",
+        "title": "Moc The Church Jesus",
         "parts": null
       },
       {
@@ -121,9 +126,9 @@
         "parts": 474
       },
       {
-        "url": "https://www.marstoy.com/products/moc-the-church-jesus",
-        "title": "Moc The Church Jesus",
-        "parts": null
+        "url": "https://www.marstoy.com/products/the-1-20-extreme-speed",
+        "title": "The 1:20 Extreme Speed",
+        "parts": 391
       },
       {
         "url": "https://www.marstoy.com/products/the-1-20-sports-car",
@@ -131,14 +136,14 @@
         "parts": 391
       },
       {
-        "url": "https://www.marstoy.com/products/the-1-20-extreme-speed",
-        "title": "The 1:20 Extreme Speed",
-        "parts": 391
-      },
-      {
         "url": "https://www.marstoy.com/products/the-atlantic-defensive-position",
         "title": "The Atlantic Defensive Position",
         "parts": 1232
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
+        "title": "The Dragon Motobcycle",
+        "parts": 585
       },
       {
         "url": "https://www.marstoy.com/products/the-harley-motorcycle",
@@ -149,11 +154,6 @@
         "url": "https://www.marstoy.com/products/the-wukongs-car",
         "title": "The Wukong's Car",
         "parts": 716
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
-        "title": "The Dragon Motobcycle",
-        "parts": 585
       }
     ]
   },
@@ -162,7 +162,7 @@
   "httpErrors": {
     "403": 2
   },
-  "finishedAt": "2026-07-26T13:27:12.998Z",
+  "finishedAt": "2026-07-26T13:32:45.367Z",
   "bricksetStatus": {
     "ok": 38
   },
