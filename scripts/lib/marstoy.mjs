@@ -10,12 +10,15 @@ import { extractCodes } from '../../src/setnum.js';
 const ORIGIN = process.env.MARSTOY_ORIGIN || 'https://www.marstoy.com';
 
 /** Produit normalisé, quelle que soit la stratégie. */
-const product = ({ code, title, url, image, price, marstoyParts, source }) => ({
+const product = ({ code, title, url, image, price, currency, marstoyParts, source }) => ({
   code,
   title: title?.trim() || null,
   url: url || null,
   image: image || null,
   price: price ?? null,
+  // null quand la boutique ne la déclare pas : le build retombe alors sur USD.
+  currency: currency || null,
+  price_currency_detected: Boolean(currency),
   // Nombre de pièces annoncé par Marstoy : sert à vérifier la correspondance.
   marstoyParts: marstoyParts ?? null,
   source,
@@ -86,6 +89,34 @@ const metaContent = (html, key) =>
     )?.[1] || '',
   ) || null;
 
+const CURRENCIES = new Set(['USD', 'CAD', 'EUR', 'GBP', 'AUD', 'CNY', 'HKD', 'JPY', 'SGD', 'NZD']);
+
+/**
+ * Devise du prix. Marstoy laisse `og:price:currency` vide, donc on cherche
+ * ailleurs : JSON-LD, blocs de configuration de la boutique, puis symboles.
+ * Renvoie null quand rien n'est concluant — l'appelant décide du défaut.
+ */
+export function extractCurrency(html) {
+  const declared = [
+    metaContent(html, 'og:price:currency'),
+    metaContent(html, 'product:price:currency'),
+    html.match(/"priceCurrency"\s*:\s*"([A-Za-z]{3})"/)?.[1],
+    html.match(/"currency(?:Code)?"\s*:\s*"([A-Za-z]{3})"/)?.[1],
+    html.match(/"shopCurrency"\s*:\s*"([A-Za-z]{3})"/)?.[1],
+  ];
+  for (const value of declared) {
+    const code = String(value || '').toUpperCase();
+    if (CURRENCIES.has(code)) return code;
+  }
+
+  // Repli sur les symboles sans ambiguïté ; le « $ » seul n'en est pas un.
+  if (/US\$|\bUSD\b/.test(html)) return 'USD';
+  if (/CA\$|C\$|\bCAD\b/.test(html)) return 'CAD';
+  if (/€|\bEUR\b/.test(html)) return 'EUR';
+  if (/£|\bGBP\b/.test(html)) return 'GBP';
+  return null;
+}
+
 /**
  * Le catalogue Marstoy contient deux familles :
  *
@@ -104,6 +135,7 @@ export function extractProductDetails(html, url) {
     decodeEntities(html.match(/<title[^>]*>([\s\S]*?)<\/title>/i)?.[1]?.trim() || '') || null;
 
   const description = metaContent(html, 'og:description') || metaContent(html, 'description') || '';
+  const currency = extractCurrency(html);
   const partsMatch = description.match(/(?:Pcs|Pieces|pcs)\s*[:：]?\s*(?:about\s*)?([\d\s,]{2,9})\s*(?:pcs|pieces)?/i);
   const price =
     metaContent(html, 'product:price:amount') ||
@@ -123,6 +155,7 @@ export function extractProductDetails(html, url) {
     image: metaContent(html, 'og:image') || metaContent(html, 'og:image:secure_url'),
     marstoyParts: partsMatch ? Number(partsMatch[1].replace(/[\s,]/g, '')) || null : null,
     price,
+    currency,
   };
 }
 

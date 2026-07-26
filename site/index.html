@@ -166,6 +166,12 @@
   let filtered = [];
   let rendered = 0;
   let coverage = '';
+  let priceNote = '';
+  let sourceCurrency = 'USD';
+
+  const cadFormat = new Intl.NumberFormat('fr-CA', {
+    style: 'currency', currency: 'CAD', maximumFractionDigits: 2,
+  });
   let showMarstoyPhoto = localStorage.getItem('mr:photo') === 'marstoy';
 
   const escapeHtml = (value) =>
@@ -207,8 +213,24 @@
     statusEl.textContent =
       `${filtered.length} set${filtered.length > 1 ? 's' : ''}` +
       (terms.length ? ` sur ${products.length}` : coverage) +
-      ` · image ${showMarstoyPhoto ? 'Marstoy' : 'LEGO officielle'} (touche l'image pour comparer)`;
+      ` · image ${showMarstoyPhoto ? 'Marstoy' : 'LEGO officielle'} (touche l'image pour comparer)` +
+      priceNote;
     renderMore();
+  }
+
+  // Le montant en CAD est une conversion faite à la construction : Marstoy
+  // facture dans sa devise, avec son propre taux. D'où le « ≈ », et le prix
+  // d'origine gardé en infobulle.
+  function priceHtml(item) {
+    if (item.priceCad != null) {
+      const original = item.price != null ? `${item.price} ${sourceCurrency}` : '';
+      return `<span class="price" title="Prix Marstoy : ${escapeHtml(original)} — conversion indicative">` +
+        `≈ ${escapeHtml(cadFormat.format(item.priceCad))}</span>`;
+    }
+    if (item.price != null) {
+      return `<span class="price">${escapeHtml(item.price)} ${escapeHtml(sourceCurrency)}</span>`;
+    }
+    return '';
   }
 
   function cardHtml(item) {
@@ -235,7 +257,7 @@
           <div class="row">
             <button class="chip" data-copy="${escapeHtml(item.code)}"
                     title="Copier la référence">${escapeHtml(item.code)}</button>
-            ${item.price ? `<span class="price">${escapeHtml(item.price)}</span>` : ''}
+            ${priceHtml(item)}
           </div>
           <div class="links">
             ${item.marstoyUrl ? `<a href="${escapeHtml(item.marstoyUrl)}" target="_blank"
@@ -302,6 +324,14 @@
       const total = catalog.counts && catalog.counts.marstoyProducts;
       if (total && total > products.length) {
         coverage = ` clonant un set LEGO, sur ${total} produits Marstoy`;
+      }
+
+      const money = catalog.currency || {};
+      if (money.source) sourceCurrency = money.source;
+      if (money.cadRate) {
+        priceNote =
+          ` · prix convertis du ${sourceCurrency}${money.assumed ? ' (supposé)' : ''}` +
+          ` au taux du ${money.cadRateDate || '—'}, à titre indicatif`;
       }
 
       if (!products.length) {

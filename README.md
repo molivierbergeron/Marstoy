@@ -76,6 +76,22 @@ fonctionne ensuite hors ligne (service worker) et se met à jour toute seule.
 - **Touche la référence `M…`** pour la copier.
 - « Commander » ouvre la fiche produit sur marstoy.com.
 
+### Prix
+
+Les prix sont affichés en **dollars canadiens**, convertis à la construction avec
+les taux de référence de la BCE (api.frankfurter.app, gratuit, sans clé). Le site
+n'appelle aucune API : la conversion est déjà dans `catalog.json`.
+
+Marstoy ne déclare pas sa devise — `og:price:currency` est vide sur ses fiches —
+donc le build prend la devise majoritaire là où il sait la lire, et **USD par
+défaut**. Le bandeau du site précise laquelle a servi, avec la mention
+« supposé » le cas échéant, et la date du taux.
+
+Le « ≈ » n'est pas décoratif : Marstoy facture dans sa propre devise avec son
+propre taux, auxquels s'ajoutent frais de carte et livraison. Le prix d'origine
+reste accessible en appui long sur le montant. **Pour décider d'un achat, fie-toi
+au prix affiché sur la fiche Marstoy**, pas à la conversion.
+
 ### Mise à jour
 
 Le catalogue se reconstruit **chaque lundi à 02 h 17** (heure de Montréal), à

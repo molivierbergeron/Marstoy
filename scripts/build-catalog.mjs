@@ -17,6 +17,7 @@ import { fileURLToPath } from 'node:url';
 import { discoverCatalog } from './lib/marstoy.mjs';
 import { loadLegoIndex, resolveFromIndex } from './lib/legodata.mjs';
 import { buildFromLegoIndex } from './lib/reverse-catalog.mjs';
+import { fetchCadRate, toCad } from './lib/fx.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const log = (...args) => console.log('▸', ...args);
@@ -121,6 +122,33 @@ if (!resolved.length) {
   log(`  ${products_.length} sets retenus (≥ 200 pièces, depuis 1998)`);
 }
 
+// Prix en dollars canadiens. Marstoy ne déclare pas sa devise (og:price:currency
+// est vide), donc on prend celle qui domine parmi les fiches où on a su la lire,
+// et USD à défaut.
+const DEFAULT_CURRENCY = 'USD';
+const seenCurrencies = new Map();
+for (const item of products) {
+  if (item.currency) seenCurrencies.set(item.currency, (seenCurrencies.get(item.currency) || 0) + 1);
+}
+const detected = [...seenCurrencies.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] || null;
+const sourceCurrency = detected || DEFAULT_CURRENCY;
+
+log(
+  detected
+    ? `Devise détectée : ${detected} (${seenCurrencies.get(detected)} fiche(s))`
+    : `Devise non déclarée par la boutique — ${DEFAULT_CURRENCY} par défaut`,
+);
+
+const fx = await fetchCadRate(sourceCurrency);
+if (fx) {
+  log(`  taux ${sourceCurrency}→CAD : ${fx.rate} (${fx.date}, ${fx.source})`);
+  for (const item of products_) {
+    item.priceCad = toCad(item.price, fx.rate);
+  }
+} else {
+  log('  conversion CAD indisponible : les prix restent dans leur devise d\'origine');
+}
+
 // Les plus récents d'abord : c'est ce qu'on cherche en général.
 products_.sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name));
 
@@ -129,6 +157,14 @@ const catalog = {
   source: recon.origin,
   strategy: recon.strategyUsed,
   mode,
+  currency: {
+    source: sourceCurrency,
+    // Le site doit pouvoir dire « USD supposé » plutôt que « USD ».
+    assumed: !detected,
+    cadRate: fx?.rate ?? null,
+    cadRateDate: fx?.date ?? null,
+    cadRateSource: fx?.source ?? null,
+  },
   counts: {
     discovered: products.length,
     resolved: resolved.length,
