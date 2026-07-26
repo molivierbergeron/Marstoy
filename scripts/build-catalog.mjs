@@ -153,7 +153,12 @@ if (fx) {
 // du catalogue officiel : l'absence de prix est normale, on affiche simplement
 // l'écart quand on l'a.
 const priceCache = await readJson('data/lego-prices.json', {});
-const legoPrices = await loadLegoPrices(products_.map((item) => item.num), priceCache, recon);
+const legoPrices = await loadLegoPrices(
+  products_.map(({ num, year }) => ({ num, year })),
+  priceCache,
+  recon,
+  { apiKey: process.env.BRICKSET_API_KEY, usdToCad: fx?.rate ?? null },
+);
 await writeJson('data/lego-prices.json', legoPrices, { pretty: true });
 
 let withSavings = 0;
@@ -165,6 +170,9 @@ for (const item of products_) {
   if (item.savingsCad != null && item.savingsCad > 0) withSavings += 1;
 }
 log(`Prix LEGO : ${withSavings} set(s) avec un écart chiffrable`);
+if (!process.env.BRICKSET_API_KEY) {
+  log('  BRICKSET_API_KEY absente : ajouter le secret pour afficher « xx $ off ».');
+}
 
 // Les plus récents d'abord : c'est ce qu'on cherche en général.
 products_.sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name));

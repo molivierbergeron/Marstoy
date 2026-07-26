@@ -87,10 +87,29 @@ donc le build prend la devise majoritaire là où il sait la lire, et **USD par
 défaut**. Le bandeau du site précise laquelle a servi, avec la mention
 « supposé » le cas échéant, et la date du taux.
 
-Le « ≈ » n'est pas décoratif : Marstoy facture dans sa propre devise avec son
-propre taux, auxquels s'ajoutent frais de carte et livraison. Le prix d'origine
-reste accessible en appui long sur le montant. **Pour décider d'un achat, fie-toi
-au prix affiché sur la fiche Marstoy**, pas à la conversion.
+Marstoy facture dans sa propre devise avec son propre taux, auxquels s'ajoutent
+frais de carte et livraison. Le prix d'origine reste accessible en appui long sur
+le montant. **Pour décider d'un achat, fie-toi au prix affiché sur la fiche
+Marstoy**, pas à la conversion.
+
+### Écart avec le prix LEGO (« xx $ off »)
+
+Optionnel, et désactivé tant qu'il manque une clé.
+
+lego.com bloque les requêtes automatisées — 403 sur les 302 essais — donc les
+prix de détail viennent de **Brickset**, qui publie le prix canadien et conserve
+celui des sets retirés. La clé est gratuite :
+
+1. Compte sur <https://brickset.com/> puis clé sur
+   <https://brickset.com/tools/webservices/requestkey>.
+2. Dépôt → **Settings → Secrets and variables → Actions → New repository
+   secret**, nommé `BRICKSET_API_KEY`.
+3. Relancer le workflow.
+
+Sans ce secret, tout le reste fonctionne : seule la ligne « xx $ off »
+disparaît. Les prix sont interrogés par année en lots de 500 (une quarantaine de
+requêtes) et mis en cache dans `data/lego-prices.json`, donc les passages
+suivants ne demandent que les nouveautés.
 
 ### Mise à jour
 

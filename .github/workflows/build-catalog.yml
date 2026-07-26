@@ -47,6 +47,9 @@ jobs:
         # public ; le secret est optionnel.
         env:
           REBRICKABLE_API_KEY: ${{ secrets.REBRICKABLE_API_KEY }}
+          # Prix de détail LEGO (« xx $ off »). Sans ce secret, la ligne
+          # d'écart ne s'affiche simplement pas.
+          BRICKSET_API_KEY: ${{ secrets.BRICKSET_API_KEY }}
         run: node scripts/build-catalog.mjs
         continue-on-error: true
 
