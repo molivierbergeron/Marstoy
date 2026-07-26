@@ -41,15 +41,38 @@ jobs:
         with:
           node-version: '22'
 
+      # Diagnostic : GitHub n'avertit jamais qu'un secret est mal nommé, le
+      # workflow reçoit simplement une valeur vide. On le dit explicitement,
+      # sans rien révéler de la valeur.
+      - name: Vérifier la configuration
+        env:
+          BRICKSET_SECRET: ${{ secrets.BRICKSET_API_KEY }}
+          BRICKSET_VAR: ${{ vars.BRICKSET_API_KEY }}
+        run: |
+          say() { echo "$1" >> "$GITHUB_STEP_SUMMARY"; }
+          say '## Configuration'
+          if [ -n "$BRICKSET_SECRET" ]; then
+            say "- \`BRICKSET_API_KEY\` : trouvée dans les **secrets** (${#BRICKSET_SECRET} caractères)"
+          elif [ -n "$BRICKSET_VAR" ]; then
+            say "- \`BRICKSET_API_KEY\` : trouvée dans les **variables** (${#BRICKSET_VAR} caractères)"
+          else
+            say '- `BRICKSET_API_KEY` : **introuvable** — la ligne « xx $ off » restera masquée.'
+            say '  - Settings → Secrets and variables → **Actions** → onglet **Secrets** → *New repository secret*'
+            say '  - Le nom doit être exactement `BRICKSET_API_KEY` (sensible à la casse)'
+            say '  - Un secret d'"'"'*environnement* ou d'"'"'*organisation* n'"'"'est pas visible ici : il faut un secret de **dépôt**'
+          fi
+
       - name: Construire le catalogue
         id: build
         # Le repli API n'est utilisé que pour les références absentes du dump
         # public ; le secret est optionnel.
         env:
           REBRICKABLE_API_KEY: ${{ secrets.REBRICKABLE_API_KEY }}
-          # Prix de détail LEGO (« xx $ off »). Sans ce secret, la ligne
-          # d'écart ne s'affiche simplement pas.
-          BRICKSET_API_KEY: ${{ secrets.BRICKSET_API_KEY }}
+          # Prix de détail LEGO (« xx $ off »). Accepte le secret ou, à défaut,
+          # une variable de dépôt du même nom — les deux se confondent aisément
+          # dans l'interface GitHub. Sans l'un ni l'autre, la ligne d'écart ne
+          # s'affiche simplement pas.
+          BRICKSET_API_KEY: ${{ secrets.BRICKSET_API_KEY || vars.BRICKSET_API_KEY }}
         run: node scripts/build-catalog.mjs
         continue-on-error: true
 
