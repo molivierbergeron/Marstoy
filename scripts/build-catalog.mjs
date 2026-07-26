@@ -167,6 +167,10 @@ for (const item of products_) {
   item.legoPriceCad = retail;
   item.savingsCad =
     retail != null && item.priceCad != null ? Math.round(retail - item.priceCad) : null;
+  // Le pourcentage est calculé ici pour que le tri et l'affichage partagent
+  // exactement la même valeur.
+  item.savingsPct =
+    item.savingsCad != null && retail > 0 ? Math.round((item.savingsCad / retail) * 100) : null;
   if (item.savingsCad != null && item.savingsCad > 0) withSavings += 1;
 }
 log(`Prix LEGO : ${withSavings} set(s) avec un écart chiffrable`);

@@ -20,6 +20,8 @@
     --muted: #5f6875;
     --accent: #1d5fd6;
     --chip: #eef1f5;
+    --save-bg: #e7f6ec;
+    --save-fg: #15703c;
     --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 4px 12px rgba(16, 24, 40, .05);
     color-scheme: light dark;
   }
@@ -27,16 +29,19 @@
     :root {
       --bg: #0b1220; --surface: #151c2b; --border: #263148; --text: #e8ecf4;
       --muted: #98a3b6; --accent: #74a8ff; --chip: #1e2739;
+      --save-bg: #16351f; --save-fg: #6ee79a;
       --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
     }
   }
   :root[data-theme="light"] {
     --bg: #f6f7f9; --surface: #fff; --border: #e3e6ea; --text: #14181f;
     --muted: #5f6875; --accent: #1d5fd6; --chip: #eef1f5;
+    --save-bg: #e7f6ec; --save-fg: #15703c;
   }
   :root[data-theme="dark"] {
     --bg: #0b1220; --surface: #151c2b; --border: #263148; --text: #e8ecf4;
     --muted: #98a3b6; --accent: #74a8ff; --chip: #1e2739;
+    --save-bg: #16351f; --save-fg: #6ee79a;
   }
 
   * { box-sizing: border-box; }
@@ -105,12 +110,6 @@
     font-size: 11px; color: var(--muted); text-align: center;
   }
   .thumb .fallback { font-size: 12px; color: var(--muted); padding: 8px; text-align: center; }
-  .badge {
-    position: absolute; top: 6px; left: 6px;
-    background: rgba(11, 18, 32, .82); color: #fff;
-    font-size: 11px; font-weight: 600; padding: 3px 7px; border-radius: 999px;
-  }
-
   .body { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
   .name { font-size: 14px; font-weight: 600; line-height: 1.3; }
   .facts { font-size: 12px; color: var(--muted); }
@@ -118,16 +117,18 @@
     font-size: 11px; color: var(--muted);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .row { display: flex; align-items: center; gap: 6px; margin-top: auto; flex-wrap: wrap; }
-  .chip {
-    font: 600 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace;
-    background: var(--chip); border: 1px solid var(--border); color: var(--text);
-    padding: 6px 8px; border-radius: 8px; cursor: pointer;
+  .row {
+    display: flex; align-items: baseline; gap: 6px;
+    margin-top: auto; flex-wrap: wrap;
   }
-  .chip.copied { background: var(--accent); color: #fff; border-color: transparent; }
-  .price { font-size: 12px; color: var(--muted); }
-  /* Information secondaire : l'écart avec le prix LEGO argumente, il n'informe pas. */
-  .savings { font-size: 11px; color: var(--muted); opacity: .85; }
+  /* Le prix Marstoy est l'information principale de cette ligne. */
+  .price { font-size: 15px; font-weight: 700; color: var(--text); }
+  .was { font-size: 12px; color: var(--muted); text-decoration-thickness: 1px; }
+  .save {
+    font: 600 11px/1 -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--save-bg); color: var(--save-fg);
+    padding: 4px 6px; border-radius: 6px; white-space: nowrap;
+  }
   .links { display: flex; gap: 10px; font-size: 12px; }
   a { color: var(--accent); text-decoration: none; }
   a:active { opacity: .6; }
@@ -154,9 +155,10 @@
            enterkeyhint="search" aria-label="Rechercher">
     <select id="sort" aria-label="Tri">
       <option value="year">Plus récents</option>
+      <option value="savingsPct">Économie %</option>
+      <option value="savingsAbs">Économie $</option>
       <option value="parts">Plus de pièces</option>
       <option value="name">Nom A→Z</option>
-      <option value="num">N° LEGO</option>
     </select>
   </div>
 </header>
@@ -189,7 +191,6 @@
   // Arrondi au dollar : la précision au cent n'aide pas à décider, et c'est de
   // toute façon une conversion.
   const amountFormat = new Intl.NumberFormat('fr-CA', { maximumFractionDigits: 0 });
-  const formatCad = (value) => `${amountFormat.format(Math.round(value))} CAD`;
 
   const escapeHtml = (value) =>
     String(value ?? '').replace(/[&<>"']/g, (char) =>
@@ -206,11 +207,23 @@
     return item._h;
   }
 
+  // Les sets sans prix LEGO connu n'ont pas d'économie : ils passent à la fin
+  // des tris par économie plutôt que de s'intercaler comme des zéros.
+  const byDesc = (field) => (a, b) => {
+    const left = a[field];
+    const right = b[field];
+    if (left == null && right == null) return a.name.localeCompare(b.name);
+    if (left == null) return 1;
+    if (right == null) return -1;
+    return right - left || a.name.localeCompare(b.name);
+  };
+
   const comparators = {
     year: (a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name),
+    savingsPct: byDesc('savingsPct'),
+    savingsAbs: byDesc('savingsCad'),
     parts: (a, b) => (b.numParts ?? 0) - (a.numParts ?? 0),
     name: (a, b) => a.name.localeCompare(b.name),
-    num: (a, b) => Number(a.num) - Number(b.num),
   };
 
   function apply() {
@@ -237,23 +250,35 @@
   // Le montant est converti à la construction ; le prix d'origine reste en
   // infobulle. L'écart avec le prix LEGO passe en second plan : c'est un
   // argument, pas l'information qu'on cherche.
+  /**
+   * Prix Marstoy, prix LEGO barré, puis l'économie en pastille — l'ordre de
+   * lecture d'une étiquette de rabais.
+   */
   function priceHtml(item) {
     if (item.priceCad == null) {
       return item.price != null
         ? `<span class="price">${escapeHtml(item.price)} ${escapeHtml(sourceCurrency)}</span>`
         : '';
     }
-    const original = item.price != null ? `${item.price} ${sourceCurrency}` : '';
-    return `<span class="price" title="Prix Marstoy : ${escapeHtml(original)} — converti">` +
-      `${escapeHtml(formatCad(item.priceCad))}</span>`;
-  }
 
-  function savingsHtml(item) {
-    if (!item.savingsCad || item.savingsCad <= 0) return '';
-    // Sur une carte qui parle déjà d'un set LEGO, la comparaison va de soi :
-    // le prix de détail reste en appui long.
-    return `<div class="savings" title="Prix LEGO : ${escapeHtml(formatCad(item.legoPriceCad))}">` +
-      `${amountFormat.format(item.savingsCad)} $ off</div>`;
+    const original = item.price != null ? `${item.price} ${sourceCurrency}` : '';
+    const parts = [
+      `<span class="price" title="Prix Marstoy : ${escapeHtml(original)} — converti">` +
+        `${amountFormat.format(item.priceCad)} $</span>`,
+    ];
+
+    if (item.savingsCad > 0 && item.legoPriceCad) {
+      parts.push(
+        `<s class="was" title="Prix de détail LEGO">${amountFormat.format(item.legoPriceCad)} $</s>`,
+      );
+      const pct = item.savingsPct != null ? `${item.savingsPct} %` : null;
+      parts.push(
+        `<span class="save">${[pct, `${amountFormat.format(item.savingsCad)} $`]
+          .filter(Boolean).join(' · ')}</span>`,
+      );
+    }
+
+    return parts.join('');
   }
 
   function cardHtml(item) {
@@ -276,12 +301,7 @@
           <div class="name">${escapeHtml(item.name)}</div>
           <div class="facts">${facts}</div>
           ${item.theme ? `<div class="theme">${escapeHtml(item.theme)}</div>` : ''}
-          <div class="row">
-            <button class="chip" data-copy="${escapeHtml(item.code)}"
-                    title="Copier la référence">${escapeHtml(item.code)}</button>
-            ${priceHtml(item)}
-          </div>
-          ${savingsHtml(item)}
+          <div class="row">${priceHtml(item)}</div>
           <div class="links">
             ${item.marstoyUrl ? `<a href="${escapeHtml(item.marstoyUrl)}" target="_blank"
                                     rel="noopener">Commander</a>` : ''}
@@ -304,14 +324,6 @@
   new IntersectionObserver((entries) => {
     if (entries.some((entry) => entry.isIntersecting)) renderMore();
   }, { rootMargin: '600px' }).observe(document.getElementById('sentinel'));
-
-  grid.addEventListener('click', (event) => {
-    const copy = event.target.closest('[data-copy]');
-    if (!copy) return;
-    navigator.clipboard?.writeText(copy.dataset.copy);
-    copy.classList.add('copied');
-    setTimeout(() => copy.classList.remove('copied'), 900);
-  });
 
   /**
    * Reconstruction à la demande. Le jeton GitHub reste dans le navigateur : il
@@ -439,9 +451,12 @@
       const money = catalog.currency || {};
       if (money.source) sourceCurrency = money.source;
       if (money.cadRate) {
+        // Les montants des cartes portent « $ » sans devise : elle est nommée
+        // ici, une fois.
         priceNote =
-          ` · prix convertis du ${sourceCurrency}${money.assumed ? ' (supposé)' : ''}` +
-          ` au taux du ${money.cadRateDate || '—'}, à titre indicatif`;
+          ` · montants en CAD, convertis du ${sourceCurrency}` +
+          `${money.assumed ? ' (supposé)' : ''} au taux du ${money.cadRateDate || '—'}` +
+          `, prix LEGO barré au détail`;
       }
 
       if (!products.length) {
