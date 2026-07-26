@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-07-26T04:13:05.475Z",
+  "startedAt": "2026-07-26T13:25:22.968Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -18,11 +18,12 @@
     "sitemapProductUrls": 2901,
     "sitemapCodesFromUrl": 309,
     "pagesFetched": 2901,
-    "marstoyOwnMocs": 2586,
+    "marstoyOwnMocs": 2588,
     "sitemap": 311,
     "unique": 310,
     "legoPricesCached": 0,
-    "legoPricesFetched": 0
+    "legoPricesFetched": 302,
+    "legoPricesResolved": 297
   },
   "samples": {
     "sitemap": "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><!--This is the parent sitemap linking to additional sitemaps for products, collections and pages as shown below. The sitemap can not be edited manually, but is kept up to date in real time.--><sitemap><loc>https://www.marstoy.com/sitemap_page_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_blogs_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_products_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_collections_1.xml</loc></sitemap></sitemapindex>",
@@ -35,9 +36,9 @@
         "parts": 604
       },
       {
-        "url": "https://www.marstoy.com/products/the-rack-railway",
-        "title": "The Rack Railway",
-        "parts": 1987
+        "url": "https://www.marstoy.com/products/the-1087x-drift-car",
+        "title": "The 1087X Drift Car",
+        "parts": 392
       },
       {
         "url": "https://www.marstoy.com/products/the-roman-colosseum",
@@ -45,19 +46,19 @@
         "parts": 3146
       },
       {
-        "url": "https://www.marstoy.com/products/the-1087x-drift-car",
-        "title": "The 1087X Drift Car",
-        "parts": 392
-      },
-      {
-        "url": "https://www.marstoy.com/products/moc-the-jeep",
-        "title": "Moc The JEEP",
-        "parts": 522
+        "url": "https://www.marstoy.com/products/the-rack-railway",
+        "title": "The Rack Railway",
+        "parts": 1987
       },
       {
         "url": "https://www.marstoy.com/products/the-60tp-tank",
         "title": "The 60tp Tank",
         "parts": 1128
+      },
+      {
+        "url": "https://www.marstoy.com/products/moc-the-jeep",
+        "title": "Moc The JEEP",
+        "parts": 522
       },
       {
         "url": "https://www.marstoy.com/products/the-block-gun",
@@ -75,14 +76,14 @@
         "parts": 1873
       },
       {
-        "url": "https://www.marstoy.com/products/the-rolling-waves-ride",
-        "title": "The Rolling Waves Ride",
-        "parts": 2118
-      },
-      {
         "url": "https://www.marstoy.com/products/the-bumper-boats",
         "title": "The Bumper Boats",
         "parts": 2044
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-rolling-waves-ride",
+        "title": "The Rolling Waves Ride",
+        "parts": 2118
       },
       {
         "url": "https://www.marstoy.com/products/the-chinese-style-garage",
@@ -95,9 +96,9 @@
         "parts": 1707
       },
       {
-        "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
-        "title": "The Castle Roller Coaster",
-        "parts": 2584
+        "url": "https://www.marstoy.com/products/the-great-white",
+        "title": "The Great White",
+        "parts": 2932
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-st-joseph",
@@ -105,9 +106,9 @@
         "parts": null
       },
       {
-        "url": "https://www.marstoy.com/products/the-great-white",
-        "title": "The Great White",
-        "parts": 2932
+        "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
+        "title": "The Castle Roller Coaster",
+        "parts": 2584
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-jesus-the-shepherd",
@@ -115,14 +116,14 @@
         "parts": null
       },
       {
-        "url": "https://www.marstoy.com/products/moc-the-church-jesus",
-        "title": "Moc The Church Jesus",
-        "parts": null
-      },
-      {
         "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
         "title": "The 1:20 Fierce Chariot",
         "parts": 474
+      },
+      {
+        "url": "https://www.marstoy.com/products/moc-the-church-jesus",
+        "title": "Moc The Church Jesus",
+        "parts": null
       },
       {
         "url": "https://www.marstoy.com/products/the-1-20-sports-car",
@@ -140,11 +141,6 @@
         "parts": 1232
       },
       {
-        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
-        "title": "The Dragon Motobcycle",
-        "parts": 585
-      },
-      {
         "url": "https://www.marstoy.com/products/the-harley-motorcycle",
         "title": "The Harley Motorcycle",
         "parts": 467
@@ -153,17 +149,22 @@
         "url": "https://www.marstoy.com/products/the-wukongs-car",
         "title": "The Wukong's Car",
         "parts": 716
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
+        "title": "The Dragon Motobcycle",
+        "parts": 585
       }
     ]
   },
   "strategyUsed": "sitemap",
   "error": null,
   "httpErrors": {
-    "403": 4
+    "403": 2
   },
-  "finishedAt": "2026-07-26T04:15:49.742Z",
+  "finishedAt": "2026-07-26T13:27:12.998Z",
   "bricksetStatus": {
-    "clé absente": 1
+    "ok": 38
   },
   "unresolved": [],
   "rejected": [
