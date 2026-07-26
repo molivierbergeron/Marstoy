@@ -250,8 +250,10 @@
 
   function savingsHtml(item) {
     if (!item.savingsCad || item.savingsCad <= 0) return '';
+    // Sur une carte qui parle déjà d'un set LEGO, la comparaison va de soi :
+    // le prix de détail reste en appui long.
     return `<div class="savings" title="Prix LEGO : ${escapeHtml(formatCad(item.legoPriceCad))}">` +
-      `${escapeHtml(formatCad(item.savingsCad))} de moins que le LEGO</div>`;
+      `${amountFormat.format(item.savingsCad)} $ off</div>`;
   }
 
   function cardHtml(item) {
