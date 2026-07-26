@@ -60,6 +60,14 @@
   .brand img { width: 28px; height: 28px; }
   .brand h1 { font-size: 17px; margin: 0; letter-spacing: -.01em; }
   .brand .meta { margin-left: auto; font-size: 12px; color: var(--muted); text-align: right; }
+  #refresh {
+    flex: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    font-size: 16px; line-height: 1; -webkit-tap-highlight-color: transparent;
+  }
+  #refresh[disabled] { opacity: .5; }
+  #refresh.spinning { animation: spin 1.1s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
   .controls { display: flex; gap: 8px; }
   input[type="search"], select {
@@ -118,6 +126,8 @@
   }
   .chip.copied { background: var(--accent); color: #fff; border-color: transparent; }
   .price { font-size: 12px; color: var(--muted); }
+  /* Information secondaire : l'écart avec le prix LEGO argumente, il n'informe pas. */
+  .savings { font-size: 11px; color: var(--muted); opacity: .85; }
   .links { display: flex; gap: 10px; font-size: 12px; }
   a { color: var(--accent); text-decoration: none; }
   a:active { opacity: .6; }
@@ -137,6 +147,7 @@
     <img src="./icon.svg" alt="">
     <h1>Marstoy réel</h1>
     <div class="meta" id="meta"></div>
+    <button id="refresh" type="button" title="Reconstruire le catalogue">⟳</button>
   </div>
   <div class="controls">
     <input type="search" id="q" placeholder="Nom, n° LEGO, référence M…, thème" autocomplete="off"
@@ -173,14 +184,12 @@
   let coverage = '';
   let priceNote = '';
   let sourceCurrency = 'USD';
+  let repo = null;
 
-  // En fr-CA, Intl rend CAD par un « $ » nu. Comme les prix viennent d'une
-  // autre devise, on garde le « $ CA » explicite pour lever l'ambiguïté.
-  const amountFormat = new Intl.NumberFormat('fr-CA', {
-    minimumFractionDigits: 2, maximumFractionDigits: 2,
-  });
-  const formatCad = (value) => `${amountFormat.format(value)} $ CA`;
-  let showMarstoyPhoto = localStorage.getItem('mr:photo') === 'marstoy';
+  // Arrondi au dollar : la précision au cent n'aide pas à décider, et c'est de
+  // toute façon une conversion.
+  const amountFormat = new Intl.NumberFormat('fr-CA', { maximumFractionDigits: 0 });
+  const formatCad = (value) => `${amountFormat.format(Math.round(value))} CAD`;
 
   const escapeHtml = (value) =>
     String(value ?? '').replace(/[&<>"']/g, (char) =>
@@ -221,28 +230,31 @@
     statusEl.textContent =
       `${filtered.length} set${filtered.length > 1 ? 's' : ''}` +
       (terms.length ? ` sur ${products.length}` : coverage) +
-      ` · image ${showMarstoyPhoto ? 'Marstoy' : 'LEGO officielle'} (touche l'image pour comparer)` +
       priceNote;
     renderMore();
   }
 
-  // Le montant en CAD est une conversion faite à la construction : Marstoy
-  // facture dans sa devise, avec son propre taux. D'où le « ≈ », et le prix
-  // d'origine gardé en infobulle.
+  // Le montant est converti à la construction ; le prix d'origine reste en
+  // infobulle. L'écart avec le prix LEGO passe en second plan : c'est un
+  // argument, pas l'information qu'on cherche.
   function priceHtml(item) {
-    if (item.priceCad != null) {
-      const original = item.price != null ? `${item.price} ${sourceCurrency}` : '';
-      return `<span class="price" title="Prix Marstoy : ${escapeHtml(original)} — conversion indicative">` +
-        `≈ ${escapeHtml(formatCad(item.priceCad))}</span>`;
+    if (item.priceCad == null) {
+      return item.price != null
+        ? `<span class="price">${escapeHtml(item.price)} ${escapeHtml(sourceCurrency)}</span>`
+        : '';
     }
-    if (item.price != null) {
-      return `<span class="price">${escapeHtml(item.price)} ${escapeHtml(sourceCurrency)}</span>`;
-    }
-    return '';
+    const original = item.price != null ? `${item.price} ${sourceCurrency}` : '';
+    return `<span class="price" title="Prix Marstoy : ${escapeHtml(original)} — converti">` +
+      `${escapeHtml(formatCad(item.priceCad))}</span>`;
+  }
+
+  function savingsHtml(item) {
+    if (!item.savingsCad || item.savingsCad <= 0) return '';
+    return `<div class="savings" title="Prix LEGO : ${escapeHtml(formatCad(item.legoPriceCad))}">` +
+      `${escapeHtml(formatCad(item.savingsCad))} de moins que le LEGO</div>`;
   }
 
   function cardHtml(item) {
-    const image = showMarstoyPhoto ? item.marstoyImage : item.imgUrl;
     const facts = [
       `LEGO ${escapeHtml(item.num)}`,
       item.year || null,
@@ -251,12 +263,11 @@
 
     return `
       <article class="card">
-        <div class="thumb" data-toggle="1">
-          ${image
-            ? `<img src="${escapeHtml(image)}" alt="${escapeHtml(item.name)}" loading="lazy"
+        <div class="thumb">
+          ${item.imgUrl
+            ? `<img src="${escapeHtml(item.imgUrl)}" alt="${escapeHtml(item.name)}" loading="lazy"
                     referrerpolicy="no-referrer">`
             : '<div class="fallback">pas d\'image</div>'}
-          ${showMarstoyPhoto ? '<span class="badge">photo Marstoy</span>' : ''}
         </div>
         <div class="body">
           <div class="name">${escapeHtml(item.name)}</div>
@@ -267,10 +278,12 @@
                     title="Copier la référence">${escapeHtml(item.code)}</button>
             ${priceHtml(item)}
           </div>
+          ${savingsHtml(item)}
           <div class="links">
             ${item.marstoyUrl ? `<a href="${escapeHtml(item.marstoyUrl)}" target="_blank"
                                     rel="noopener">Commander</a>` : ''}
-            <a href="${escapeHtml(item.setUrl)}" target="_blank" rel="noopener">Rebrickable</a>
+            <a href="https://www.lego.com/fr-ca/search?q=${escapeHtml(item.num)}"
+               target="_blank" rel="noopener">LEGO</a>
           </div>
         </div>
       </article>`;
@@ -289,22 +302,107 @@
     if (entries.some((entry) => entry.isIntersecting)) renderMore();
   }, { rootMargin: '600px' }).observe(document.getElementById('sentinel'));
 
-  // Touche l'image : bascule entre visuel LEGO officiel et photo Marstoy, utile
-  // pour vérifier qu'on commande bien la bonne boîte.
   grid.addEventListener('click', (event) => {
     const copy = event.target.closest('[data-copy]');
-    if (copy) {
-      navigator.clipboard?.writeText(copy.dataset.copy);
-      copy.classList.add('copied');
-      setTimeout(() => copy.classList.remove('copied'), 900);
+    if (!copy) return;
+    navigator.clipboard?.writeText(copy.dataset.copy);
+    copy.classList.add('copied');
+    setTimeout(() => copy.classList.remove('copied'), 900);
+  });
+
+  /**
+   * Reconstruction à la demande. Le jeton GitHub reste dans le navigateur : il
+   * n'est ni dans le dépôt ni dans la page publiée. Une fois le workflow lancé,
+   * on surveille la date du catalogue plutôt que l'API — ça ne demande aucun
+   * droit de lecture supplémentaire.
+   */
+  const refreshEl = document.getElementById('refresh');
+  const TOKEN_KEY = 'mr:ghToken';
+
+  function askToken() {
+    const message =
+      'Un jeton GitHub est nécessaire pour lancer la reconstruction.\n\n' +
+      'github.com/settings/personal-access-tokens/new\n' +
+      '  · Only select repositories → ce dépôt\n' +
+      '  · Repository permissions → Actions : Read and write\n\n' +
+      'Il reste sur cet appareil.';
+    const token = window.prompt(message, '');
+    if (token && token.trim()) {
+      localStorage.setItem(TOKEN_KEY, token.trim());
+      return token.trim();
+    }
+    return null;
+  }
+
+  async function waitForNewCatalog(previousDate) {
+    const deadline = Date.now() + 10 * 60 * 1000;
+    while (Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 20000));
+      try {
+        const response = await fetch(`./data/catalog.json?t=${Date.now()}`, { cache: 'no-store' });
+        if (response.ok) {
+          const fresh = await response.json();
+          if (fresh.generatedAt && fresh.generatedAt !== previousDate) return true;
+        }
+      } catch {
+        // Réseau instable : on retentera au prochain tour.
+      }
+    }
+    return false;
+  }
+
+  refreshEl.addEventListener('click', async () => {
+    if (!repo || !repo.slug || !repo.ref) {
+      window.alert("Reconstruction indisponible : le catalogue ne contient pas les informations du dépôt.");
       return;
     }
-    if (event.target.closest('[data-toggle]')) {
-      showMarstoyPhoto = !showMarstoyPhoto;
-      localStorage.setItem('mr:photo', showMarstoyPhoto ? 'marstoy' : 'lego');
-      const scroll = window.scrollY;
+
+    const minutes = repo.approxMinutes || 4;
+    const confirmed = window.confirm(
+      `Reconstruire le catalogue ?\n\n` +
+      `Cela relance la collecte complète sur marstoy.com et prend environ ${minutes} minutes. ` +
+      `La page se rechargera toute seule une fois terminé.`,
+    );
+    if (!confirmed) return;
+
+    let token = localStorage.getItem(TOKEN_KEY) || askToken();
+    if (!token) return;
+
+    refreshEl.disabled = true;
+    refreshEl.classList.add('spinning');
+    const previousDate = (await (await fetch('./data/catalog.json', { cache: 'no-store' })).json())
+      .generatedAt;
+
+    try {
+      const response = await fetch(
+        `https://api.github.com/repos/${repo.slug}/actions/workflows/${repo.workflow}/dispatches`,
+        {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/vnd.github+json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ref: repo.ref }),
+        },
+      );
+
+      if (response.status === 401 || response.status === 403) {
+        localStorage.removeItem(TOKEN_KEY);
+        throw new Error('jeton refusé — il a été oublié, réessaie pour en saisir un autre');
+      }
+      if (!response.ok) throw new Error(`GitHub a répondu ${response.status}`);
+
+      statusEl.textContent = `Reconstruction lancée — environ ${minutes} minutes…`;
+      const updated = await waitForNewCatalog(previousDate);
+      if (updated) window.location.reload();
+      else statusEl.textContent = 'Toujours en cours — recharge la page dans quelques minutes.';
+    } catch (error) {
+      window.alert(`Reconstruction impossible : ${error.message}`);
       apply();
-      window.scrollTo(0, scroll);
+    } finally {
+      refreshEl.disabled = false;
+      refreshEl.classList.remove('spinning');
     }
   });
 
@@ -334,6 +432,7 @@
         coverage = ` clonant un set LEGO, sur ${total} produits Marstoy`;
       }
 
+      repo = catalog.repo || null;
       const money = catalog.currency || {};
       if (money.source) sourceCurrency = money.source;
       if (money.cadRate) {

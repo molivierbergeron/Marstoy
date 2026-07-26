@@ -18,6 +18,7 @@ import { discoverCatalog } from './lib/marstoy.mjs';
 import { loadLegoIndex, resolveFromIndex } from './lib/legodata.mjs';
 import { buildFromLegoIndex } from './lib/reverse-catalog.mjs';
 import { fetchCadRate, toCad } from './lib/fx.mjs';
+import { loadLegoPrices } from './lib/legoprice.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const log = (...args) => console.log('▸', ...args);
@@ -90,7 +91,6 @@ for (const item of products) {
       code: item.code,
       marstoyTitle: item.title,
       marstoyUrl: item.url,
-      marstoyImage: item.image,
       marstoyParts: item.marstoyParts,
       price: item.price,
       num: set.num,
@@ -149,6 +149,23 @@ if (fx) {
   log('  conversion CAD indisponible : les prix restent dans leur devise d\'origine');
 }
 
+// Prix de détail LEGO, pour chiffrer l'économie. Beaucoup de sets sont retirés
+// du catalogue officiel : l'absence de prix est normale, on affiche simplement
+// l'écart quand on l'a.
+const priceCache = await readJson('data/lego-prices.json', {});
+const legoPrices = await loadLegoPrices(products_.map((item) => item.num), priceCache, recon);
+await writeJson('data/lego-prices.json', legoPrices, { pretty: true });
+
+let withSavings = 0;
+for (const item of products_) {
+  const retail = legoPrices[item.num]?.price ?? null;
+  item.legoPriceCad = retail;
+  item.savingsCad =
+    retail != null && item.priceCad != null ? Math.round(retail - item.priceCad) : null;
+  if (item.savingsCad != null && item.savingsCad > 0) withSavings += 1;
+}
+log(`Prix LEGO : ${withSavings} set(s) avec un écart chiffrable`);
+
 // Les plus récents d'abord : c'est ce qu'on cherche en général.
 products_.sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name));
 
@@ -157,6 +174,13 @@ const catalog = {
   source: recon.origin,
   strategy: recon.strategyUsed,
   mode,
+  // De quoi laisser le site déclencher une reconstruction à la demande.
+  repo: {
+    slug: process.env.GITHUB_REPOSITORY || null,
+    ref: process.env.GITHUB_REF_NAME || null,
+    workflow: 'build-catalog.yml',
+    approxMinutes: 4,
+  },
   currency: {
     source: sourceCurrency,
     // Le site doit pouvoir dire « USD supposé » plutôt que « USD ».
