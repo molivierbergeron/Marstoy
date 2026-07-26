@@ -257,8 +257,9 @@
   }
 
   function cardHtml(item) {
+    // Le numéro de set reste cherchable, mais il n'a pas sa place sur la carte :
+    // c'est le nom et l'image qui identifient le set.
     const facts = [
-      `LEGO ${escapeHtml(item.num)}`,
       item.year || null,
       item.numParts ? `${item.numParts} pièces` : null,
     ].filter(Boolean).join(' · ');
