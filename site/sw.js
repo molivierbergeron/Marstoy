@@ -3,8 +3,11 @@
  * métro ou en magasin). Réseau d'abord pour rester à jour, cache en secours.
  */
 
-const CACHE = 'marstoy-real-v1';
-const SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './data/catalog.json'];
+const CACHE = 'marstoy-real-v2';
+const SHELL = [
+  './', './index.html', './manifest.webmanifest', './data/catalog.json',
+  './icon.svg', './icon-192.png', './icon-512.png',
+];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

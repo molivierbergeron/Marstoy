@@ -73,9 +73,8 @@ const rejected = [];
 for (const item of products) {
   const set = resolveFromIndex(item.code, index, overrides);
   if (set.ok) {
-    if (item.marstoyParts && set.numParts) {
-      const delta = Math.abs(item.marstoyParts - set.numParts) / set.numParts;
-      if (delta > PARTS_TOLERANCE) {
+    if (item.marstoyParts) {
+      const reject = (reason) => {
         rejected.push({
           code: item.code,
           num: set.num,
@@ -83,7 +82,19 @@ for (const item of products) {
           marstoyTitle: item.title,
           marstoyParts: item.marstoyParts,
           legoParts: set.numParts,
+          reason,
         });
+      };
+
+      // Un livre ou un accessoire (0 pièce chez Rebrickable) ne peut pas être
+      // le clone d'une boîte de briques. Ce cas était court-circuité tant que
+      // la condition exigeait `set.numParts` vrai — zéro étant falsy.
+      if (!set.numParts) {
+        reject('le set LEGO ne contient aucune pièce');
+        continue;
+      }
+      if (Math.abs(item.marstoyParts - set.numParts) / set.numParts > PARTS_TOLERANCE) {
+        reject('nombre de pièces trop éloigné');
         continue;
       }
     }

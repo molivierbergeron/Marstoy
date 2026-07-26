@@ -89,3 +89,26 @@ test('le catalogue livré est un JSON valide avec la forme attendue', async () =
   assert.ok(Array.isArray(catalog.products));
   assert.ok(catalog.counts && typeof catalog.counts.resolved === 'number');
 });
+
+test('un set LEGO sans pièce ne peut pas cloner une boîte de briques', async () => {
+  // M142 s'était retrouvé apparié au livre « 4.5v Idea Book » (0 pièce) alors
+  // que Marstoy annonçait 629 pièces : le garde-fou exigeait `set.numParts`
+  // vrai, et zéro étant falsy, il ne se déclenchait pas.
+  const build = await readFile(path.join(root, 'scripts/build-catalog.mjs'), 'utf8');
+  assert.match(build, /if \(!set\.numParts\)/);
+  assert.match(build, /ne contient aucune pièce/);
+  assert.doesNotMatch(build, /if \(item\.marstoyParts && set\.numParts\)/);
+});
+
+test('le manifeste déclare des icônes PNG pour l\'installation bureau', async () => {
+  const manifest = JSON.parse(
+    await readFile(path.join(root, 'site/manifest.webmanifest'), 'utf8'),
+  );
+  const sizes = manifest.icons.map((icon) => icon.sizes);
+  assert.ok(sizes.includes('192x192'), '192 px requis par Chrome');
+  assert.ok(sizes.includes('512x512'), '512 px requis par Chrome');
+  assert.ok(manifest.icons.some((icon) => icon.purpose === 'maskable'));
+  for (const icon of manifest.icons) {
+    await readFile(path.join(root, 'site', icon.src.replace('./', '')));
+  }
+});
