@@ -78,12 +78,17 @@ jobs:
 
       # Le Worker des favoris vit chez Cloudflare : ce runner est le seul endroit
       # d'où on puisse constater qu'il répond vraiment.
+      # Pas de `if:` ici : le contexte `secrets` y est interdit, et un `if`
+      # invalide empêche le workflow entier de démarrer. On teste dans le script.
       - name: Vérifier le Worker des favoris
-        if: vars.FAVORIS_API_URL != '' || secrets.FAVORIS_API_URL != ''
         env:
           FAVORIS_API_URL: ${{ vars.FAVORIS_API_URL || secrets.FAVORIS_API_URL }}
         run: |
           say() { echo "$1"; echo "$1" >> "$GITHUB_STEP_SUMMARY"; }
+          if [ -z "${FAVORIS_API_URL:-}" ]; then
+            say '- Worker des favoris : **adresse inconnue**, vérification impossible.'
+            exit 0
+          fi
           base="${FAVORIS_API_URL%/}"
           code=$(curl -s -o /tmp/users.json -w '%{http_code}' --max-time 20 "$base/api/users" || echo 000)
 
