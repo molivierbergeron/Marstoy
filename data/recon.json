@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-08-01T14:13:45.932Z",
+  "startedAt": "2026-08-01T15:11:15.402Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -18,12 +18,11 @@
     "sitemapProductUrls": 2931,
     "sitemapCodesFromUrl": 318,
     "pagesFetched": 2931,
-    "marstoyOwnMocs": 2603,
+    "marstoyOwnMocs": 2605,
     "sitemap": 320,
     "unique": 319,
-    "legoPricesCached": 302,
-    "legoPricesFetched": 10,
-    "legoPricesResolved": 10
+    "legoPricesCached": 312,
+    "legoPricesFetched": 0
   },
   "samples": {
     "sitemap": "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><!--This is the parent sitemap linking to additional sitemaps for products, collections and pages as shown below. The sitemap can not be edited manually, but is kept up to date in real time.--><sitemap><loc>https://www.marstoy.com/sitemap_page_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_blogs_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_products_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_collections_1.xml</loc></sitemap></sitemapindex>",
@@ -36,14 +35,14 @@
         "parts": 1987
       },
       {
-        "url": "https://www.marstoy.com/products/the-1087x-drift-car",
-        "title": "The 1087X Drift Car",
-        "parts": 392
-      },
-      {
         "url": "https://www.marstoy.com/products/the-roman-colosseum",
         "title": "The Roman Colosseum",
         "parts": 3146
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-1087x-drift-car",
+        "title": "The 1087X Drift Car",
+        "parts": 392
       },
       {
         "url": "https://www.marstoy.com/products/the-1087x-modified-fleet-maintenance-vehicle",
@@ -56,14 +55,14 @@
         "parts": 1128
       },
       {
-        "url": "https://www.marstoy.com/products/the-block-gun",
-        "title": "The Block Gun",
-        "parts": 307
-      },
-      {
         "url": "https://www.marstoy.com/products/moc-the-jeep",
         "title": "Moc The JEEP",
         "parts": 522
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-block-gun",
+        "title": "The Block Gun",
+        "parts": 307
       },
       {
         "url": "https://www.marstoy.com/products/the-su-7",
@@ -76,11 +75,6 @@
         "parts": 1873
       },
       {
-        "url": "https://www.marstoy.com/products/the-bumper-boats",
-        "title": "The Bumper Boats",
-        "parts": 2044
-      },
-      {
         "url": "https://www.marstoy.com/products/the-rolling-waves-ride",
         "title": "The Rolling Waves Ride",
         "parts": 2118
@@ -91,6 +85,16 @@
         "parts": 1707
       },
       {
+        "url": "https://www.marstoy.com/products/the-chinese-style-garage",
+        "title": "The Chinese-style Garage",
+        "parts": 763
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-bumper-boats",
+        "title": "The Bumper Boats",
+        "parts": 2044
+      },
+      {
         "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
         "title": "The Castle Roller Coaster",
         "parts": 2584
@@ -99,11 +103,6 @@
         "url": "https://www.marstoy.com/products/the-great-white",
         "title": "The Great White",
         "parts": 2932
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-chinese-style-garage",
-        "title": "The Chinese-style Garage",
-        "parts": 763
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-st-joseph",
@@ -141,14 +140,14 @@
         "parts": 1232
       },
       {
-        "url": "https://www.marstoy.com/products/the-harley-motorcycle",
-        "title": "The Harley Motorcycle",
-        "parts": 467
-      },
-      {
         "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
         "title": "The Dragon Motobcycle",
         "parts": 585
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-harley-motorcycle",
+        "title": "The Harley Motorcycle",
+        "parts": 467
       },
       {
         "url": "https://www.marstoy.com/products/the-wukongs-car",
@@ -160,12 +159,10 @@
   "strategyUsed": "sitemap",
   "error": null,
   "httpErrors": {
-    "403": 8
+    "403": 6
   },
-  "finishedAt": "2026-08-01T14:25:46.510Z",
-  "bricksetStatus": {
-    "ok": 13
-  },
+  "finishedAt": "2026-08-01T15:14:51.288Z",
+  "bricksetStatus": {},
   "unresolved": [],
   "rejected": [
     {
