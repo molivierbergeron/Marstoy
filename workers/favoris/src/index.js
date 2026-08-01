@@ -59,6 +59,24 @@ const cors = () => ({
   'access-control-max-age': '86400',
 });
 
+/**
+ * Crée les comptes de départ au premier accès. Un marqueur empêche de les
+ * ressusciter si on en supprime un plus tard.
+ */
+async function seedUsers(env) {
+  if (!env.SEED_USERS) return;
+  if (await env.FAVORIS.get('seeded')) return;
+
+  for (const raw of String(env.SEED_USERS).split(',')) {
+    const name = raw.trim().slice(0, MAX_NAME);
+    const slug = toSlug(name);
+    if (!slug || (await env.FAVORIS.get(KEY(slug)))) continue;
+    const now = new Date().toISOString();
+    await env.FAVORIS.put(KEY(slug), JSON.stringify({ slug, name, codes: [], createdAt: now, updatedAt: now }));
+  }
+  await env.FAVORIS.put('seeded', new Date().toISOString());
+}
+
 async function listUsers(env) {
   const { keys } = await env.FAVORIS.list({ prefix: 'user:' });
   const users = await Promise.all(
@@ -85,6 +103,8 @@ export default {
     const path = url.pathname.replace(/\/+$/, '');
 
     try {
+      await seedUsers(env);
+
       if (path === '/api/users' && request.method === 'GET') {
         return json({ users: await listUsers(env) });
       }

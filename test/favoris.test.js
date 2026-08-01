@@ -114,3 +114,29 @@ test('un compte se supprime', async () => {
   assert.equal((await call('DELETE', '/api/users/ephemere')).status, 200);
   assert.equal((await call('GET', '/api/list/ephemere')).status, 404);
 });
+
+test('les comptes de départ sont créés une seule fois', async () => {
+  const built = await esbuild.build({
+    entryPoints: [path.join(root, 'workers/favoris/src/index.js')],
+    bundle: true, write: false, format: 'esm', platform: 'neutral',
+  });
+  const seeded = new Miniflare({
+    script: built.outputFiles[0].text,
+    modules: true,
+    compatibilityDate: '2025-06-01',
+    kvNamespaces: ['FAVORIS'],
+    bindings: { SEED_USERS: 'Marco,Christian,Marie-Claude' },
+  });
+  try {
+    const first = await (await seeded.dispatchFetch('https://f.test/api/users')).json();
+    assert.deepEqual(first.users.map((user) => user.slug), ['christian', 'marco', 'marie-claude']);
+    assert.deepEqual(first.users.map((user) => user.name), ['Christian', 'Marco', 'Marie-Claude']);
+
+    // Un compte supprimé ne doit pas réapparaître au prochain appel.
+    await seeded.dispatchFetch('https://f.test/api/users/marco', { method: 'DELETE' });
+    const after = await (await seeded.dispatchFetch('https://f.test/api/users')).json();
+    assert.deepEqual(after.users.map((user) => user.slug), ['christian', 'marie-claude']);
+  } finally {
+    await seeded.dispose();
+  }
+});

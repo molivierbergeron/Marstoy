@@ -2,6 +2,11 @@ name = "marstoy-favoris"
 main = "src/index.js"
 compatibility_date = "2025-06-01"
 
+[vars]
+# Comptes créés au tout premier accès, une seule fois. Ensuite, tout se fait
+# depuis le site ; modifier cette liste ne recrée rien.
+SEED_USERS = "Marco,Christian,Marie-Claude"
+
 # Stockage des listes. Créer le namespace puis coller son id :
 #   npx wrangler kv namespace create FAVORIS
 [[kv_namespaces]]

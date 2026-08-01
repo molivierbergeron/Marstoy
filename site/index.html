@@ -802,7 +802,9 @@
       products = catalog.products || [];
       byCode = new Map(products.map((item) => [item.code, item]));
       repo = catalog.repo || null;
-      api = (catalog.api && catalog.api.favorites) || null;
+      // La barre oblique finale est facile à copier depuis le tableau de bord
+      // Cloudflare : on la retire plutôt que de fabriquer des « //api/… ».
+      api = ((catalog.api && catalog.api.favorites) || '').replace(/\/+$/, '') || null;
 
       const total = catalog.counts && catalog.counts.marstoyProducts;
       if (total && total > products.length) {

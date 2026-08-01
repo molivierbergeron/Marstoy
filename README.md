@@ -160,26 +160,74 @@ plus.
 > maladresse, conformément au besoin. N'y mets rien de sensible. Un NIP par
 > compte serait une vingtaine de lignes de plus.
 
-### Déployer le Worker (~10 min, gratuit)
+### Déployer le Worker
+
+Deux chemins. Le premier ne demande **aucun terminal** — tout se fait dans le
+navigateur — et c'est celui à suivre si la ligne de commande ne te dit rien.
+
+#### Chemin A — tableau de bord Cloudflare, sans terminal
+
+**1. Compte.** <https://dash.cloudflare.com/sign-up> — courriel et mot de passe,
+puis confirme le courriel reçu. Aucune carte bancaire demandée.
+
+**2. Créer l'espace de stockage.** Menu de gauche → **Storage & Databases** →
+**KV** → bouton **Create**. Nomme-le `marstoy-favoris`. Valide.
+
+**3. Créer le Worker.** Menu de gauche → **Compute (Workers)** → **Workers &
+Pages** → **Create** → onglet **Workers** → **Start with Hello World** →
+**Deploy**. Nomme-le `marstoy-favoris`.
+
+**4. Coller le code.** Sur la page du Worker → **Edit code**. Sélectionne tout
+ce qu'il y a dans l'éditeur, supprime, et colle le contenu de
+[`workers/favoris/src/index.js`](workers/favoris/src/index.js) (bouton *Copy raw
+file* sur GitHub). Puis **Deploy**.
+
+**5. Brancher le stockage.** Page du Worker → **Settings** → **Bindings** →
+**Add binding** :
+
+| Champ | Valeur |
+| --- | --- |
+| Type | **KV namespace** |
+| Variable name | `FAVORIS` — exactement, en majuscules |
+| KV namespace | `marstoy-favoris`, créé à l'étape 2 |
+
+Ajoute ensuite une **Variable** (texte, pas secret) :
+
+| Champ | Valeur |
+| --- | --- |
+| Name | `SEED_USERS` |
+| Value | `Marco,Christian,Marie-Claude` |
+
+**Deploy** pour appliquer.
+
+**6. Vérifier.** L'adresse du Worker est affichée en haut de sa page
+(`https://marstoy-favoris.QUELQUECHOSE.workers.dev`). Ouvre-la en ajoutant
+`/api/users` : les trois comptes doivent apparaître.
+
+#### Chemin B — en ligne de commande
 
 ```bash
 cd workers/favoris
 npx wrangler login
-npx wrangler kv namespace create FAVORIS     # colle l'id dans wrangler.toml
+npx wrangler kv namespace create FAVORIS   # colle l'id renvoyé dans wrangler.toml
 npx wrangler deploy
 ```
 
-L'URL affichée à la fin (`https://marstoy-favoris.<sous-domaine>.workers.dev`)
-doit ensuite être connue du site :
+### Dire au site où se trouve le Worker
 
-**Settings → Secrets and variables → Actions → onglet Variables →
-`New repository variable`**, nommée `FAVORIS_API_URL`. C'est une *variable*, pas
-un secret : cette adresse est publique de toute façon.
+Dépôt GitHub → **Settings** → **Secrets and variables** → **Actions** → onglet
+**Variables** → **New repository variable** :
 
-Relance ensuite le workflow. Sans cette variable, les favoris fonctionnent
-quand même mais restent dans le navigateur de chaque appareil.
+| Champ | Valeur |
+| --- | --- |
+| Name | `FAVORIS_API_URL` |
+| Value | l'adresse du Worker, **sans barre oblique finale** |
 
-Vérifier : `https://marstoy-favoris.<sous-domaine>.workers.dev/api/health`
+C'est une *variable*, pas un secret : cette adresse est publique de toute façon.
+Relance ensuite le workflow.
+
+Sans cette variable, les favoris fonctionnent quand même — ils restent
+simplement dans le navigateur de chaque appareil, sans synchronisation.
 
 ---
 
