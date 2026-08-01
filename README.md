@@ -191,14 +191,13 @@ file* sur GitHub). Puis **Deploy**.
 | Variable name | `FAVORIS` — exactement, en majuscules |
 | KV namespace | `marstoy-favoris`, créé à l'étape 2 |
 
-Ajoute ensuite une **Variable** (texte, pas secret) :
-
-| Champ | Valeur |
-| --- | --- |
-| Name | `SEED_USERS` |
-| Value | `Marco,Christian,Marie-Claude` |
-
 **Deploy** pour appliquer.
+
+C'est le seul branchement nécessaire. Les comptes Marco, Christian et
+Marie-Claude sont créés automatiquement au premier accès ; d'autres s'ajoutent
+ensuite depuis le site. Pour changer cette liste de départ, la variable
+`SEED_USERS` la remplace — elle se règle dans **Settings → Variables and
+Secrets**, un écran distinct de « Add a binding ».
 
 **6. Vérifier.** L'adresse du Worker est affichée en haut de sa page
 (`https://marstoy-favoris.QUELQUECHOSE.workers.dev`). Ouvre-la en ajoutant

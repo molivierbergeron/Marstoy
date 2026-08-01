@@ -35,6 +35,8 @@ before(async () => {
     modules: true,
     compatibilityDate: '2025-06-01',
     kvNamespaces: ['FAVORIS'],
+    // Semis désactivé : ces tests-ci vérifient la création manuelle.
+    bindings: { SEED_USERS: '' },
   });
 });
 
@@ -138,5 +140,27 @@ test('les comptes de départ sont créés une seule fois', async () => {
     assert.deepEqual(after.users.map((user) => user.slug), ['christian', 'marie-claude']);
   } finally {
     await seeded.dispose();
+  }
+});
+
+test('sans variable SEED_USERS, les comptes par défaut sont quand même créés', async () => {
+  // Le tableau de bord Cloudflare ne propose pas les variables d'environnement
+  // dans le dialogue « Add a binding » : la valeur par défaut évite d'avoir à
+  // les chercher ailleurs.
+  const built = await esbuild.build({
+    entryPoints: [path.join(root, 'workers/favoris/src/index.js')],
+    bundle: true, write: false, format: 'esm', platform: 'neutral',
+  });
+  const bare = new Miniflare({
+    script: built.outputFiles[0].text,
+    modules: true,
+    compatibilityDate: '2025-06-01',
+    kvNamespaces: ['FAVORIS'],
+  });
+  try {
+    const { users } = await (await bare.dispatchFetch('https://f.test/api/users')).json();
+    assert.deepEqual(users.map((user) => user.name), ['Christian', 'Marco', 'Marie-Claude']);
+  } finally {
+    await bare.dispose();
   }
 });

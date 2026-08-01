@@ -17,6 +17,10 @@
  *   DELETE /api/users/:slug      supprime un compte
  */
 
+// Comptes créés au tout premier accès. La variable SEED_USERS les remplace si
+// elle est définie, mais la valeur par défaut évite d'avoir à la configurer.
+const DEFAULT_SEED_USERS = 'Marco,Christian,Marie-Claude';
+
 const MAX_USERS = 50;
 const MAX_CODES = 500;
 const MAX_NAME = 40;
@@ -64,10 +68,13 @@ const cors = () => ({
  * ressusciter si on en supprime un plus tard.
  */
 async function seedUsers(env) {
-  if (!env.SEED_USERS) return;
+  // Définir SEED_USERS à vide désactive le semis ; l'absence de variable
+  // applique la liste par défaut.
+  const seeds = env.SEED_USERS === undefined ? DEFAULT_SEED_USERS : env.SEED_USERS;
+  if (!seeds) return;
   if (await env.FAVORIS.get('seeded')) return;
 
-  for (const raw of String(env.SEED_USERS).split(',')) {
+  for (const raw of String(seeds).split(',')) {
     const name = raw.trim().slice(0, MAX_NAME);
     const slug = toSlug(name);
     if (!slug || (await env.FAVORIS.get(KEY(slug)))) continue;
