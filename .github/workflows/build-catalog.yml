@@ -76,6 +76,30 @@ jobs:
             say '  - Nom exact `FAVORIS_API_URL`, valeur = adresse du Worker'
           fi
 
+      # Le Worker des favoris vit chez Cloudflare : ce runner est le seul endroit
+      # d'où on puisse constater qu'il répond vraiment.
+      - name: Vérifier le Worker des favoris
+        if: vars.FAVORIS_API_URL != '' || secrets.FAVORIS_API_URL != ''
+        env:
+          FAVORIS_API_URL: ${{ vars.FAVORIS_API_URL || secrets.FAVORIS_API_URL }}
+        run: |
+          say() { echo "$1"; echo "$1" >> "$GITHUB_STEP_SUMMARY"; }
+          base="${FAVORIS_API_URL%/}"
+          code=$(curl -s -o /tmp/users.json -w '%{http_code}' --max-time 20 "$base/api/users" || echo 000)
+
+          if [ "$code" = "200" ]; then
+            noms=$(node -e "
+              const d = require('/tmp/users.json');
+              console.log((d.users || []).map((u) => u.name + ' (' + u.count + ')').join(', ') || 'aucun compte');
+            ")
+            say "- Worker des favoris : **en ligne** — comptes : $noms"
+          else
+            say "- Worker des favoris : **HTTP $code** sur \`$base/api/users\`"
+            say '  - `000` : adresse injoignable, Worker non déployé ou mal orthographiée'
+            say '  - `500` : le branchement KV `FAVORIS` manque sur le Worker'
+            head -c 300 /tmp/users.json 2>/dev/null | sed 's/^/    /' || true
+          fi
+
       - name: Construire le catalogue
         id: build
         # Le repli API n'est utilisé que pour les références absentes du dump
