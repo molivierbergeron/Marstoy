@@ -157,7 +157,7 @@ jobs:
         if: always()
         run: |
           set -u
-          FILES='data/recon.json site/data/catalog.json data/lego-prices.json'
+          FILES='data/recon.json site/data/catalog.json data/lego-prices.json data/first-seen.json'
 
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'

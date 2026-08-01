@@ -216,12 +216,13 @@
     <input type="search" id="q" placeholder="Nom, n° LEGO, référence M…, thème" autocomplete="off"
            enterkeyhint="search" aria-label="Rechercher">
     <select id="sort" aria-label="Tri">
-      <option value="year">Plus récents</option>
+      <option value="added">Ajouts récents</option>
       <option value="savingsPct">Économie %</option>
       <option value="savingsAbs">Économie $</option>
       <option value="priceAsc">Prix ↑</option>
       <option value="legoDesc">Prix LEGO ↓</option>
       <option value="parts">Plus de pièces</option>
+      <option value="year">Année du set</option>
       <option value="name">Nom A→Z</option>
     </select>
   </div>
@@ -326,6 +327,12 @@
   };
 
   const comparators = {
+    // Arrivée chez Marstoy, pas année de sortie du set. L'année départage tant
+    // que le registre des arrivées n'a pas d'historique.
+    added: (a, b) =>
+      String(b.addedAt || '').localeCompare(String(a.addedAt || '')) ||
+      (b.year ?? 0) - (a.year ?? 0) ||
+      a.name.localeCompare(b.name),
     year: (a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name),
     savingsPct: byDesc('savingsPct'),
     savingsAbs: byDesc('savingsCad'),
@@ -608,7 +615,7 @@
     let pool = view === 'list' ? products.filter((item) => favorites.has(item.code)) : products;
     if (terms.length) pool = pool.filter((item) => terms.every((term) => haystack(item).includes(term)));
 
-    filtered = pool.slice().sort(comparators[sortEl.value] || comparators.year);
+    filtered = pool.slice().sort(comparators[sortEl.value] || comparators.added);
     grid.replaceChildren();
     rendered = 0;
 

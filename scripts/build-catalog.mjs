@@ -102,6 +102,7 @@ for (const item of products) {
       code: item.code,
       marstoyTitle: item.title,
       marstoyUrl: item.url,
+      lastmod: item.lastmod,
       marstoyParts: item.marstoyParts,
       price: item.price,
       num: set.num,
@@ -189,8 +190,31 @@ if (!process.env.BRICKSET_API_KEY) {
   log('  BRICKSET_API_KEY absente : ajouter le secret pour afficher « xx $ off ».');
 }
 
-// Les plus récents d'abord : c'est ce qu'on cherche en général.
-products_.sort((a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name));
+// Date d'arrivée chez Marstoy — à ne pas confondre avec l'année de sortie du
+// set LEGO. Le registre est tenu d'un passage à l'autre : une référence jamais
+// vue est datée d'aujourd'hui, ou de la date du sitemap quand il en donne une,
+// ce qui donne un classement utile dès le premier passage et exact ensuite.
+const firstSeen = await readJson('data/first-seen.json', {});
+const today = new Date().toISOString();
+let newcomers = 0;
+
+for (const item of products_) {
+  if (!firstSeen[item.code]) {
+    firstSeen[item.code] = item.lastmod || today;
+    newcomers += 1;
+  }
+  item.addedAt = firstSeen[item.code];
+  delete item.lastmod;
+}
+await writeJson('data/first-seen.json', firstSeen, { pretty: true });
+log(`Arrivées : ${newcomers} référence(s) vue(s) pour la première fois`);
+
+// Les arrivées récentes d'abord. L'année du set départage tant que le registre
+// n'a pas d'historique, sinon tout serait à égalité au premier passage.
+products_.sort((a, b) =>
+  String(b.addedAt || '').localeCompare(String(a.addedAt || '')) ||
+  (b.year ?? 0) - (a.year ?? 0) ||
+  a.name.localeCompare(b.name));
 
 const catalog = {
   generatedAt: new Date().toISOString(),

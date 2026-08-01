@@ -10,10 +10,13 @@ import { extractCodes } from '../../lib/setnum.js';
 const ORIGIN = process.env.MARSTOY_ORIGIN || 'https://www.marstoy.com';
 
 /** Produit normalisé, quelle que soit la stratégie. */
-const product = ({ code, title, url, image, price, currency, marstoyParts, source }) => ({
+const product = ({ code, title, url, image, price, currency, marstoyParts, lastmod, source }) => ({
   code,
   title: title?.trim() || null,
   url: url || null,
+  // Date déclarée par le sitemap, quand il en fournit une : premier indice de
+  // l'ancienneté d'un produit chez Marstoy.
+  lastmod: lastmod || null,
   image: image || null,
   price: price ?? null,
   // null quand la boutique ne la déclare pas : le build retombe alors sur USD.
@@ -181,27 +184,34 @@ async function fromSitemap(recon) {
     if (productSitemaps.length) break;
   }
 
-  const urls = new Set();
+  // url -> lastmod, en lisant chaque bloc <url> plutôt que les <loc> isolées.
+  const urls = new Map();
   for (const sitemap of [...new Set(productSitemaps)].slice(0, 20)) {
     const response = await get(sitemap, { accept: 'application/xml' });
     if (!response.ok) continue;
     const xml = await response.text();
-    for (const match of xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)) {
-      if (match[1].includes('/products/')) urls.add(match[1]);
+    if (!recon.samples.productSitemap) recon.samples.productSitemap = xml.slice(0, 1200);
+
+    for (const block of xml.matchAll(/<url>([\s\S]*?)<\/url>/g)) {
+      const loc = block[1].match(/<loc>\s*([^<\s]+)\s*<\/loc>/)?.[1];
+      if (!loc || !loc.includes('/products/')) continue;
+      urls.set(loc, block[1].match(/<lastmod>\s*([^<\s]+)\s*<\/lastmod>/)?.[1] || null);
     }
     await sleep(300);
   }
   recon.counts.sitemapProductUrls = urls.size;
+  recon.counts.sitemapWithLastmod = [...urls.values()].filter(Boolean).length;
   if (!urls.size) return [];
 
-  recon.counts.sitemapCodesFromUrl = [...urls].filter(
+  recon.counts.sitemapCodesFromUrl = [...urls.keys()].filter(
     (url) => extractCodes(url.split('/').pop().replaceAll('-', ' ')).length,
   ).length;
 
   // On charge chaque fiche : c'est le seul endroit où se trouvent le titre, la
   // photo, le prix, et — pour la majorité du catalogue — la référence elle-même.
   const limit = Number(process.env.MARSTOY_PAGE_LIMIT || 0);
-  const targets = limit > 0 ? [...urls].slice(0, limit) : [...urls];
+  const allUrls = [...urls.keys()];
+  const targets = limit > 0 ? allUrls.slice(0, limit) : allUrls;
   recon.counts.pagesFetched = targets.length;
 
   const httpErrors = new Map();
@@ -234,7 +244,7 @@ async function fromSitemap(recon) {
         if (withoutCode.length < 60) withoutCode.push({ url, title: details.title, parts: details.marstoyParts });
         return null;
       }
-      return product({ ...details, url, source: 'sitemap-page' });
+      return product({ ...details, url, lastmod: urls.get(url), source: 'sitemap-page' });
     } catch (error) {
       httpErrors.set(String(error?.message || error).slice(0, 60), 1);
       return null;

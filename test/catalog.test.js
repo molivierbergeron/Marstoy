@@ -112,3 +112,27 @@ test('le manifeste déclare des icônes PNG pour l\'installation bureau', async 
     await readFile(path.join(root, 'site', icon.src.replace('./', '')));
   }
 });
+
+test('le tri par défaut classe les arrivées, pas les années de sortie', async () => {
+  // « Plus récents » triait sur l'année du set LEGO, ce qui n'a rien à voir
+  // avec l'arrivée du produit chez Marstoy.
+  const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
+  assert.match(html, /<option value="added">Ajouts récents<\/option>/);
+  assert.match(html, /<option value="year">Année du set<\/option>/);
+  // La première option du menu est celle appliquée par défaut.
+  const options = [...html.matchAll(/<option value="([^"]+)"/g)].map((m) => m[1]);
+  assert.equal(options[0], 'added');
+  assert.match(html, /comparators\[sortEl\.value\] \|\| comparators\.added/);
+});
+
+test('le registre des arrivées est tenu d\'un passage à l\'autre', async () => {
+  const build = await readFile(path.join(root, 'scripts/build-catalog.mjs'), 'utf8');
+  assert.match(build, /data\/first-seen\.json/);
+  // Une référence déjà connue garde sa date : sinon tout serait « nouveau »
+  // à chaque passage.
+  assert.match(build, /if \(!firstSeen\[item\.code\]\)/);
+  assert.match(build, /item\.lastmod \|\| today/);
+
+  const workflow = await readFile(path.join(root, '.github/workflows/build-catalog.yml'), 'utf8');
+  assert.match(workflow, /data\/first-seen\.json/, 'le registre doit être commité, sinon il repart de zéro');
+});
