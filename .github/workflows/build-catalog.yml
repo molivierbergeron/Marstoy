@@ -12,7 +12,7 @@ on:
   push:
     paths:
       - 'scripts/**'
-      - 'src/setnum.js'
+      - 'lib/setnum.js'
       - 'site/**'
       - 'overrides.json'
       - '.github/workflows/build-catalog.yml'
@@ -75,6 +75,8 @@ jobs:
           # dans l'interface GitHub. Sans l'un ni l'autre, la ligne d'écart ne
           # s'affiche simplement pas.
           BRICKSET_API_KEY: ${{ secrets.BRICKSET_API_KEY || vars.BRICKSET_API_KEY }}
+          # Adresse publique du Worker des favoris (variable, pas secret).
+          FAVORIS_API_URL: ${{ vars.FAVORIS_API_URL }}
         run: node scripts/build-catalog.mjs
         continue-on-error: true
 

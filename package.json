@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Proxy Cloudflare Worker qui affiche marstoy.com avec les vrais noms et visuels des sets LEGO.",
+  "description": "Catalogue Marstoy avec les vrais noms, visuels et prix des sets LEGO, publié sur GitHub Pages.",
   "scripts": {
-    "check": "node scripts/check.mjs",
-    "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
-    "tail": "wrangler tail",
-    "test": "node --test 'test/*.test.js'"
+    "build": "node scripts/build-catalog.mjs",
+    "test": "node --test 'test/*.test.js'",
+    "favoris:dev": "wrangler dev --config workers/favoris/wrangler.toml",
+    "favoris:deploy": "wrangler deploy --config workers/favoris/wrangler.toml"
   },
   "devDependencies": {
     "esbuild": "^0.25.12",

@@ -5,7 +5,7 @@
  */
 
 import { get, mapLimit, sleep } from './fetch-util.mjs';
-import { extractCodes } from '../../src/setnum.js';
+import { extractCodes } from '../../lib/setnum.js';
 
 const ORIGIN = process.env.MARSTOY_ORIGIN || 'https://www.marstoy.com';
 

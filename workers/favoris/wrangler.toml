@@ -1,0 +1,12 @@
+name = "marstoy-favoris"
+main = "src/index.js"
+compatibility_date = "2025-06-01"
+
+# Stockage des listes. Créer le namespace puis coller son id :
+#   npx wrangler kv namespace create FAVORIS
+[[kv_namespaces]]
+binding = "FAVORIS"
+id = "REMPLACER_PAR_L_ID"
+
+[observability]
+enabled = true

@@ -1,0 +1,9 @@
+{
+  "_comment": [
+    "Corrections manuelles référence Marstoy -> set LEGO, pour les cas où",
+    "l'inversion des chiffres ne suffit pas (ambiguïté, référence maison,",
+    "boîte multi-sets). La valeur est un numéro Rebrickable ('10276-1' ou",
+    "'10276'), ou null pour ne jamais toucher cette référence.",
+    "Ce fichier est lu au déploiement : redéployer après modification."
+  ]
+}

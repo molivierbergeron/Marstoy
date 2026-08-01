@@ -22,6 +22,7 @@
     --chip: #eef1f5;
     --save-bg: #e7f6ec;
     --save-fg: #15703c;
+    --star: #e8a400;
     --shadow: 0 1px 2px rgba(16, 24, 40, .06), 0 4px 12px rgba(16, 24, 40, .05);
     color-scheme: light dark;
   }
@@ -29,19 +30,19 @@
     :root {
       --bg: #0b1220; --surface: #151c2b; --border: #263148; --text: #e8ecf4;
       --muted: #98a3b6; --accent: #74a8ff; --chip: #1e2739;
-      --save-bg: #16351f; --save-fg: #6ee79a;
+      --save-bg: #16351f; --save-fg: #6ee79a; --star: #ffc542;
       --shadow: 0 1px 2px rgba(0,0,0,.4), 0 6px 18px rgba(0,0,0,.3);
     }
   }
   :root[data-theme="light"] {
     --bg: #f6f7f9; --surface: #fff; --border: #e3e6ea; --text: #14181f;
     --muted: #5f6875; --accent: #1d5fd6; --chip: #eef1f5;
-    --save-bg: #e7f6ec; --save-fg: #15703c;
+    --save-bg: #e7f6ec; --save-fg: #15703c; --star: #e8a400;
   }
   :root[data-theme="dark"] {
     --bg: #0b1220; --surface: #151c2b; --border: #263148; --text: #e8ecf4;
     --muted: #98a3b6; --accent: #74a8ff; --chip: #1e2739;
-    --save-bg: #16351f; --save-fg: #6ee79a;
+    --save-bg: #16351f; --save-fg: #6ee79a; --star: #ffc542;
   }
 
   * { box-sizing: border-box; }
@@ -56,7 +57,7 @@
 
   header {
     position: sticky; top: 0; z-index: 10;
-    padding: max(12px, env(safe-area-inset-top)) 16px 12px;
+    padding: max(12px, env(safe-area-inset-top)) 16px 10px;
     background: color-mix(in srgb, var(--bg) 88%, transparent);
     backdrop-filter: saturate(180%) blur(12px);
     border-bottom: 1px solid var(--border);
@@ -64,11 +65,20 @@
   .brand { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .brand img { width: 28px; height: 28px; }
   .brand h1 { font-size: 17px; margin: 0; letter-spacing: -.01em; }
-  .brand .meta { margin-left: auto; font-size: 12px; color: var(--muted); text-align: right; }
+
+  button { font: inherit; -webkit-tap-highlight-color: transparent; cursor: pointer; }
+  #account {
+    margin-left: auto; display: flex; align-items: center; gap: 6px;
+    max-width: 48%; overflow: hidden;
+    font-size: 12px; font-weight: 600; color: var(--text);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 999px; padding: 7px 11px;
+  }
+  #account span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   #refresh {
-    flex: none; width: 34px; height: 34px; border-radius: 10px; cursor: pointer;
+    flex: none; width: 34px; height: 34px; border-radius: 10px;
     border: 1px solid var(--border); background: var(--surface); color: var(--text);
-    font-size: 16px; line-height: 1; -webkit-tap-highlight-color: transparent;
+    font-size: 16px; line-height: 1;
   }
   #refresh[disabled] { opacity: .5; }
   #refresh.spinning { animation: spin 1.1s linear infinite; }
@@ -81,10 +91,31 @@
     -webkit-appearance: none; appearance: none;
   }
   input[type="search"] { flex: 1; min-width: 0; }
-  select { max-width: 42%; }
+  select { max-width: 44%; }
 
-  main { padding: 14px 16px calc(28px + env(safe-area-inset-bottom)); }
+  .tabs { display: flex; gap: 6px; margin-top: 10px; }
+  .tab {
+    flex: 1; padding: 7px 10px; border-radius: 9px; font-size: 13px; font-weight: 600;
+    border: 1px solid var(--border); background: var(--surface); color: var(--muted);
+  }
+  .tab[aria-selected="true"] { background: var(--text); color: var(--bg); border-color: transparent; }
+
+  main { padding: 12px 16px calc(28px + env(safe-area-inset-bottom)); }
   .status { color: var(--muted); font-size: 13px; padding: 4px 0 12px; }
+
+  .totals {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 11px 13px; margin-bottom: 12px;
+  }
+  .totals b { font-size: 17px; }
+  .totals .sub { font-size: 12px; color: var(--muted); }
+  .totals .save { font-size: 12px; }
+  .totals button {
+    margin-left: auto; font-size: 12px; font-weight: 600; padding: 7px 11px;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--chip); color: var(--text);
+  }
 
   .grid {
     display: grid; gap: 12px;
@@ -110,6 +141,15 @@
     font-size: 11px; color: var(--muted); text-align: center;
   }
   .thumb .fallback { font-size: 12px; color: var(--muted); padding: 8px; text-align: center; }
+  .star {
+    position: absolute; top: 6px; right: 6px; width: 32px; height: 32px;
+    border-radius: 50%; border: 0; line-height: 1; font-size: 17px;
+    background: rgba(255, 255, 255, .86); color: #98a3b6;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .18);
+  }
+  .star[aria-pressed="true"] { color: var(--star); }
+  .star[disabled] { opacity: 0; pointer-events: none; }
+
   .body { padding: 10px 11px 12px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
   .name { font-size: 14px; font-weight: 600; line-height: 1.3; }
   .facts { font-size: 12px; color: var(--muted); }
@@ -117,10 +157,7 @@
     font-size: 11px; color: var(--muted);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
-  .row {
-    display: flex; align-items: baseline; gap: 6px;
-    margin-top: auto; flex-wrap: wrap;
-  }
+  .row { display: flex; align-items: baseline; gap: 6px; margin-top: auto; flex-wrap: wrap; }
   /* Le prix Marstoy est l'information principale de cette ligne. */
   .price { font-size: 15px; font-weight: 700; color: var(--text); }
   .was { font-size: 12px; color: var(--muted); text-decoration-thickness: 1px; }
@@ -133,12 +170,37 @@
   a { color: var(--accent); text-decoration: none; }
   a:active { opacity: .6; }
 
-  .empty { text-align: center; color: var(--muted); padding: 48px 16px; }
-  .empty code {
-    display: block; margin-top: 10px; font-size: 12px;
-    background: var(--chip); padding: 10px; border-radius: 8px; overflow-x: auto;
-  }
+  .empty { text-align: center; color: var(--muted); padding: 44px 16px; font-size: 14px; }
   #sentinel { height: 1px; }
+
+  /* Feuille des comptes */
+  #sheet {
+    position: fixed; inset: 0; z-index: 50; display: none;
+    background: rgba(11, 18, 32, .45);
+    align-items: flex-end; justify-content: center;
+  }
+  #sheet[open] { display: flex; }
+  #sheet .panel {
+    background: var(--bg); width: 100%; max-width: 460px;
+    border-radius: 16px 16px 0 0; padding: 18px 16px calc(20px + env(safe-area-inset-bottom));
+    max-height: 82vh; overflow-y: auto;
+  }
+  #sheet h2 { margin: 0 0 4px; font-size: 16px; }
+  #sheet p { margin: 0 0 14px; font-size: 13px; color: var(--muted); }
+  .user-row {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 12px 13px; margin-bottom: 8px;
+    font-size: 14px; color: var(--text); text-align: left;
+  }
+  .user-row .count { margin-left: auto; font-size: 12px; color: var(--muted); }
+  .user-row.current { border-color: var(--accent); }
+  .sheet-actions { display: flex; gap: 8px; margin-top: 6px; }
+  .sheet-actions button {
+    flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 600;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+  }
+  .sheet-actions .primary { background: var(--accent); color: #fff; border-color: transparent; }
 </style>
 </head>
 <body>
@@ -147,7 +209,7 @@
   <div class="brand">
     <img src="./icon.svg" alt="">
     <h1>Marstoy réel</h1>
-    <div class="meta" id="meta"></div>
+    <button id="account" type="button" title="Changer de compte">👤 <span>Invité</span></button>
     <button id="refresh" type="button" title="Reconstruire le catalogue">⟳</button>
   </div>
   <div class="controls">
@@ -157,17 +219,36 @@
       <option value="year">Plus récents</option>
       <option value="savingsPct">Économie %</option>
       <option value="savingsAbs">Économie $</option>
+      <option value="priceAsc">Prix ↑</option>
+      <option value="legoDesc">Prix LEGO ↓</option>
       <option value="parts">Plus de pièces</option>
       <option value="name">Nom A→Z</option>
     </select>
   </div>
+  <div class="tabs" role="tablist">
+    <button class="tab" id="tab-all" role="tab" aria-selected="true" data-view="all">Tout le catalogue</button>
+    <button class="tab" id="tab-list" role="tab" aria-selected="false" data-view="list">★ Ma liste</button>
+  </div>
 </header>
 
 <main>
+  <div class="totals" id="totals" hidden></div>
   <div class="status" id="status">Chargement du catalogue…</div>
   <div class="grid" id="grid"></div>
   <div id="sentinel"></div>
 </main>
+
+<div id="sheet">
+  <div class="panel">
+    <h2>Compte</h2>
+    <p id="sheet-hint"></p>
+    <div id="sheet-users"></div>
+    <div class="sheet-actions">
+      <button type="button" id="sheet-new" class="primary">Nouveau compte</button>
+      <button type="button" id="sheet-close">Fermer</button>
+    </div>
+  </div>
+</div>
 
 <script>
 (() => {
@@ -176,21 +257,35 @@
   const PAGE = 60;
   const grid = document.getElementById('grid');
   const statusEl = document.getElementById('status');
-  const metaEl = document.getElementById('meta');
+  const totalsEl = document.getElementById('totals');
   const queryEl = document.getElementById('q');
   const sortEl = document.getElementById('sort');
+  const accountEl = document.getElementById('account');
+  const sheetEl = document.getElementById('sheet');
+
+  const STORE_ACCOUNT = 'mr:account';
+  const STORE_FAV = (slug) => `mr:fav:${slug}`;
 
   let products = [];
+  let byCode = new Map();
   let filtered = [];
   let rendered = 0;
   let coverage = '';
   let priceNote = '';
   let sourceCurrency = 'USD';
   let repo = null;
+  let api = null;
+
+  let account = null;      // { slug, name } — le compte connecté
+  let browsing = null;     // { slug, name } — liste d'un autre, en lecture seule
+  let favorites = new Set();
+  let view = 'all';
+  let syncError = false;
 
   // Arrondi au dollar : la précision au cent n'aide pas à décider, et c'est de
   // toute façon une conversion.
   const amountFormat = new Intl.NumberFormat('fr-CA', { maximumFractionDigits: 0 });
+  const money = (value) => `${amountFormat.format(Math.round(value))} $`;
 
   const escapeHtml = (value) =>
     String(value ?? '').replace(/[&<>"']/g, (char) =>
@@ -198,6 +293,10 @@
 
   const normalize = (value) =>
     String(value ?? '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  const readJson = (key, fallback) => {
+    try { return JSON.parse(localStorage.getItem(key)) ?? fallback; } catch { return fallback; }
+  };
 
   function haystack(item) {
     if (!item._h) {
@@ -217,67 +316,332 @@
     if (right == null) return -1;
     return right - left || a.name.localeCompare(b.name);
   };
+  const byAsc = (field) => (a, b) => {
+    const left = a[field];
+    const right = b[field];
+    if (left == null && right == null) return a.name.localeCompare(b.name);
+    if (left == null) return 1;
+    if (right == null) return -1;
+    return left - right || a.name.localeCompare(b.name);
+  };
 
   const comparators = {
     year: (a, b) => (b.year ?? 0) - (a.year ?? 0) || a.name.localeCompare(b.name),
     savingsPct: byDesc('savingsPct'),
     savingsAbs: byDesc('savingsCad'),
-    parts: (a, b) => (b.numParts ?? 0) - (a.numParts ?? 0),
+    priceAsc: byAsc('priceCad'),
+    legoDesc: byDesc('legoPriceCad'),
+    parts: byDesc('numParts'),
     name: (a, b) => a.name.localeCompare(b.name),
   };
 
-  function apply() {
-    const terms = normalize(queryEl.value).split(/\s+/).filter(Boolean);
-    filtered = terms.length
-      ? products.filter((item) => terms.every((term) => haystack(item).includes(term)))
-      : products.slice();
-    filtered.sort(comparators[sortEl.value] || comparators.year);
+  /* ---------------------------------------------------------------- favoris */
 
-    grid.replaceChildren();
-    rendered = 0;
+  const activeList = () => browsing || account;
+  const canEdit = () => Boolean(account) && !browsing;
 
-    if (!filtered.length) {
-      statusEl.textContent = 'Aucun résultat.';
+  function loadLocalFavorites(slug) {
+    favorites = new Set(readJson(STORE_FAV(slug), []));
+  }
+
+  function saveLocalFavorites() {
+    const list = activeList();
+    if (list) localStorage.setItem(STORE_FAV(list.slug), JSON.stringify([...favorites]));
+  }
+
+  let syncTimer;
+  function scheduleSync() {
+    if (!api || !canEdit()) return;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(async () => {
+      try {
+        const response = await fetch(`${api}/api/list/${account.slug}`, {
+          method: 'PUT',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ codes: [...favorites] }),
+        });
+        if (!response.ok) throw new Error(String(response.status));
+        syncError = false;
+      } catch {
+        // La liste reste en local : on retentera au prochain changement ou au
+        // prochain chargement.
+        syncError = true;
+      }
+      renderStatus();
+    }, 700);
+  }
+
+  async function pullList(slug) {
+    if (!api) return null;
+    try {
+      const response = await fetch(`${api}/api/list/${slug}`, { cache: 'no-store' });
+      if (!response.ok) return null;
+      return await response.json();
+    } catch {
+      return null;
+    }
+  }
+
+  function toggleFavorite(code) {
+    if (!canEdit()) {
+      openSheet(browsing ? 'Reviens à ton compte pour modifier ta liste.' : null);
       return;
     }
+    if (favorites.has(code)) favorites.delete(code);
+    else favorites.add(code);
+    saveLocalFavorites();
+    scheduleSync();
+
+    for (const button of grid.querySelectorAll(`[data-star="${code}"]`)) {
+      button.setAttribute('aria-pressed', String(favorites.has(code)));
+      button.textContent = favorites.has(code) ? '★' : '☆';
+    }
+    renderAccount();
+    if (view === 'list') apply();
+    else renderStatus();
+  }
+
+  /* ---------------------------------------------------------------- comptes */
+
+  function renderAccount() {
+    const label = browsing
+      ? `👁 ${browsing.name}`
+      : account
+        ? `👤 ${account.name}`
+        : '👤 Invité';
+    accountEl.innerHTML = `<span>${escapeHtml(label)}</span>`;
+    const listTab = document.getElementById('tab-list');
+    const owner = activeList();
+    listTab.textContent = owner
+      ? `★ ${browsing ? browsing.name : 'Ma liste'} (${favorites.size})`
+      : '★ Ma liste';
+  }
+
+  async function setAccount(user, { asBrowsing = false } = {}) {
+    if (asBrowsing) {
+      browsing = user;
+    } else {
+      browsing = null;
+      account = user;
+      if (user) localStorage.setItem(STORE_ACCOUNT, JSON.stringify(user));
+      else localStorage.removeItem(STORE_ACCOUNT);
+    }
+
+    const owner = activeList();
+    if (!owner) {
+      favorites = new Set();
+    } else {
+      loadLocalFavorites(owner.slug);
+      const remote = await pullList(owner.slug);
+      if (remote) {
+        // On fusionne au lieu d'écraser : une étoile ajoutée hors ligne sur cet
+        // appareil ne doit pas disparaître au premier chargement.
+        const merged = asBrowsing ? remote.codes : [...new Set([...favorites, ...remote.codes])];
+        favorites = new Set(merged);
+        saveLocalFavorites();
+        if (!asBrowsing && merged.length !== remote.codes.length) scheduleSync();
+      }
+    }
+    renderAccount();
+    apply();
+  }
+
+  async function fetchUsers() {
+    if (!api) return [];
+    try {
+      const response = await fetch(`${api}/api/users`, { cache: 'no-store' });
+      if (!response.ok) return [];
+      return (await response.json()).users || [];
+    } catch {
+      return [];
+    }
+  }
+
+  async function openSheet(hint) {
+    const hintEl = document.getElementById('sheet-hint');
+    const usersEl = document.getElementById('sheet-users');
+    sheetEl.setAttribute('open', '');
+
+    if (!api) {
+      hintEl.textContent =
+        "Le serveur des listes n'est pas configuré : tes favoris restent sur cet appareil.";
+      usersEl.innerHTML = '';
+      return;
+    }
+
+    hintEl.textContent = hint || 'Choisis ton compte. Il te suivra d’un appareil à l’autre.';
+    usersEl.innerHTML = '<div class="user-row">Chargement…</div>';
+    const users = await fetchUsers();
+
+    usersEl.innerHTML = users.length
+      ? users.map((user) => `
+          <button type="button" class="user-row${account && account.slug === user.slug ? ' current' : ''}"
+                  data-slug="${escapeHtml(user.slug)}" data-name="${escapeHtml(user.name)}">
+            ${escapeHtml(user.name)}
+            <span class="count">${user.count} favori${user.count > 1 ? 's' : ''}</span>
+          </button>`).join('')
+      : '<p>Aucun compte pour l’instant. Crées-en un.</p>';
+  }
+
+  const closeSheet = () => sheetEl.removeAttribute('open');
+
+  sheetEl.addEventListener('click', async (event) => {
+    if (event.target === sheetEl) return closeSheet();
+
+    const row = event.target.closest('[data-slug]');
+    if (!row) return;
+    const user = { slug: row.dataset.slug, name: row.dataset.name };
+
+    if (account && account.slug === user.slug) {
+      closeSheet();
+      return setAccount(user);
+    }
+    // La confirmation est tout ce qui empêche d'ajouter par mégarde dans la
+    // liste de quelqu'un d'autre. Ce n'est pas une protection, c'est un garde-fou.
+    const confirmed = window.confirm(
+      `Te connecter comme ${user.name} ?\n\n` +
+      `Tes ★ iront dans sa liste. Annule pour la consulter sans y toucher.`,
+    );
+    closeSheet();
+    await setAccount(user, { asBrowsing: !confirmed });
+  });
+
+  document.getElementById('sheet-close').addEventListener('click', closeSheet);
+  accountEl.addEventListener('click', () => openSheet());
+
+  document.getElementById('sheet-new').addEventListener('click', async () => {
+    if (!api) return closeSheet();
+    const name = window.prompt('Prénom pour ce compte :', '');
+    if (!name || !name.trim()) return;
+    try {
+      const response = await fetch(`${api}/api/users`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ name: name.trim() }),
+      });
+      const data = await response.json();
+      if (response.status === 409) {
+        window.alert('Ce compte existe déjà — choisis-le dans la liste.');
+        return openSheet();
+      }
+      if (!response.ok) throw new Error(data.error || String(response.status));
+      closeSheet();
+      await setAccount({ slug: data.slug, name: data.name });
+    } catch (error) {
+      window.alert(`Création impossible : ${error.message}`);
+    }
+  });
+
+  /* ------------------------------------------------------------------ vues */
+
+  for (const tab of document.querySelectorAll('.tab')) {
+    tab.addEventListener('click', () => {
+      view = tab.dataset.view;
+      for (const other of document.querySelectorAll('.tab')) {
+        other.setAttribute('aria-selected', String(other === tab));
+      }
+      apply();
+    });
+  }
+
+  function renderTotals() {
+    if (view !== 'list' || !filtered.length) {
+      totalsEl.hidden = true;
+      return;
+    }
+    const marstoy = filtered.reduce((sum, item) => sum + (item.priceCad || 0), 0);
+    const lego = filtered.reduce((sum, item) => sum + (item.legoPriceCad || 0), 0);
+    const saved = lego > 0 ? lego - marstoy : 0;
+
+    totalsEl.hidden = false;
+    totalsEl.innerHTML =
+      `<div><b>${escapeHtml(money(marstoy))}</b>` +
+      `<div class="sub">${filtered.length} set${filtered.length > 1 ? 's' : ''}` +
+      `${lego > 0 ? ` · LEGO ${escapeHtml(money(lego))}` : ''}</div></div>` +
+      (saved > 0 ? `<span class="save">${escapeHtml(money(saved))} off</span>` : '') +
+      '<button type="button" id="export">Exporter</button>';
+
+    document.getElementById('export').addEventListener('click', exportList);
+  }
+
+  async function exportList() {
+    const owner = activeList();
+    const lines = filtered.map((item) =>
+      `• ${item.name} (${item.code}) — ${money(item.priceCad || 0)}` +
+      `${item.legoPriceCad ? ` au lieu de ${money(item.legoPriceCad)}` : ''}` +
+      `\n  ${item.marstoyUrl || ''}`);
+    const total = filtered.reduce((sum, item) => sum + (item.priceCad || 0), 0);
+    const text =
+      `Short list Marstoy${owner ? ` — ${owner.name}` : ''}\n\n` +
+      `${lines.join('\n')}\n\nTotal : ${money(total)} CAD`;
+
+    try {
+      if (navigator.share) await navigator.share({ title: 'Short list Marstoy', text });
+      else {
+        await navigator.clipboard.writeText(text);
+        window.alert('Liste copiée dans le presse-papiers.');
+      }
+    } catch {
+      // Partage annulé par l'utilisateur : rien à signaler.
+    }
+  }
+
+  function renderStatus() {
+    const owner = activeList();
+    if (view === 'list') {
+      statusEl.textContent = filtered.length
+        ? (browsing ? `Liste de ${browsing.name} — lecture seule` : 'Ta short list')
+          + (syncError ? ' · ⚠ non synchronisée' : '')
+        : '';
+      return;
+    }
+    const terms = normalize(queryEl.value).split(/\s+/).filter(Boolean);
     statusEl.textContent =
       `${filtered.length} set${filtered.length > 1 ? 's' : ''}` +
       (terms.length ? ` sur ${products.length}` : coverage) +
-      priceNote;
+      priceNote +
+      (owner && syncError ? ' · ⚠ favoris non synchronisés' : '');
+  }
+
+  function apply() {
+    const terms = normalize(queryEl.value).split(/\s+/).filter(Boolean);
+    let pool = view === 'list' ? products.filter((item) => favorites.has(item.code)) : products;
+    if (terms.length) pool = pool.filter((item) => terms.every((term) => haystack(item).includes(term)));
+
+    filtered = pool.slice().sort(comparators[sortEl.value] || comparators.year);
+    grid.replaceChildren();
+    rendered = 0;
+
+    renderTotals();
+    renderStatus();
+
+    if (!filtered.length) {
+      grid.innerHTML = view === 'list'
+        ? `<div class="empty">${activeList()
+            ? 'Aucun favori pour l’instant — touche l’étoile d’un set.'
+            : 'Choisis un compte en haut à droite pour créer ta short list.'}</div>`
+        : '<div class="empty">Aucun résultat.</div>';
+      return;
+    }
     renderMore();
   }
 
-  // Le montant est converti à la construction ; le prix d'origine reste en
-  // infobulle. L'écart avec le prix LEGO passe en second plan : c'est un
-  // argument, pas l'information qu'on cherche.
-  /**
-   * Prix Marstoy, prix LEGO barré, puis l'économie en pastille — l'ordre de
-   * lecture d'une étiquette de rabais.
-   */
   function priceHtml(item) {
     if (item.priceCad == null) {
       return item.price != null
         ? `<span class="price">${escapeHtml(item.price)} ${escapeHtml(sourceCurrency)}</span>`
         : '';
     }
-
     const original = item.price != null ? `${item.price} ${sourceCurrency}` : '';
     const parts = [
       `<span class="price" title="Prix Marstoy : ${escapeHtml(original)} — converti">` +
-        `${amountFormat.format(item.priceCad)} $</span>`,
+        `${escapeHtml(money(item.priceCad))}</span>`,
     ];
-
     if (item.savingsCad > 0 && item.legoPriceCad) {
-      parts.push(
-        `<s class="was" title="Prix de détail LEGO">${amountFormat.format(item.legoPriceCad)} $</s>`,
-      );
+      parts.push(`<s class="was" title="Prix de détail LEGO">${escapeHtml(money(item.legoPriceCad))}</s>`);
       const pct = item.savingsPct != null ? `${item.savingsPct} %` : null;
-      parts.push(
-        `<span class="save">${[pct, `${amountFormat.format(item.savingsCad)} $`]
-          .filter(Boolean).join(' · ')}</span>`,
-      );
+      parts.push(`<span class="save">${[pct, money(item.savingsCad)].filter(Boolean).join(' · ')}</span>`);
     }
-
     return parts.join('');
   }
 
@@ -288,6 +652,7 @@
       item.year || null,
       item.numParts ? `${item.numParts} pièces` : null,
     ].filter(Boolean).join(' · ');
+    const starred = favorites.has(item.code);
 
     return `
       <article class="card">
@@ -296,6 +661,9 @@
             ? `<img src="${escapeHtml(item.imgUrl)}" alt="${escapeHtml(item.name)}" loading="lazy"
                     referrerpolicy="no-referrer">`
             : '<div class="fallback">pas d\'image</div>'}
+          <button class="star" type="button" data-star="${escapeHtml(item.code)}"
+                  aria-pressed="${starred}" aria-label="Ajouter à ma liste"
+                  ${canEdit() ? '' : 'disabled'}>${starred ? '★' : '☆'}</button>
         </div>
         <div class="body">
           <div class="name">${escapeHtml(item.name)}</div>
@@ -325,23 +693,30 @@
     if (entries.some((entry) => entry.isIntersecting)) renderMore();
   }, { rootMargin: '600px' }).observe(document.getElementById('sentinel'));
 
-  /**
-   * Reconstruction à la demande. Le jeton GitHub reste dans le navigateur : il
-   * n'est ni dans le dépôt ni dans la page publiée. Une fois le workflow lancé,
-   * on surveille la date du catalogue plutôt que l'API — ça ne demande aucun
-   * droit de lecture supplémentaire.
-   */
+  grid.addEventListener('click', (event) => {
+    const star = event.target.closest('[data-star]');
+    if (star) toggleFavorite(star.dataset.star);
+  });
+
+  let timer;
+  queryEl.addEventListener('input', () => {
+    clearTimeout(timer);
+    timer = setTimeout(apply, 120);
+  });
+  sortEl.addEventListener('change', apply);
+
+  /* ------------------------------------------------------- reconstruction */
+
   const refreshEl = document.getElementById('refresh');
   const TOKEN_KEY = 'mr:ghToken';
 
   function askToken() {
-    const message =
+    const token = window.prompt(
       'Un jeton GitHub est nécessaire pour lancer la reconstruction.\n\n' +
       'github.com/settings/personal-access-tokens/new\n' +
       '  · Only select repositories → ce dépôt\n' +
       '  · Repository permissions → Actions : Read and write\n\n' +
-      'Il reste sur cet appareil.';
-    const token = window.prompt(message, '');
+      'Il reste sur cet appareil.', '');
     if (token && token.trim()) {
       localStorage.setItem(TOKEN_KEY, token.trim());
       return token.trim();
@@ -368,17 +743,14 @@
 
   refreshEl.addEventListener('click', async () => {
     if (!repo || !repo.slug || !repo.ref) {
-      window.alert("Reconstruction indisponible : le catalogue ne contient pas les informations du dépôt.");
+      window.alert('Reconstruction indisponible : le catalogue ne contient pas les informations du dépôt.');
       return;
     }
-
     const minutes = repo.approxMinutes || 4;
-    const confirmed = window.confirm(
+    if (!window.confirm(
       `Reconstruire le catalogue ?\n\n` +
       `Cela relance la collecte complète sur marstoy.com et prend environ ${minutes} minutes. ` +
-      `La page se rechargera toute seule une fois terminé.`,
-    );
-    if (!confirmed) return;
+      `La page se rechargera toute seule une fois terminé.`)) return;
 
     let token = localStorage.getItem(TOKEN_KEY) || askToken();
     if (!token) return;
@@ -399,8 +771,7 @@
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ ref: repo.ref }),
-        },
-      );
+        });
 
       if (response.status === 401 || response.status === 403) {
         localStorage.removeItem(TOKEN_KEY);
@@ -409,8 +780,7 @@
       if (!response.ok) throw new Error(`GitHub a répondu ${response.status}`);
 
       statusEl.textContent = `Reconstruction lancée — environ ${minutes} minutes…`;
-      const updated = await waitForNewCatalog(previousDate);
-      if (updated) window.location.reload();
+      if (await waitForNewCatalog(previousDate)) window.location.reload();
       else statusEl.textContent = 'Toujours en cours — recharge la page dans quelques minutes.';
     } catch (error) {
       window.alert(`Reconstruction impossible : ${error.message}`);
@@ -421,55 +791,49 @@
     }
   });
 
-  let timer;
-  queryEl.addEventListener('input', () => {
-    clearTimeout(timer);
-    timer = setTimeout(apply, 120);
-  });
-  sortEl.addEventListener('change', apply);
+  /* ------------------------------------------------------------ démarrage */
 
   fetch('./data/catalog.json', { cache: 'no-cache' })
     .then((response) => {
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       return response.json();
     })
-    .then((catalog) => {
+    .then(async (catalog) => {
       products = catalog.products || [];
-      const date = catalog.generatedAt
-        ? new Date(catalog.generatedAt).toLocaleDateString('fr-CA')
-        : '—';
-      metaEl.innerHTML = `${products.length} sets<br>maj ${escapeHtml(date)}`;
+      byCode = new Map(products.map((item) => [item.code, item]));
+      repo = catalog.repo || null;
+      api = (catalog.api && catalog.api.favorites) || null;
 
-      // Le reste du catalogue Marstoy, ce sont leurs MOC maison : aucun set
-      // officiel derrière, donc rien à corriger. Autant le dire.
       const total = catalog.counts && catalog.counts.marstoyProducts;
       if (total && total > products.length) {
         coverage = ` clonant un set LEGO, sur ${total} produits Marstoy`;
       }
 
-      repo = catalog.repo || null;
-      const money = catalog.currency || {};
-      if (money.source) sourceCurrency = money.source;
-      if (money.cadRate) {
+      const currency = catalog.currency || {};
+      if (currency.source) sourceCurrency = currency.source;
+      if (currency.cadRate) {
         // Les montants des cartes portent « $ » sans devise : elle est nommée
         // ici, une fois.
         priceNote =
           ` · montants en CAD, convertis du ${sourceCurrency}` +
-          `${money.assumed ? ' (supposé)' : ''} au taux du ${money.cadRateDate || '—'}` +
+          `${currency.assumed ? ' (supposé)' : ''} au taux du ${currency.cadRateDate || '—'}` +
           `, prix LEGO barré au détail`;
       }
 
       if (!products.length) {
-        statusEl.innerHTML = 'Catalogue vide — lance le workflow ' +
-          '<em>Construire le catalogue et publier le site</em> dans l\'onglet Actions.';
+        statusEl.textContent = 'Catalogue vide — lance le workflow depuis l’onglet Actions.';
         return;
       }
-      apply();
+
+      const saved = readJson(STORE_ACCOUNT, null);
+      if (saved && saved.slug) await setAccount(saved);
+      else {
+        renderAccount();
+        apply();
+      }
     })
     .catch((error) => {
-      statusEl.innerHTML =
-        `<div class="empty">Catalogue introuvable (${escapeHtml(error.message)}).` +
-        '<code>Actions → Construire le catalogue et publier le site → Run workflow</code></div>';
+      statusEl.textContent = `Catalogue introuvable (${error.message}).`;
     });
 
   if ('serviceWorker' in navigator) {

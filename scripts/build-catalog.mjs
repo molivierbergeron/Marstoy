@@ -197,6 +197,9 @@ const catalog = {
   source: recon.origin,
   strategy: recon.strategyUsed,
   mode,
+  // Adresse du Worker des favoris. Absente, le site range les listes dans le
+  // navigateur seulement — rien ne casse, la synchronisation disparaît.
+  api: { favorites: process.env.FAVORIS_API_URL || null },
   // De quoi laisser le site déclencher une reconstruction à la demande.
   repo: {
     slug: process.env.GITHUB_REPOSITORY || null,

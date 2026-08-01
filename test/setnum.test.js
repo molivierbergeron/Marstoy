@@ -8,7 +8,7 @@ import {
   extractCodes,
   formatLabel,
   replaceCodes,
-} from '../src/setnum.js';
+} from '../lib/setnum.js';
 
 test('extractCodes trouve les références Marstoy et dédoublonne', () => {
   assert.deepEqual(extractCodes('M67201 et m67201, plus M29157.'), ['M67201', 'M29157']);

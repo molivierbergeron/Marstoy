@@ -8,7 +8,7 @@
 import { gunzipSync } from 'node:zlib';
 
 import { get } from './fetch-util.mjs';
-import { candidateGroups, codeDigits } from '../../src/setnum.js';
+import { candidateGroups, codeDigits } from '../../lib/setnum.js';
 
 const DOWNLOADS = 'https://cdn.rebrickable.com/media/downloads';
 
