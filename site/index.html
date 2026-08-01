@@ -216,13 +216,13 @@
     <input type="search" id="q" placeholder="Nom, n° LEGO, référence M…, thème" autocomplete="off"
            enterkeyhint="search" aria-label="Rechercher">
     <select id="sort" aria-label="Tri">
-      <option value="added">Ajouts récents</option>
+      <option value="year">Plus récents</option>
+      <option value="added">Arrivées (bêta)</option>
       <option value="savingsPct">Économie %</option>
       <option value="savingsAbs">Économie $</option>
       <option value="priceAsc">Prix ↑</option>
       <option value="legoDesc">Prix LEGO ↓</option>
       <option value="parts">Plus de pièces</option>
-      <option value="year">Année du set</option>
       <option value="name">Nom A→Z</option>
     </select>
   </div>
@@ -327,8 +327,9 @@
   };
 
   const comparators = {
-    // Arrivée chez Marstoy, pas année de sortie du set. L'année départage tant
-    // que le registre des arrivées n'a pas d'historique.
+    // Arrivée chez Marstoy, pas année de sortie du set. Expérimental : Marstoy
+    // ne date pas ses ajouts, on reconstitue depuis un registre qui n'a encore
+    // presque pas d'historique. L'année départage les ex æquo.
     added: (a, b) =>
       String(b.addedAt || '').localeCompare(String(a.addedAt || '')) ||
       (b.year ?? 0) - (a.year ?? 0) ||
@@ -606,16 +607,24 @@
     statusEl.textContent =
       `${filtered.length} set${filtered.length > 1 ? 's' : ''}` +
       (terms.length ? ` sur ${products.length}` : coverage) +
+      betaNote() +
       priceNote +
       (owner && syncError ? ' · ⚠ favoris non synchronisés' : '');
   }
+
+  // Marstoy ne publie pas la date d'ajout de ses produits : elle est
+  // reconstituée d'un passage à l'autre. Autant le dire là où ça se voit.
+  const betaNote = () =>
+    sortEl.value === 'added'
+      ? ' · tri bêta : Marstoy ne date pas ses ajouts, l’ordre s’affine chaque semaine'
+      : '';
 
   function apply() {
     const terms = normalize(queryEl.value).split(/\s+/).filter(Boolean);
     let pool = view === 'list' ? products.filter((item) => favorites.has(item.code)) : products;
     if (terms.length) pool = pool.filter((item) => terms.every((term) => haystack(item).includes(term)));
 
-    filtered = pool.slice().sort(comparators[sortEl.value] || comparators.added);
+    filtered = pool.slice().sort(comparators[sortEl.value] || comparators.year);
     grid.replaceChildren();
     rendered = 0;
 

@@ -113,16 +113,21 @@ test('le manifeste déclare des icônes PNG pour l\'installation bureau', async 
   }
 });
 
-test('le tri par défaut classe les arrivées, pas les années de sortie', async () => {
-  // « Plus récents » triait sur l'année du set LEGO, ce qui n'a rien à voir
-  // avec l'arrivée du produit chez Marstoy.
+test('le tri par arrivée est proposé à part, en bêta assumée', async () => {
   const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
-  assert.match(html, /<option value="added">Ajouts récents<\/option>/);
-  assert.match(html, /<option value="year">Année du set<\/option>/);
-  // La première option du menu est celle appliquée par défaut.
+
+  // Le tri par défaut reste l'année de sortie du set : celui par arrivée
+  // repose sur un historique encore inexistant.
   const options = [...html.matchAll(/<option value="([^"]+)"/g)].map((m) => m[1]);
-  assert.equal(options[0], 'added');
-  assert.match(html, /comparators\[sortEl\.value\] \|\| comparators\.added/);
+  assert.equal(options[0], 'year');
+  assert.equal(options[1], 'added');
+  assert.match(html, /comparators\[sortEl\.value\] \|\| comparators\.year/);
+
+  assert.match(html, /<option value="year">Plus récents<\/option>/);
+  assert.match(html, /<option value="added">Arrivées \(bêta\)<\/option>/);
+  // L'avertissement ne doit apparaître que pour ce tri-là.
+  assert.match(html, /sortEl\.value === 'added'/);
+  assert.match(html, /tri bêta/);
 });
 
 test('le registre des arrivées est tenu d\'un passage à l\'autre', async () => {
