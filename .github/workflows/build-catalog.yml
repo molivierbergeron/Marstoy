@@ -48,6 +48,8 @@ jobs:
         env:
           BRICKSET_SECRET: ${{ secrets.BRICKSET_API_KEY }}
           BRICKSET_VAR: ${{ vars.BRICKSET_API_KEY }}
+          FAVORIS_VAR: ${{ vars.FAVORIS_API_URL }}
+          FAVORIS_SECRET: ${{ secrets.FAVORIS_API_URL }}
         run: |
           # Écrit dans le résumé du run et dans les logs : le résumé n'est
           # lisible que depuis l'interface, les logs le sont par l'API.
@@ -64,6 +66,16 @@ jobs:
             say '  - Un secret d'"'"'*environnement* ou d'"'"'*organisation* n'"'"'est pas visible ici : il faut un secret de **dépôt**'
           fi
 
+          if [ -n "$FAVORIS_VAR" ]; then
+            say "- \`FAVORIS_API_URL\` : trouvée dans les **variables** → $FAVORIS_VAR"
+          elif [ -n "$FAVORIS_SECRET" ]; then
+            say '- `FAVORIS_API_URL` : trouvée dans les **secrets**. Ça marche, mais sa place est dans les *variables* — cette adresse est publique.'
+          else
+            say '- `FAVORIS_API_URL` : **introuvable** — les favoris resteront sur chaque appareil, sans synchronisation.'
+            say '  - Settings → Secrets and variables → **Actions** → onglet **Variables** → *New repository variable*'
+            say '  - Nom exact `FAVORIS_API_URL`, valeur = adresse du Worker'
+          fi
+
       - name: Construire le catalogue
         id: build
         # Le repli API n'est utilisé que pour les références absentes du dump
@@ -76,7 +88,7 @@ jobs:
           # s'affiche simplement pas.
           BRICKSET_API_KEY: ${{ secrets.BRICKSET_API_KEY || vars.BRICKSET_API_KEY }}
           # Adresse publique du Worker des favoris (variable, pas secret).
-          FAVORIS_API_URL: ${{ vars.FAVORIS_API_URL }}
+          FAVORIS_API_URL: ${{ vars.FAVORIS_API_URL || secrets.FAVORIS_API_URL }}
         run: node scripts/build-catalog.mjs
         continue-on-error: true
 
