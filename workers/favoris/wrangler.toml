@@ -7,11 +7,13 @@ compatibility_date = "2025-06-01"
 # depuis le site ; modifier cette liste ne recrée rien.
 SEED_USERS = "Marco,Christian,Marie-Claude"
 
-# Stockage des listes. Créer le namespace puis coller son id :
-#   npx wrangler kv namespace create FAVORIS
+# Stockage des listes. Cet identifiant doit rester juste : dès que le Worker est
+# déployé depuis Git (Settings → Build → Connect to Git, avec
+# « Root directory » = workers/favoris), c'est ce fichier qui fait autorité et
+# il écrase les branchements faits à la main dans le tableau de bord.
 [[kv_namespaces]]
 binding = "FAVORIS"
-id = "REMPLACER_PAR_L_ID"
+id = "c9bee6f1758b45c58fee08189df13d00"
 
 [observability]
 enabled = true
