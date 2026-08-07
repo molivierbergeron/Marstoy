@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-08-04T15:18:31.795Z",
+  "startedAt": "2026-08-07T03:47:38.668Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -15,15 +15,16 @@
   ],
   "counts": {
     "products.json": 0,
-    "sitemapProductUrls": 2929,
-    "sitemapWithLastmod": 2929,
-    "sitemapCodesFromUrl": 317,
-    "pagesFetched": 2929,
-    "marstoyOwnMocs": 2603,
-    "sitemap": 318,
-    "unique": 317,
+    "sitemapProductUrls": 2931,
+    "sitemapWithLastmod": 2931,
+    "sitemapCodesFromUrl": 319,
+    "pagesFetched": 2931,
+    "marstoyOwnMocs": 2605,
+    "sitemap": 321,
+    "unique": 320,
     "legoPricesCached": 312,
-    "legoPricesFetched": 0
+    "legoPricesFetched": 3,
+    "legoPricesResolved": 3
   },
   "samples": {
     "sitemap": "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><!--This is the parent sitemap linking to additional sitemaps for products, collections and pages as shown below. The sitemap can not be edited manually, but is kept up to date in real time.--><sitemap><loc>https://www.marstoy.com/sitemap_page_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_blogs_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_products_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_collections_1.xml</loc></sitemap></sitemapindex>",
@@ -42,19 +43,9 @@
         "parts": 3146
       },
       {
-        "url": "https://www.marstoy.com/products/the-rack-railway",
-        "title": "The Rack Railway",
-        "parts": 1987
-      },
-      {
         "url": "https://www.marstoy.com/products/the-1087x-drift-car",
         "title": "The 1087X Drift Car",
         "parts": 392
-      },
-      {
-        "url": "https://www.marstoy.com/products/moc-the-jeep",
-        "title": "Moc The JEEP",
-        "parts": 522
       },
       {
         "url": "https://www.marstoy.com/products/the-60tp-tank",
@@ -62,9 +53,19 @@
         "parts": 1128
       },
       {
+        "url": "https://www.marstoy.com/products/moc-the-jeep",
+        "title": "Moc The JEEP",
+        "parts": 522
+      },
+      {
         "url": "https://www.marstoy.com/products/the-block-gun",
         "title": "The Block Gun",
         "parts": 307
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-rack-railway",
+        "title": "The Rack Railway",
+        "parts": 1987
       },
       {
         "url": "https://www.marstoy.com/products/the-su-7",
@@ -82,19 +83,14 @@
         "parts": 2118
       },
       {
-        "url": "https://www.marstoy.com/products/the-bumper-boats",
-        "title": "The Bumper Boats",
-        "parts": 2044
-      },
-      {
         "url": "https://www.marstoy.com/products/the-chinese-style-garage",
         "title": "The Chinese-style Garage",
         "parts": 763
       },
       {
-        "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
-        "title": "The Castle Roller Coaster",
-        "parts": 2584
+        "url": "https://www.marstoy.com/products/the-bumper-boats",
+        "title": "The Bumper Boats",
+        "parts": 2044
       },
       {
         "url": "https://www.marstoy.com/products/the-whirl-wind-coaster",
@@ -102,14 +98,14 @@
         "parts": 1707
       },
       {
+        "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
+        "title": "The Castle Roller Coaster",
+        "parts": 2584
+      },
+      {
         "url": "https://www.marstoy.com/products/the-great-white",
         "title": "The Great White",
         "parts": 2932
-      },
-      {
-        "url": "https://www.marstoy.com/products/moc-the-st-joseph",
-        "title": "Moc The St. Joseph",
-        "parts": null
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-jesus-the-shepherd",
@@ -117,24 +113,9 @@
         "parts": null
       },
       {
-        "url": "https://www.marstoy.com/products/moc-the-church-jesus",
-        "title": "Moc The Church Jesus",
+        "url": "https://www.marstoy.com/products/moc-the-st-joseph",
+        "title": "Moc The St. Joseph",
         "parts": null
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-1-20-sports-car",
-        "title": "The 1:20 Sports Car",
-        "parts": 391
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
-        "title": "The 1:20 Fierce Chariot",
-        "parts": 474
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-atlantic-defensive-position",
-        "title": "The Atlantic Defensive Position",
-        "parts": 1232
       },
       {
         "url": "https://www.marstoy.com/products/the-1-20-extreme-speed",
@@ -142,14 +123,34 @@
         "parts": 391
       },
       {
-        "url": "https://www.marstoy.com/products/the-harley-motorcycle",
-        "title": "The Harley Motorcycle",
-        "parts": 467
+        "url": "https://www.marstoy.com/products/moc-the-church-jesus",
+        "title": "Moc The Church Jesus",
+        "parts": null
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
+        "title": "The 1:20 Fierce Chariot",
+        "parts": 474
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-1-20-sports-car",
+        "title": "The 1:20 Sports Car",
+        "parts": 391
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-atlantic-defensive-position",
+        "title": "The Atlantic Defensive Position",
+        "parts": 1232
       },
       {
         "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
         "title": "The Dragon Motobcycle",
         "parts": 585
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-harley-motorcycle",
+        "title": "The Harley Motorcycle",
+        "parts": 467
       },
       {
         "url": "https://www.marstoy.com/products/the-wukongs-car",
@@ -161,10 +162,12 @@
   "strategyUsed": "sitemap",
   "error": null,
   "httpErrors": {
-    "403": 8
+    "403": 5
   },
-  "finishedAt": "2026-08-04T15:30:37.609Z",
-  "bricksetStatus": {},
+  "finishedAt": "2026-08-07T03:51:35.624Z",
+  "bricksetStatus": {
+    "ok": 5
+  },
   "unresolved": [],
   "rejected": [
     {

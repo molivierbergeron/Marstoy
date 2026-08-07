@@ -389,6 +389,11 @@
     "currency": "CAD",
     "fetchedAt": "2026-07-26T13:33:14.358Z"
   },
+  "11378": {
+    "price": 299.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-08-07T03:51:39.890Z"
+  },
   "11384": {
     "price": 179.99,
     "currency": "CAD",
@@ -578,6 +583,11 @@
     "price": 429.99,
     "currency": "CAD",
     "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "21354": {
+    "price": 279.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-08-07T03:51:39.890Z"
   },
   "21356": {
     "price": 429.99,
@@ -1218,6 +1228,11 @@
     "price": 199.99,
     "currency": "CAD",
     "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "75442": {
+    "price": 349.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-08-07T03:51:39.890Z"
   },
   "75551": {
     "price": 69.99,
