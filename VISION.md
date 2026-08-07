@@ -298,4 +298,7 @@ Le produit couvre l'intégralité du catalogue Marstoy et prévient sans qu'on l
 
 ---
 
-*Audit produit le 2026-08-02 sur `b497120`. `[URL_PAGE_NOTION]` n'a pas été renseignée : l'étape Notion reste en attente.*
+*Audit produit le 2026-08-02 sur `b497120`. Report dans Notion le 2026-08-07 :
+[Marstoy réel — Vision produit](https://app.notion.com/p/3b5d951b509181c09742ead707d8c30a),
+sous le hub [AI Products](https://app.notion.com/p/3b0d951b509180999098d32f48d9bc6b).
+La page Notion porte l'état courant ; ce fichier reste figé sur `b497120`.*
