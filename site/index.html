@@ -216,8 +216,8 @@
     <input type="search" id="q" placeholder="Nom, n° LEGO, référence M…, thème" autocomplete="off"
            enterkeyhint="search" aria-label="Rechercher">
     <select id="sort" aria-label="Tri">
-      <option value="year">Plus récents</option>
       <option value="added">Arrivées (bêta)</option>
+      <option value="year">Plus récents</option>
       <option value="savingsPct">Économie %</option>
       <option value="savingsAbs">Économie $</option>
       <option value="priceAsc">Prix ↑</option>
@@ -624,7 +624,7 @@
     let pool = view === 'list' ? products.filter((item) => favorites.has(item.code)) : products;
     if (terms.length) pool = pool.filter((item) => terms.every((term) => haystack(item).includes(term)));
 
-    filtered = pool.slice().sort(comparators[sortEl.value] || comparators.year);
+    filtered = pool.slice().sort(comparators[sortEl.value] || comparators.added);
     grid.replaceChildren();
     rendered = 0;
 

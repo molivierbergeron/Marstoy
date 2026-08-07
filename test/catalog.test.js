@@ -116,12 +116,12 @@ test('le manifeste déclare des icônes PNG pour l\'installation bureau', async 
 test('le tri par arrivée est proposé à part, en bêta assumée', async () => {
   const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
 
-  // Le tri par défaut reste l'année de sortie du set : celui par arrivée
-  // repose sur un historique encore inexistant.
+  // Le tri par défaut est l'arrivée chez Marstoy : c'est ce qu'on vient voir.
+  // L'année de sortie du set reste offerte juste après.
   const options = [...html.matchAll(/<option value="([^"]+)"/g)].map((m) => m[1]);
-  assert.equal(options[0], 'year');
-  assert.equal(options[1], 'added');
-  assert.match(html, /comparators\[sortEl\.value\] \|\| comparators\.year/);
+  assert.equal(options[0], 'added');
+  assert.equal(options[1], 'year');
+  assert.match(html, /comparators\[sortEl\.value\] \|\| comparators\.added/);
 
   assert.match(html, /<option value="year">Plus récents<\/option>/);
   assert.match(html, /<option value="added">Arrivées \(bêta\)<\/option>/);
