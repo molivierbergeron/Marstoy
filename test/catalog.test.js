@@ -125,9 +125,6 @@ test('le tri par arrivée est proposé à part, en bêta assumée', async () => 
 
   assert.match(html, /<option value="year">Plus récents<\/option>/);
   assert.match(html, /<option value="added">Arrivées \(bêta\)<\/option>/);
-  // L'avertissement ne doit apparaître que pour ce tri-là.
-  assert.match(html, /sortEl\.value === 'added'/);
-  assert.match(html, /tri bêta/);
 });
 
 test('le registre des arrivées est tenu d\'un passage à l\'autre', async () => {

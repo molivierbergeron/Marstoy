@@ -273,6 +273,7 @@
   let rendered = 0;
   let coverage = '';
   let priceNote = '';
+  let scanNote = '';
   let sourceCurrency = 'USD';
   let repo = null;
   let api = null;
@@ -287,6 +288,14 @@
   // toute façon une conversion.
   const amountFormat = new Intl.NumberFormat('fr-CA', { maximumFractionDigits: 0 });
   const money = (value) => `${amountFormat.format(Math.round(value))} $`;
+
+  // timeZone: 'UTC' — cadRateDate arrive en simple « AAAA-MM-JJ » : sans ça,
+  // Date() l'interprète à minuit UTC et l'affichage local recule d'un jour.
+  const dayFormat = new Intl.DateTimeFormat('fr-CA', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+  const shortDate = (value) => {
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? '—' : dayFormat.format(date);
+  };
 
   const escapeHtml = (value) =>
     String(value ?? '').replace(/[&<>"']/g, (char) =>
@@ -607,17 +616,10 @@
     statusEl.textContent =
       `${filtered.length} set${filtered.length > 1 ? 's' : ''}` +
       (terms.length ? ` sur ${products.length}` : coverage) +
-      betaNote() +
       priceNote +
+      scanNote +
       (owner && syncError ? ' · ⚠ favoris non synchronisés' : '');
   }
-
-  // Marstoy ne publie pas la date d'ajout de ses produits : elle est
-  // reconstituée d'un passage à l'autre. Autant le dire là où ça se voit.
-  const betaNote = () =>
-    sortEl.value === 'added'
-      ? ' · tri bêta : Marstoy ne date pas ses ajouts, l’ordre s’affine chaque semaine'
-      : '';
 
   function apply() {
     const terms = normalize(queryEl.value).split(/\s+/).filter(Boolean);
@@ -832,11 +834,10 @@
       if (currency.cadRate) {
         // Les montants des cartes portent « $ » sans devise : elle est nommée
         // ici, une fois.
-        priceNote =
-          ` · montants en CAD, convertis du ${sourceCurrency}` +
-          `${currency.assumed ? ' (supposé)' : ''} au taux du ${currency.cadRateDate || '—'}` +
-          `, prix LEGO barré au détail`;
+        priceNote = ` · CAD au ${shortDate(currency.cadRateDate)}${currency.assumed ? ' (approx.)' : ''}`;
       }
+
+      if (catalog.generatedAt) scanNote = ` · maj le ${shortDate(catalog.generatedAt)}`;
 
       if (!products.length) {
         statusEl.textContent = 'Catalogue vide — lance le workflow depuis l’onglet Actions.';
