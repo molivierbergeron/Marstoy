@@ -141,6 +141,13 @@
     font-size: 11px; color: var(--muted); text-align: center;
   }
   .thumb .fallback { font-size: 12px; color: var(--muted); padding: 8px; text-align: center; }
+  .card.unavailable .thumb img { filter: grayscale(1); opacity: .5; }
+  .gone {
+    align-self: flex-start;
+    font: 600 11px/1 -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--chip); color: var(--muted);
+    padding: 4px 7px; border-radius: 6px; white-space: nowrap;
+  }
   .star {
     position: absolute; top: 6px; right: 6px; width: 32px; height: 32px;
     border-radius: 50%; border: 0; line-height: 1; font-size: 17px;
@@ -266,6 +273,10 @@
 
   const STORE_ACCOUNT = 'mr:account';
   const STORE_FAV = (slug) => `mr:fav:${slug}`;
+  // Un seul cache, partagé entre comptes : la donnée d'un set ne dépend pas de
+  // qui l'a mis en favori. Sert à afficher un favori encore après qu'il ait
+  // disparu du catalogue (Marstoy ne garde pas d'historique).
+  const STORE_FAV_SNAP = 'mr:favsnap';
 
   let products = [];
   let byCode = new Map();
@@ -366,6 +377,29 @@
     if (list) localStorage.setItem(STORE_FAV(list.slug), JSON.stringify([...favorites]));
   }
 
+  const snapshotOf = (item) => ({
+    code: item.code, name: item.name, num: item.num, setNum: item.setNum,
+    theme: item.theme, year: item.year, numParts: item.numParts, imgUrl: item.imgUrl,
+    price: item.price, priceCad: item.priceCad, legoPriceCad: item.legoPriceCad,
+    savingsCad: item.savingsCad, savingsPct: item.savingsPct,
+  });
+
+  // Rafraîchit, pour les codes donnés, le dernier état connu tant que le set
+  // est encore dans le catalogue — c'est cette copie qui sert une fois qu'il
+  // en sort.
+  function refreshFavSnapshots(codes) {
+    if (!codes.length) return;
+    const snaps = readJson(STORE_FAV_SNAP, {});
+    let changed = false;
+    for (const code of codes) {
+      const item = byCode.get(code);
+      if (!item) continue;
+      snaps[code] = snapshotOf(item);
+      changed = true;
+    }
+    if (changed) localStorage.setItem(STORE_FAV_SNAP, JSON.stringify(snaps));
+  }
+
   let syncTimer;
   function scheduleSync() {
     if (!api || !canEdit()) return;
@@ -405,7 +439,7 @@
       return;
     }
     if (favorites.has(code)) favorites.delete(code);
-    else favorites.add(code);
+    else { favorites.add(code); refreshFavSnapshots([code]); }
     saveLocalFavorites();
     scheduleSync();
 
@@ -458,6 +492,7 @@
         saveLocalFavorites();
         if (!asBrowsing && merged.length !== remote.codes.length) scheduleSync();
       }
+      refreshFavSnapshots([...favorites]);
     }
     renderAccount();
     apply();
@@ -621,9 +656,16 @@
       (owner && syncError ? ' · ⚠ favoris non synchronisés' : '');
   }
 
+  function listPool() {
+    const snaps = readJson(STORE_FAV_SNAP, {});
+    return [...favorites]
+      .map((code) => byCode.get(code) || (snaps[code] && { ...snaps[code], unavailable: true }))
+      .filter(Boolean);
+  }
+
   function apply() {
     const terms = normalize(queryEl.value).split(/\s+/).filter(Boolean);
-    let pool = view === 'list' ? products.filter((item) => favorites.has(item.code)) : products;
+    let pool = view === 'list' ? listPool() : products;
     if (terms.length) pool = pool.filter((item) => terms.every((term) => haystack(item).includes(term)));
 
     filtered = pool.slice().sort(comparators[sortEl.value] || comparators.added);
@@ -671,9 +713,10 @@
       item.numParts ? `${item.numParts} pièces` : null,
     ].filter(Boolean).join(' · ');
     const starred = favorites.has(item.code);
+    const gone = Boolean(item.unavailable);
 
     return `
-      <article class="card">
+      <article class="card${gone ? ' unavailable' : ''}">
         <div class="thumb">
           ${item.imgUrl
             ? `<img src="${escapeHtml(item.imgUrl)}" alt="${escapeHtml(item.name)}" loading="lazy"
@@ -684,12 +727,13 @@
                   ${canEdit() ? '' : 'disabled'}>${starred ? '★' : '☆'}</button>
         </div>
         <div class="body">
+          ${gone ? '<span class="gone">Retiré chez Marstoy</span>' : ''}
           <div class="name">${escapeHtml(item.name)}</div>
           <div class="facts">${facts}</div>
           ${item.theme ? `<div class="theme">${escapeHtml(item.theme)}</div>` : ''}
           <div class="row">${priceHtml(item)}</div>
           <div class="links">
-            ${item.marstoyUrl ? `<a href="${escapeHtml(item.marstoyUrl)}" target="_blank"
+            ${!gone && item.marstoyUrl ? `<a href="${escapeHtml(item.marstoyUrl)}" target="_blank"
                                     rel="noopener">Commander</a>` : ''}
             <a href="https://www.lego.com/fr-ca/search?q=${escapeHtml(item.num)}"
                target="_blank" rel="noopener">LEGO</a>
