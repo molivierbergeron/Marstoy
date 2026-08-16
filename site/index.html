@@ -635,7 +635,9 @@
       amount(item.legoPriceCad ?? null),
       item.savingsPct ?? '',
       amount(item.savingsCad ?? null),
-      item.marstoyUrl,
+      // Un produit retiré du catalogue garde ses prix, mais son lien mène à un
+      // 404 : la carte le masque déjà, l'export ne doit pas le ressusciter.
+      item.unavailable ? '' : item.marstoyUrl,
     ]);
 
     const marstoy = filtered.reduce((sum, item) => sum + (item.priceCad || 0), 0);

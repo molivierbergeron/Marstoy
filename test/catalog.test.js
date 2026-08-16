@@ -174,6 +174,15 @@ test('un prix LEGO inconnu laisse des cellules vides, jamais des zéros', async 
   assert.deepEqual(rows[1].slice(1, 5), ['40,00', '', '', '']);
 });
 
+test('un produit retiré du catalogue n\'exporte pas son lien mort', async () => {
+  const rows = await runExport([
+    { name: 'Retiré', priceCad: 40, unavailable: true, marstoyUrl: 'https://mort' },
+  ]);
+  assert.equal(rows[1][0], 'Retiré');
+  assert.equal(rows[1][1], '40,00', 'le prix connu reste exporté');
+  assert.equal(rows[1][5], '', 'le lien mènerait à un 404');
+});
+
 test('le total n\'impute l\'économie qu\'aux sets réellement comparables', async () => {
   const rows = await runExport([
     { name: 'Comparable', priceCad: 50, legoPriceCad: 200, savingsPct: 75, savingsCad: 150, marstoyUrl: 'https://a' },
