@@ -117,6 +117,24 @@
     background: var(--chip); color: var(--text);
   }
 
+  .copyfallback {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: 11px 13px; margin-bottom: 12px;
+  }
+  .copyfallback p { margin: 0 0 8px; font-size: 13px; color: var(--muted); }
+  .copyfallback textarea {
+    width: 100%; font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+    color: var(--text); background: var(--bg);
+    border: 1px solid var(--border); border-radius: 8px; padding: 8px;
+    /* Sans nowrap, les colonnes tabulées se replient et deviennent illisibles. */
+    white-space: pre; overflow-x: auto; resize: vertical;
+  }
+  .copyfallback button {
+    margin-top: 8px; font-size: 12px; font-weight: 600; padding: 7px 11px;
+    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--chip); color: var(--text);
+  }
+
   .grid {
     display: grid; gap: 12px;
     grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -241,6 +259,11 @@
 
 <main>
   <div class="totals" id="totals" hidden></div>
+  <div class="copyfallback" id="copyfallback" hidden>
+    <p>Le navigateur a refusé l’accès au presse-papiers. Sélectionne le tableau et copie-le à la main.</p>
+    <textarea readonly rows="6" aria-label="Tableau à copier"></textarea>
+    <button type="button" id="copyfallback-close">Fermer</button>
+  </div>
   <div class="status" id="status">Chargement du catalogue…</div>
   <div class="grid" id="grid"></div>
   <div id="sentinel"></div>
@@ -270,6 +293,10 @@
   const sortEl = document.getElementById('sort');
   const accountEl = document.getElementById('account');
   const sheetEl = document.getElementById('sheet');
+  const fallbackEl = document.getElementById('copyfallback');
+
+  document.getElementById('copyfallback-close')
+    .addEventListener('click', () => { fallbackEl.hidden = true; });
 
   const STORE_ACCOUNT = 'mr:account';
   const STORE_FAV = (slug) => `mr:fav:${slug}`;
@@ -660,32 +687,75 @@
     return [EXPORT_HEADERS, ...rows];
   }
 
+  /**
+   * L'API presse-papiers refuse dans plus de cas qu'on ne le croit : contexte
+   * non sécurisé, onglet non focalisé sous Chrome, activation perdue sous
+   * Safari. `execCommand` reste accepté dans une partie de ces cas, d'où les
+   * deux tentatives. Rend `false` si les deux échouent — jamais d'échec muet.
+   */
+  async function copyText(text) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // On tente la voie historique ci-dessous.
+    }
+
+    const area = document.createElement('textarea');
+    area.value = text;
+    // Lecture seule et hors écran : sinon iOS ouvre le clavier et fait défiler.
+    area.readOnly = true;
+    area.style.cssText = 'position:fixed;top:0;left:-9999px;opacity:0';
+    document.body.append(area);
+    try {
+      area.focus();
+      area.setSelectionRange(0, text.length);
+      return document.execCommand('copy');
+    } catch {
+      return false;
+    } finally {
+      area.remove();
+    }
+  }
+
+  function showCopyFallback(text) {
+    fallbackEl.querySelector('textarea').value = text;
+    fallbackEl.hidden = false;
+    const area = fallbackEl.querySelector('textarea');
+    area.focus();
+    area.setSelectionRange(0, text.length);
+    area.scrollIntoView({ block: 'nearest' });
+  }
+
   async function exportList() {
     const text = exportRows().map((row) => row.map(cell).join('\t')).join('\n');
     const plural = filtered.length > 1 ? 's' : '';
+    fallbackEl.hidden = true;
 
     // Le presse-papiers d'abord : des colonnes servent à être collées quelque
     // part. La feuille de partage reste le repli quand il est refusé.
-    try {
-      await navigator.clipboard.writeText(text);
+    if (await copyText(text)) {
       window.alert(`${filtered.length} set${plural} copié${plural} en colonnes.`
         + ' Colle dans un tableur.');
       return;
-    } catch {
-      // Presse-papiers indisponible : on tente le partage.
     }
 
-    try {
-      if (navigator.share) {
+    if (navigator.share) {
+      try {
         const owner = activeList();
         await navigator.share({
           title: `Short list Marstoy${owner ? ` — ${owner.name}` : ''}`,
           text,
         });
+        return;
+      } catch (error) {
+        // Annulation volontaire : l'utilisateur a eu ce qu'il voulait, on se
+        // tait. Tout autre échec mérite le repli visible.
+        if (error?.name === 'AbortError') return;
       }
-    } catch {
-      // Partage annulé par l'utilisateur : rien à signaler.
     }
+
+    showCopyFallback(text);
   }
 
   function renderStatus() {

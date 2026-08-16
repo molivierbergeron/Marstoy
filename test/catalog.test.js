@@ -198,6 +198,93 @@ test('le total n\'impute l\'économie qu\'aux sets réellement comparables', asy
   assert.equal(total[4], '150,00');
 });
 
+/**
+ * Exécute la chaîne de copie de la page contre des sosies de `navigator` et
+ * `document`. Le bug corrigé ici ne se voyait qu'à l'exécution : le bouton
+ * « Exporter » ne faisait rien du tout quand le presse-papiers refusait et que
+ * `navigator.share` n'existait pas — c'est-à-dire sur navigateur de bureau.
+ */
+async function runCopyChain({ clipboardOk, execCommandOk, hasShare, shareThrows }) {
+  const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
+  const block = html.match(/(async function copyText[\s\S]*?\n {2}}\n)\n {2}\/\*\*/)?.[1]
+    ?? html.match(/(async function copyText[\s\S]*?\n {2}}\n)$/m)?.[1];
+  const rest = html.match(/(function showCopyFallback[\s\S]*?\n {2}}\n)/)?.[1];
+  const list = html.match(/(async function exportList[\s\S]*?\n {2}}\n)/)?.[1];
+  assert.ok(block && rest && list, 'chaîne de copie introuvable');
+
+  const seen = { alert: null, shown: null };
+  const area = { value: '', focus() {}, setSelectionRange() {}, scrollIntoView() {} };
+  const fallbackEl = { hidden: true, querySelector: () => area };
+  const navigator = {
+    clipboard: {
+      writeText: () => (clipboardOk ? Promise.resolve() : Promise.reject(new Error('refus'))),
+    },
+    ...(hasShare
+      ? {
+        share: () => {
+          if (!shareThrows) return Promise.resolve();
+          const error = new Error('annulé');
+          error.name = shareThrows;
+          return Promise.reject(error);
+        },
+      }
+      : {}),
+  };
+  const document = {
+    createElement: () => ({
+      style: {}, focus() {}, setSelectionRange() {}, remove() {},
+    }),
+    body: { append() {} },
+    execCommand: () => execCommandOk,
+  };
+  const win = { alert: (message) => { seen.alert = message; } };
+
+  const source = `${block}\n${rest}\n${list}\n return exportList();`;
+  await new Function(
+    'navigator', 'document', 'window', 'fallbackEl', 'exportRows', 'cell',
+    'filtered', 'activeList', source,
+  )(
+    navigator, document, win, fallbackEl,
+    () => [['Nom du set'], ['Un set']], (v) => String(v),
+    [{ name: 'Un set' }], () => null,
+  );
+
+  seen.shown = fallbackEl.hidden ? null : area.value;
+  return seen;
+}
+
+test('le presse-papiers moderne suffit quand il est accordé', async () => {
+  const seen = await runCopyChain({ clipboardOk: true, execCommandOk: false, hasShare: false });
+  assert.match(seen.alert, /copié/);
+  assert.equal(seen.shown, null, 'aucun repli inutile');
+});
+
+test('execCommand rattrape un presse-papiers refusé', async () => {
+  const seen = await runCopyChain({ clipboardOk: false, execCommandOk: true, hasShare: false });
+  assert.match(seen.alert, /copié/);
+  assert.equal(seen.shown, null);
+});
+
+test('le bouton Exporter n\'échoue jamais en silence', async () => {
+  // Le cas exact du bug : bureau, presse-papiers refusé, pas de partage.
+  const seen = await runCopyChain({ clipboardOk: false, execCommandOk: false, hasShare: false });
+  assert.equal(seen.alert, null, 'rien n\'a été copié, donc rien à annoncer');
+  assert.ok(seen.shown?.includes('Nom du set'), 'le tableau doit s\'afficher pour copie manuelle');
+});
+
+test('un partage annulé volontairement ne déclenche pas le repli', async () => {
+  const cancelled = await runCopyChain({
+    clipboardOk: false, execCommandOk: false, hasShare: true, shareThrows: 'AbortError',
+  });
+  assert.equal(cancelled.shown, null, 'l\'utilisateur a fermé la feuille exprès');
+
+  // Un partage qui casse pour une autre raison, lui, mérite le repli.
+  const broken = await runCopyChain({
+    clipboardOk: false, execCommandOk: false, hasShare: true, shareThrows: 'NotAllowedError',
+  });
+  assert.ok(broken.shown?.includes('Nom du set'));
+});
+
 test('le registre des arrivées est tenu d\'un passage à l\'autre', async () => {
   const build = await readFile(path.join(root, 'scripts/build-catalog.mjs'), 'utf8');
   assert.match(build, /data\/first-seen\.json/);
