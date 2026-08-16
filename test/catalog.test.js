@@ -127,6 +127,68 @@ test('le tri par arrivée est proposé à part, en bêta assumée', async () => 
   assert.match(html, /<option value="added">Arrivées \(bêta\)<\/option>/);
 });
 
+/**
+ * Extrait le bloc d'export de la page et l'exécute sur une liste donnée.
+ * Le code vit dans une closure qui n'a pas de DOM : on lui injecte `filtered`
+ * plutôt que de simuler un navigateur.
+ */
+async function runExport(filtered) {
+  const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
+  const block = html.match(/(const EXPORT_HEADERS[\s\S]*?\n {2}}\n)\n {2}async function exportList/);
+  assert.ok(block, 'bloc d\'export introuvable');
+  return new Function('filtered', `${block[1]}; return exportRows();`)(filtered);
+}
+
+test('l\'export sort les six colonnes demandées, tabulées', async () => {
+  const rows = await runExport([
+    {
+      name: "The Mandalorian's N-1 Starfighter",
+      priceCad: 55.99,
+      legoPriceCad: 349.99,
+      savingsPct: 84,
+      savingsCad: 294,
+      marstoyUrl: 'https://www.marstoy.com/products/moc-m24457-parts-kit',
+    },
+  ]);
+
+  assert.deepEqual(rows[0], [
+    'Nom du set', 'prix marstoy', 'prix original',
+    'economie (%)', 'economie ($)', 'Lien marstoy',
+  ]);
+  assert.deepEqual(rows[1], [
+    "The Mandalorian's N-1 Starfighter",
+    '55,99',
+    '349,99',
+    84,
+    '294,00',
+    'https://www.marstoy.com/products/moc-m24457-parts-kit',
+  ]);
+  // Six colonnes partout, sinon le collage se décale dans le tableur.
+  for (const row of rows) assert.equal(row.length, 6);
+});
+
+test('un prix LEGO inconnu laisse des cellules vides, jamais des zéros', async () => {
+  const rows = await runExport([
+    { name: 'Sans prix', priceCad: 40, marstoyUrl: 'https://x' },
+  ]);
+  assert.deepEqual(rows[1].slice(1, 5), ['40,00', '', '', '']);
+});
+
+test('le total n\'impute l\'économie qu\'aux sets réellement comparables', async () => {
+  const rows = await runExport([
+    { name: 'Comparable', priceCad: 50, legoPriceCad: 200, savingsPct: 75, savingsCad: 150, marstoyUrl: 'https://a' },
+    { name: 'Sans prix LEGO', priceCad: 100, marstoyUrl: 'https://b' },
+  ]);
+  const total = rows.at(-1);
+
+  assert.equal(total[0], 'Total');
+  assert.equal(total[1], '150,00', 'la somme payée couvre toute la liste');
+  // 150 $ économisés sur les 200 $ comparables, pas sur les 300 $ de la liste :
+  // sinon le pourcentage se calculerait sur un dénominateur incomplet.
+  assert.equal(total[3], 75);
+  assert.equal(total[4], '150,00');
+});
+
 test('le registre des arrivées est tenu d\'un passage à l\'autre', async () => {
   const build = await readFile(path.join(root, 'scripts/build-catalog.mjs'), 'utf8');
   assert.match(build, /data\/first-seen\.json/);

@@ -616,22 +616,70 @@
     document.getElementById('export').addEventListener('click', exportList);
   }
 
+  // Colonnes séparées par des tabulations : collé dans un tableur, chaque
+  // champ tombe dans sa colonne. Décimale en virgule et aucun séparateur de
+  // milliers, sinon un tableur fr-CA lit « 1 234,56 » comme du texte.
+  const EXPORT_HEADERS = [
+    'Nom du set', 'prix marstoy', 'prix original',
+    'economie (%)', 'economie ($)', 'Lien marstoy',
+  ];
+  const cell = (value) => (value == null ? '' : String(value).replaceAll('\t', ' '));
+  const amount = (value) => (value == null ? '' : value.toFixed(2).replace('.', ','));
+
+  function exportRows() {
+    const rows = filtered.map((item) => [
+      item.name,
+      amount(item.priceCad ?? null),
+      // Cellules vides plutôt que des zéros : un prix LEGO inconnu ne veut pas
+      // dire une économie nulle, et un zéro fausserait les moyennes.
+      amount(item.legoPriceCad ?? null),
+      item.savingsPct ?? '',
+      amount(item.savingsCad ?? null),
+      item.marstoyUrl,
+    ]);
+
+    const marstoy = filtered.reduce((sum, item) => sum + (item.priceCad || 0), 0);
+    const lego = filtered.reduce((sum, item) => sum + (item.legoPriceCad || 0), 0);
+    // L'économie totale ne porte que sur les sets dont les deux prix sont
+    // connus : rapporter une somme partielle à une somme complète la gonflerait.
+    const comparable = filtered.filter((item) => item.legoPriceCad && item.priceCad);
+    const paid = comparable.reduce((sum, item) => sum + item.priceCad, 0);
+    const retail = comparable.reduce((sum, item) => sum + item.legoPriceCad, 0);
+
+    rows.push([
+      'Total',
+      amount(marstoy),
+      lego > 0 ? amount(lego) : '',
+      retail > 0 ? Math.round(((retail - paid) / retail) * 100) : '',
+      retail > 0 ? amount(retail - paid) : '',
+      '',
+    ]);
+
+    return [EXPORT_HEADERS, ...rows];
+  }
+
   async function exportList() {
-    const owner = activeList();
-    const lines = filtered.map((item) =>
-      `• ${item.name} (${item.code}) — ${money(item.priceCad || 0)}` +
-      `${item.legoPriceCad ? ` au lieu de ${money(item.legoPriceCad)}` : ''}` +
-      `\n  ${item.marstoyUrl || ''}`);
-    const total = filtered.reduce((sum, item) => sum + (item.priceCad || 0), 0);
-    const text =
-      `Short list Marstoy${owner ? ` — ${owner.name}` : ''}\n\n` +
-      `${lines.join('\n')}\n\nTotal : ${money(total)} CAD`;
+    const text = exportRows().map((row) => row.map(cell).join('\t')).join('\n');
+    const plural = filtered.length > 1 ? 's' : '';
+
+    // Le presse-papiers d'abord : des colonnes servent à être collées quelque
+    // part. La feuille de partage reste le repli quand il est refusé.
+    try {
+      await navigator.clipboard.writeText(text);
+      window.alert(`${filtered.length} set${plural} copié${plural} en colonnes.`
+        + ' Colle dans un tableur.');
+      return;
+    } catch {
+      // Presse-papiers indisponible : on tente le partage.
+    }
 
     try {
-      if (navigator.share) await navigator.share({ title: 'Short list Marstoy', text });
-      else {
-        await navigator.clipboard.writeText(text);
-        window.alert('Liste copiée dans le presse-papiers.');
+      if (navigator.share) {
+        const owner = activeList();
+        await navigator.share({
+          title: `Short list Marstoy${owner ? ` — ${owner.name}` : ''}`,
+          text,
+        });
       }
     } catch {
       // Partage annulé par l'utilisateur : rien à signaler.
