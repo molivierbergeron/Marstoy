@@ -1,0 +1,35 @@
+name: Diagnostiquer un produit Marstoy
+
+# Le conteneur de développement n'a pas d'accès sortant vers marstoy.com ni
+# rebrickable.com. Ce workflow sert d'unique fenêtre pour vérifier ce qu'une
+# fiche annonce réellement, et à quel set LEGO elle devrait correspondre.
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: URL de la fiche Marstoy à inspecter
+        required: true
+      sets:
+        description: Numéros de sets LEGO à vérifier, séparés par des virgules
+        required: false
+        default: ''
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Inspecter la fiche Marstoy
+        env:
+          TARGET_URL: ${{ inputs.url }}
+        run: node scripts/diagnose-product.mjs
+
+      - name: Retrouver les sets LEGO dans l'export Rebrickable
+        if: inputs.sets != ''
+        env:
+          TARGET_SETS: ${{ inputs.sets }}
+        run: node scripts/diagnose-sets.mjs
