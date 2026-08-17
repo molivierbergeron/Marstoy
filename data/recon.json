@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-08-17T07:14:56.512Z",
+  "startedAt": "2026-08-17T13:05:57.111Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -19,9 +19,9 @@
     "sitemapWithLastmod": 2941,
     "sitemapCodesFromUrl": 320,
     "pagesFetched": 2941,
-    "marstoyOwnMocs": 2611,
-    "sitemap": 322,
-    "unique": 321,
+    "marstoyOwnMocs": 2609,
+    "sitemap": 321,
+    "unique": 320,
     "legoPricesCached": 318,
     "legoPricesFetched": 0
   },
@@ -52,11 +52,6 @@
         "parts": 392
       },
       {
-        "url": "https://www.marstoy.com/products/the-block-gun",
-        "title": "The Block Gun",
-        "parts": 307
-      },
-      {
         "url": "https://www.marstoy.com/products/the-60tp-tank",
         "title": "The 60tp Tank",
         "parts": 1128
@@ -65,6 +60,16 @@
         "url": "https://www.marstoy.com/products/moc-the-jeep",
         "title": "Moc The JEEP",
         "parts": 522
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-block-gun",
+        "title": "The Block Gun",
+        "parts": 307
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-su-7",
+        "title": "The Su 7",
+        "parts": 725
       },
       {
         "url": "https://www.marstoy.com/products/the-mill-house",
@@ -82,24 +87,19 @@
         "parts": 2044
       },
       {
-        "url": "https://www.marstoy.com/products/the-su-7",
-        "title": "The Su 7",
-        "parts": 725
-      },
-      {
         "url": "https://www.marstoy.com/products/the-chinese-style-garage",
         "title": "The Chinese-style Garage",
         "parts": 763
       },
       {
-        "url": "https://www.marstoy.com/products/the-whirl-wind-coaster",
-        "title": "The Whirl Wind Coaster",
-        "parts": 1707
-      },
-      {
         "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
         "title": "The Castle Roller Coaster",
         "parts": 2584
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-whirl-wind-coaster",
+        "title": "The Whirl Wind Coaster",
+        "parts": 1707
       },
       {
         "url": "https://www.marstoy.com/products/the-great-white",
@@ -122,14 +122,14 @@
         "parts": null
       },
       {
-        "url": "https://www.marstoy.com/products/the-1-20-sports-car",
-        "title": "The 1:20 Sports Car",
-        "parts": 391
-      },
-      {
         "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
         "title": "The 1:20 Fierce Chariot",
         "parts": 474
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-1-20-sports-car",
+        "title": "The 1:20 Sports Car",
+        "parts": 391
       },
       {
         "url": "https://www.marstoy.com/products/the-1-20-extreme-speed",
@@ -142,28 +142,28 @@
         "parts": 1232
       },
       {
-        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
-        "title": "The Dragon Motobcycle",
-        "parts": 585
-      },
-      {
         "url": "https://www.marstoy.com/products/the-harley-motorcycle",
         "title": "The Harley Motorcycle",
         "parts": 467
       },
       {
-        "url": "https://www.marstoy.com/products/the-wukongs-car",
-        "title": "The Wukong's Car",
-        "parts": 716
+        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
+        "title": "The Dragon Motobcycle",
+        "parts": 585
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-air-glider",
+        "title": "The Air Glider",
+        "parts": 900
       }
     ]
   },
   "strategyUsed": "sitemap",
   "error": null,
   "httpErrors": {
-    "403": 8
+    "403": 11
   },
-  "finishedAt": "2026-08-17T07:25:09.735Z",
+  "finishedAt": "2026-08-17T13:11:50.011Z",
   "bricksetStatus": {},
   "unresolved": [],
   "rejected": [
