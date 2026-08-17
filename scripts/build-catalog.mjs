@@ -77,7 +77,12 @@ for (const item of products) {
       const reject = (reason) => {
         rejected.push({
           code: item.code,
+          // Sans l'URL, un rejet n'est pas vérifiable : c'est la fiche Marstoy
+          // qui tranche, et c'est elle que le site doit pouvoir ouvrir.
+          url: item.url,
           num: set.num,
+          setNum: set.setNum,
+          setUrl: set.setUrl,
           name: set.name,
           marstoyTitle: item.title,
           marstoyParts: item.marstoyParts,
@@ -251,6 +256,35 @@ const catalog = {
     marstoyOwnMocs: recon.counts.marstoyOwnMocs ?? null,
   },
   products: products_,
+  // Les références écartées, publiées avec le site : sans elles, un produit
+  // absent du catalogue est indistinguable d'un produit que Marstoy ne vend
+  // pas. L'écart en pourcentage est calculé ici pour que la page n'ait pas à
+  // deviner quelle règle a écarté quoi.
+  skipped: [
+    ...rejected.map((item) => ({
+      kind: 'rejected',
+      code: item.code,
+      url: item.url,
+      marstoyTitle: item.marstoyTitle,
+      marstoyParts: item.marstoyParts,
+      num: item.num,
+      name: item.name,
+      setUrl: item.setUrl,
+      legoParts: item.legoParts,
+      gapPct: item.legoParts
+        ? Math.round(Math.abs(item.marstoyParts - item.legoParts) / item.legoParts * 100)
+        : null,
+      reason: item.reason,
+    })),
+    ...unresolved.map((item) => ({
+      kind: 'unresolved',
+      code: item.code,
+      url: item.url,
+      marstoyTitle: item.title,
+      tried: item.tried ?? null,
+      reason: item.reason,
+    })),
+  ].slice(0, 200),
 };
 
 await writeJson('site/data/catalog.json', catalog);

@@ -108,6 +108,9 @@
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 12px; padding: 11px 13px; margin-bottom: 12px;
   }
+  /* `display: flex` l'emporte sur le `display: none` que le navigateur applique
+     à [hidden] : sans cette règle, la barre reste une boîte vide. */
+  .totals[hidden] { display: none; }
   .totals b { font-size: 17px; }
   .totals .sub { font-size: 12px; color: var(--muted); }
   .totals .save { font-size: 12px; }
@@ -160,6 +163,15 @@
   }
   .thumb .fallback { font-size: 12px; color: var(--muted); padding: 8px; text-align: center; }
   .card.unavailable .thumb img { filter: grayscale(1); opacity: .5; }
+  /* Pas de vignette : la carte est faite de texte, et la référence tient la
+     place du nom du set — qui est justement ce qu'on n'a pas pu confirmer. */
+  .card.skipped .name { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  .card.skipped .facts { line-height: 1.45; }
+  /* Le motif du rejet est une phrase, pas une étiquette : sans ce retour à la
+     ligne, `nowrap` la fait dépasser et `.card { overflow: hidden }` la coupe. */
+  .card.skipped .gone { white-space: normal; }
+  /* Une colonne : ces cartes sont faites de texte, pas d'une vignette. */
+  .grid.rows { grid-template-columns: 1fr; }
   .gone {
     align-self: flex-start;
     font: 600 11px/1 -apple-system, BlinkMacSystemFont, sans-serif;
@@ -254,6 +266,7 @@
   <div class="tabs" role="tablist">
     <button class="tab" id="tab-all" role="tab" aria-selected="true" data-view="all">Tout le catalogue</button>
     <button class="tab" id="tab-list" role="tab" aria-selected="false" data-view="list">★ Ma liste</button>
+    <button class="tab" id="tab-skipped" role="tab" aria-selected="false" data-view="skipped" hidden>Écartées</button>
   </div>
 </header>
 
@@ -294,6 +307,7 @@
   const accountEl = document.getElementById('account');
   const sheetEl = document.getElementById('sheet');
   const fallbackEl = document.getElementById('copyfallback');
+  const skippedTab = document.getElementById('tab-skipped');
 
   document.getElementById('copyfallback-close')
     .addEventListener('click', () => { fallbackEl.hidden = true; });
@@ -306,6 +320,7 @@
   const STORE_FAV_SNAP = 'mr:favsnap';
 
   let products = [];
+  let skipped = [];
   let byCode = new Map();
   let filtered = [];
   let rendered = 0;
@@ -760,6 +775,14 @@
 
   function renderStatus() {
     const owner = activeList();
+    if (view === 'skipped') {
+      statusEl.textContent = filtered.length
+        ? `${filtered.length} référence${filtered.length > 1 ? 's' : ''} écartée`
+          + `${filtered.length > 1 ? 's' : ''} — écart le plus faible en premier.`
+          + ' Une fiche Marstoy erronée se corrige chez eux, pas ici.'
+        : 'Aucune référence écartée.';
+      return;
+    }
     if (view === 'list') {
       statusEl.textContent = filtered.length
         ? (browsing ? `Liste de ${browsing.name} — lecture seule` : 'Ta short list')
@@ -785,11 +808,16 @@
 
   function apply() {
     const terms = normalize(queryEl.value).split(/\s+/).filter(Boolean);
-    let pool = view === 'list' ? listPool() : products;
+    let pool = view === 'list' ? listPool() : view === 'skipped' ? skipped : products;
     if (terms.length) pool = pool.filter((item) => terms.every((term) => haystack(item).includes(term)));
 
-    filtered = pool.slice().sort(comparators[sortEl.value] || comparators.added);
+    // Les écartées gardent leur ordre de tri propre : elles n'ont ni prix, ni
+    // année, ni thème, donc aucun des tris du menu ne s'y applique.
+    filtered = view === 'skipped'
+      ? pool.slice()
+      : pool.slice().sort(comparators[sortEl.value] || comparators.added);
     grid.replaceChildren();
+    grid.classList.toggle('rows', view === 'skipped');
     rendered = 0;
 
     renderTotals();
@@ -862,11 +890,45 @@
       </article>`;
   }
 
+  /**
+   * Carte d'une référence écartée. Pas d'image ni de prix : le set LEGO n'est
+   * justement pas confirmé. Ce qui compte est la preuve — les deux nombres de
+   * pièces — et les deux liens pour trancher soi-même.
+   */
+  function skippedCardHtml(item) {
+    const gap = item.gapPct != null ? ` · écart ${item.gapPct} %` : '';
+    const proof = item.kind === 'rejected'
+      ? `${item.marstoyParts} pièces annoncées contre ${item.legoParts} chez LEGO${gap}`
+      : `aucun set LEGO pour ${item.tried?.length ? item.tried.join(', ') : 'les numéros essayés'}`;
+
+    return `
+      <article class="card skipped">
+        <div class="body">
+          <div class="name">${escapeHtml(item.code)}</div>
+          ${item.name
+            ? `<div class="facts">apparié à ${escapeHtml(item.num)} ${escapeHtml(item.name)}</div>`
+            : ''}
+          <div class="theme" title="${escapeHtml(item.marstoyTitle || '')}">${
+            escapeHtml(item.marstoyTitle || 'sans titre chez Marstoy')}</div>
+          <div class="facts">${escapeHtml(proof)}</div>
+          <span class="gone">${escapeHtml(item.reason)}</span>
+          <div class="links">
+            ${item.url
+              ? `<a href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Fiche Marstoy</a>`
+              : ''}
+            ${item.setUrl
+              ? `<a href="${escapeHtml(item.setUrl)}" target="_blank" rel="noopener">Set supposé</a>`
+              : ''}
+          </div>
+        </div>
+      </article>`;
+  }
+
   function renderMore() {
     const slice = filtered.slice(rendered, rendered + PAGE);
     if (!slice.length) return;
     const fragment = document.createElement('template');
-    fragment.innerHTML = slice.map(cardHtml).join('');
+    fragment.innerHTML = slice.map(view === 'skipped' ? skippedCardHtml : cardHtml).join('');
     grid.append(fragment.content);
     rendered += slice.length;
   }
@@ -983,6 +1045,13 @@
     .then(async (catalog) => {
       products = catalog.products || [];
       byCode = new Map(products.map((item) => [item.code, item]));
+      // Les écarts les plus faibles d'abord : ce sont les correspondances les
+      // plus douteuses, donc celles qui valent un coup d'œil. M33406 était de
+      // celles-là — 27 % d'écart sur une fiche Marstoy erronée, corrigée depuis.
+      skipped = (catalog.skipped || []).slice().sort((a, b) =>
+        (a.gapPct ?? Infinity) - (b.gapPct ?? Infinity) || a.code.localeCompare(b.code));
+      skippedTab.hidden = !skipped.length;
+      if (skipped.length) skippedTab.textContent = `Écartées (${skipped.length})`;
       repo = catalog.repo || null;
       // La barre oblique finale est facile à copier depuis le tableau de bord
       // Cloudflare : on la retire plutôt que de fabriquer des « //api/… ».

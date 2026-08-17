@@ -285,6 +285,91 @@ test('un partage annulé volontairement ne déclenche pas le repli', async () =>
   assert.ok(broken.shown?.includes('Nom du set'));
 });
 
+/** Rend une référence écartée avec la vraie fonction de la page. */
+async function renderSkipped(item) {
+  const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
+  const escape = html.match(/(const escapeHtml =[\s\S]*?\}\[char\]\)\);\n)/)?.[1];
+  const card = html.match(/(function skippedCardHtml[\s\S]*?\n {2}}\n)/)?.[1];
+  assert.ok(escape && card, 'rendu des écartées introuvable');
+  return new Function('item', `${escape}${card}; return skippedCardHtml(item);`)(item);
+}
+
+const REJECTED = {
+  kind: 'rejected',
+  code: 'M33406',
+  url: 'https://www.marstoy.com/products/m33406',
+  marstoyTitle: 'MOC M24024 Parts Kit',
+  marstoyParts: 1401,
+  num: '60433',
+  name: 'Modular Space Station',
+  setUrl: 'https://rebrickable.com/sets/60433-1/',
+  legoParts: 1099,
+  gapPct: 27,
+  reason: 'nombre de pièces trop éloigné',
+};
+
+test('une référence écartée montre la preuve chiffrée et les deux liens', async () => {
+  const card = await renderSkipped(REJECTED);
+
+  assert.match(card, /M33406/);
+  assert.match(card, /apparié à 60433 Modular Space Station/);
+  // Les deux nombres et l'écart : c'est ce qui permet de juger sans lire le code.
+  assert.match(card, /1401 pièces annoncées contre 1099 chez LEGO/);
+  assert.match(card, /écart 27 %/);
+  assert.match(card, /nombre de pièces trop éloigné/);
+  assert.match(card, /https:\/\/www\.marstoy\.com\/products\/m33406/);
+  assert.match(card, /https:\/\/rebrickable\.com\/sets\/60433-1\//);
+  // Pas d'étoile : une référence écartée n'est pas dans le catalogue, elle ne
+  // peut pas entrer dans une short list.
+  assert.doesNotMatch(card, /data-star/);
+});
+
+test('une référence non résolue n\'affiche pas de set supposé', async () => {
+  const card = await renderSkipped({
+    kind: 'unresolved',
+    code: 'M99999',
+    url: 'https://www.marstoy.com/products/m99999',
+    marstoyTitle: 'MOC M99999 Parts Kit',
+    tried: ['99999'],
+    reason: 'aucun set LEGO connu',
+  });
+
+  assert.match(card, /aucun set LEGO pour 99999/);
+  assert.doesNotMatch(card, /Set supposé/);
+  assert.doesNotMatch(card, /apparié à/);
+});
+
+test('le titre Marstoy d\'une écartée est échappé', async () => {
+  // Ces titres sont saisis à la main chez Marstoy : ils ne sont pas de confiance.
+  const card = await renderSkipped({
+    ...REJECTED,
+    marstoyTitle: '<img src=x onerror=alert(1)>',
+  });
+  assert.doesNotMatch(card, /<img src=x/);
+  assert.match(card, /&lt;img src=x/);
+});
+
+test('le build publie les écartées avec de quoi les vérifier', async () => {
+  const build = await readFile(path.join(root, 'scripts/build-catalog.mjs'), 'utf8');
+  // Sans l'URL de la fiche, un rejet est une affirmation invérifiable.
+  assert.match(build, /url: item\.url,/);
+  assert.match(build, /skipped: \[/);
+  assert.match(build, /kind: 'rejected'/);
+  assert.match(build, /kind: 'unresolved'/);
+  assert.match(build, /gapPct/);
+
+  const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
+  assert.match(html, /data-view="skipped"/);
+  assert.match(html, /catalog\.skipped/);
+});
+
+test('la barre des totaux disparaît vraiment quand elle est masquée', async () => {
+  // `display: flex` battait le `display: none` de [hidden] : la barre restait
+  // une boîte vide sur toutes les vues sans total.
+  const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
+  assert.match(html, /\.totals\[hidden\] \{ display: none; \}/);
+});
+
 test('le registre des arrivées est tenu d\'un passage à l\'autre', async () => {
   const build = await readFile(path.join(root, 'scripts/build-catalog.mjs'), 'utf8');
   assert.match(build, /data\/first-seen\.json/);
