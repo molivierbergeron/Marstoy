@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-08-16T19:24:13.604Z",
+  "startedAt": "2026-08-17T07:14:56.512Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -19,9 +19,9 @@
     "sitemapWithLastmod": 2941,
     "sitemapCodesFromUrl": 320,
     "pagesFetched": 2941,
-    "marstoyOwnMocs": 2614,
-    "sitemap": 323,
-    "unique": 322,
+    "marstoyOwnMocs": 2611,
+    "sitemap": 322,
+    "unique": 321,
     "legoPricesCached": 318,
     "legoPricesFetched": 0
   },
@@ -37,6 +37,11 @@
         "parts": 604
       },
       {
+        "url": "https://www.marstoy.com/products/the-roman-colosseum",
+        "title": "The Roman Colosseum",
+        "parts": 3146
+      },
+      {
         "url": "https://www.marstoy.com/products/the-rack-railway",
         "title": "The Rack Railway",
         "parts": 1987
@@ -47,9 +52,9 @@
         "parts": 392
       },
       {
-        "url": "https://www.marstoy.com/products/the-roman-colosseum",
-        "title": "The Roman Colosseum",
-        "parts": 3146
+        "url": "https://www.marstoy.com/products/the-block-gun",
+        "title": "The Block Gun",
+        "parts": 307
       },
       {
         "url": "https://www.marstoy.com/products/the-60tp-tank",
@@ -60,16 +65,6 @@
         "url": "https://www.marstoy.com/products/moc-the-jeep",
         "title": "Moc The JEEP",
         "parts": 522
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-block-gun",
-        "title": "The Block Gun",
-        "parts": 307
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-su-7",
-        "title": "The Su 7",
-        "parts": 725
       },
       {
         "url": "https://www.marstoy.com/products/the-mill-house",
@@ -87,6 +82,11 @@
         "parts": 2044
       },
       {
+        "url": "https://www.marstoy.com/products/the-su-7",
+        "title": "The Su 7",
+        "parts": 725
+      },
+      {
         "url": "https://www.marstoy.com/products/the-chinese-style-garage",
         "title": "The Chinese-style Garage",
         "parts": 763
@@ -97,14 +97,14 @@
         "parts": 1707
       },
       {
-        "url": "https://www.marstoy.com/products/the-great-white",
-        "title": "The Great White",
-        "parts": 2932
-      },
-      {
         "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
         "title": "The Castle Roller Coaster",
         "parts": 2584
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-great-white",
+        "title": "The Great White",
+        "parts": 2932
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-st-joseph",
@@ -117,11 +117,6 @@
         "parts": null
       },
       {
-        "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
-        "title": "The 1:20 Fierce Chariot",
-        "parts": 474
-      },
-      {
         "url": "https://www.marstoy.com/products/moc-the-church-jesus",
         "title": "Moc The Church Jesus",
         "parts": null
@@ -132,19 +127,24 @@
         "parts": 391
       },
       {
+        "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
+        "title": "The 1:20 Fierce Chariot",
+        "parts": 474
+      },
+      {
         "url": "https://www.marstoy.com/products/the-1-20-extreme-speed",
         "title": "The 1:20 Extreme Speed",
         "parts": 391
       },
       {
-        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
-        "title": "The Dragon Motobcycle",
-        "parts": 585
-      },
-      {
         "url": "https://www.marstoy.com/products/the-atlantic-defensive-position",
         "title": "The Atlantic Defensive Position",
         "parts": 1232
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
+        "title": "The Dragon Motobcycle",
+        "parts": 585
       },
       {
         "url": "https://www.marstoy.com/products/the-harley-motorcycle",
@@ -161,9 +161,9 @@
   "strategyUsed": "sitemap",
   "error": null,
   "httpErrors": {
-    "403": 4
+    "403": 8
   },
-  "finishedAt": "2026-08-16T19:27:57.805Z",
+  "finishedAt": "2026-08-17T07:25:09.735Z",
   "bricksetStatus": {},
   "unresolved": [],
   "rejected": [
