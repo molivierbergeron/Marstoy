@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-08-17T13:05:57.111Z",
+  "startedAt": "2026-08-17T13:15:01.691Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -19,7 +19,7 @@
     "sitemapWithLastmod": 2941,
     "sitemapCodesFromUrl": 320,
     "pagesFetched": 2941,
-    "marstoyOwnMocs": 2609,
+    "marstoyOwnMocs": 2611,
     "sitemap": 321,
     "unique": 320,
     "legoPricesCached": 318,
@@ -37,11 +37,6 @@
         "parts": 604
       },
       {
-        "url": "https://www.marstoy.com/products/the-roman-colosseum",
-        "title": "The Roman Colosseum",
-        "parts": 3146
-      },
-      {
         "url": "https://www.marstoy.com/products/the-rack-railway",
         "title": "The Rack Railway",
         "parts": 1987
@@ -50,6 +45,11 @@
         "url": "https://www.marstoy.com/products/the-1087x-drift-car",
         "title": "The 1087X Drift Car",
         "parts": 392
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-roman-colosseum",
+        "title": "The Roman Colosseum",
+        "parts": 3146
       },
       {
         "url": "https://www.marstoy.com/products/the-60tp-tank",
@@ -87,9 +87,9 @@
         "parts": 2044
       },
       {
-        "url": "https://www.marstoy.com/products/the-chinese-style-garage",
-        "title": "The Chinese-style Garage",
-        "parts": 763
+        "url": "https://www.marstoy.com/products/the-whirl-wind-coaster",
+        "title": "The Whirl Wind Coaster",
+        "parts": 1707
       },
       {
         "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
@@ -97,14 +97,9 @@
         "parts": 2584
       },
       {
-        "url": "https://www.marstoy.com/products/the-whirl-wind-coaster",
-        "title": "The Whirl Wind Coaster",
-        "parts": 1707
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-great-white",
-        "title": "The Great White",
-        "parts": 2932
+        "url": "https://www.marstoy.com/products/the-chinese-style-garage",
+        "title": "The Chinese-style Garage",
+        "parts": 763
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-st-joseph",
@@ -112,9 +107,19 @@
         "parts": null
       },
       {
+        "url": "https://www.marstoy.com/products/the-great-white",
+        "title": "The Great White",
+        "parts": 2932
+      },
+      {
         "url": "https://www.marstoy.com/products/moc-the-jesus-the-shepherd",
         "title": "Moc The Jesus the Shepherd",
         "parts": null
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-1-20-sports-car",
+        "title": "The 1:20 Sports Car",
+        "parts": 391
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-church-jesus",
@@ -125,11 +130,6 @@
         "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
         "title": "The 1:20 Fierce Chariot",
         "parts": 474
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-1-20-sports-car",
-        "title": "The 1:20 Sports Car",
-        "parts": 391
       },
       {
         "url": "https://www.marstoy.com/products/the-1-20-extreme-speed",
@@ -152,18 +152,18 @@
         "parts": 585
       },
       {
-        "url": "https://www.marstoy.com/products/the-air-glider",
-        "title": "The Air Glider",
-        "parts": 900
+        "url": "https://www.marstoy.com/products/the-wukongs-car",
+        "title": "The Wukong's Car",
+        "parts": 716
       }
     ]
   },
   "strategyUsed": "sitemap",
   "error": null,
   "httpErrors": {
-    "403": 11
+    "403": 9
   },
-  "finishedAt": "2026-08-17T13:11:50.011Z",
+  "finishedAt": "2026-08-17T13:18:11.110Z",
   "bricksetStatus": {},
   "unresolved": [],
   "rejected": [
