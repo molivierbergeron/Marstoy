@@ -266,7 +266,6 @@
   <div class="tabs" role="tablist">
     <button class="tab" id="tab-all" role="tab" aria-selected="true" data-view="all">Tout le catalogue</button>
     <button class="tab" id="tab-list" role="tab" aria-selected="false" data-view="list">★ Ma liste</button>
-    <button class="tab" id="tab-skipped" role="tab" aria-selected="false" data-view="skipped" hidden>Écartées</button>
   </div>
 </header>
 
@@ -307,7 +306,6 @@
   const accountEl = document.getElementById('account');
   const sheetEl = document.getElementById('sheet');
   const fallbackEl = document.getElementById('copyfallback');
-  const skippedTab = document.getElementById('tab-skipped');
 
   document.getElementById('copyfallback-close')
     .addEventListener('click', () => { fallbackEl.hidden = true; });
@@ -628,14 +626,21 @@
 
   /* ------------------------------------------------------------------ vues */
 
+  /**
+   * Les écartées n'ont pas d'onglet : quand on y est, aucun onglet n'est
+   * sélectionné, et le lien « Retour au catalogue » de la ligne de statut est
+   * la seule sortie.
+   */
+  function setView(next) {
+    view = next;
+    for (const tab of document.querySelectorAll('.tab')) {
+      tab.setAttribute('aria-selected', String(tab.dataset.view === next));
+    }
+    apply();
+  }
+
   for (const tab of document.querySelectorAll('.tab')) {
-    tab.addEventListener('click', () => {
-      view = tab.dataset.view;
-      for (const other of document.querySelectorAll('.tab')) {
-        other.setAttribute('aria-selected', String(other === tab));
-      }
-      apply();
-    });
+    tab.addEventListener('click', () => setView(tab.dataset.view));
   }
 
   function renderTotals() {
@@ -773,30 +778,57 @@
     showCopyFallback(text);
   }
 
+  /**
+   * Écrit la ligne de statut avec, au besoin, un lien vers les écartées.
+   * Le texte passe par des nœuds texte plutôt que par `innerHTML` : il est bâti
+   * à partir du catalogue, dont la devise vient d'une page Marstoy.
+   */
+  function setStatus(text, link) {
+    const nodes = [document.createTextNode(text)];
+    if (link) {
+      const anchor = document.createElement('a');
+      anchor.href = '#';
+      anchor.textContent = link.label;
+      anchor.addEventListener('click', (event) => {
+        event.preventDefault();
+        setView(link.view);
+      });
+      nodes.push(document.createTextNode(' · '), anchor);
+    }
+    statusEl.replaceChildren(...nodes);
+  }
+
   function renderStatus() {
     const owner = activeList();
     if (view === 'skipped') {
-      statusEl.textContent = filtered.length
-        ? `${filtered.length} référence${filtered.length > 1 ? 's' : ''} écartée`
-          + `${filtered.length > 1 ? 's' : ''} — écart le plus faible en premier.`
-          + ' Une fiche Marstoy erronée se corrige chez eux, pas ici.'
-        : 'Aucune référence écartée.';
+      setStatus(
+        `${filtered.length} référence${filtered.length > 1 ? 's' : ''} écartée`
+        + `${filtered.length > 1 ? 's' : ''} — écart le plus faible en premier.`
+        + ' Une fiche Marstoy erronée se corrige chez eux, pas ici.',
+        { label: 'Retour au catalogue', view: 'all' },
+      );
       return;
     }
     if (view === 'list') {
-      statusEl.textContent = filtered.length
+      setStatus(filtered.length
         ? (browsing ? `Liste de ${browsing.name} — lecture seule` : 'Ta short list')
           + (syncError ? ' · ⚠ non synchronisée' : '')
-        : '';
+        : '');
       return;
     }
     const terms = normalize(queryEl.value).split(/\s+/).filter(Boolean);
-    statusEl.textContent =
+    setStatus(
       `${filtered.length} set${filtered.length > 1 ? 's' : ''}` +
       (terms.length ? ` sur ${products.length}` : coverage) +
       priceNote +
       scanNote +
-      (owner && syncError ? ' · ⚠ favoris non synchronisés' : '');
+      (owner && syncError ? ' · ⚠ favoris non synchronisés' : ''),
+      // Les écartées ne valent pas un onglet permanent : elles se signalent
+      // d'un mot, là où on lit déjà la couverture du catalogue.
+      skipped.length && !terms.length
+        ? { label: `${skipped.length} écartée${skipped.length > 1 ? 's' : ''}`, view: 'skipped' }
+        : null,
+    );
   }
 
   function listPool() {
@@ -1050,8 +1082,6 @@
       // celles-là — 27 % d'écart sur une fiche Marstoy erronée, corrigée depuis.
       skipped = (catalog.skipped || []).slice().sort((a, b) =>
         (a.gapPct ?? Infinity) - (b.gapPct ?? Infinity) || a.code.localeCompare(b.code));
-      skippedTab.hidden = !skipped.length;
-      if (skipped.length) skippedTab.textContent = `Écartées (${skipped.length})`;
       repo = catalog.repo || null;
       // La barre oblique finale est facile à copier depuis le tableau de bord
       // Cloudflare : on la retire plutôt que de fabriquer des « //api/… ».

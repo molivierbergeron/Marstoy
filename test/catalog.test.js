@@ -359,8 +359,22 @@ test('le build publie les écartées avec de quoi les vérifier', async () => {
   assert.match(build, /gapPct/);
 
   const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
-  assert.match(html, /data-view="skipped"/);
   assert.match(html, /catalog\.skipped/);
+
+  // Neuf lignes ne justifient pas un onglet permanent : la vue s'atteint par un
+  // lien dans la ligne de statut, et les onglets restent à deux.
+  const tabs = [...html.matchAll(/class="tab"[^>]*data-view="([^"]+)"/g)].map((m) => m[1]);
+  assert.deepEqual(tabs, ['all', 'list']);
+  assert.match(html, /label: `\$\{skipped\.length\} écartée/);
+  assert.match(html, /label: 'Retour au catalogue', view: 'all'/);
+});
+
+test('la ligne de statut n\'est pas construite en innerHTML', async () => {
+  // Elle contient la devise, qui vient d'une page Marstoy : la passer en HTML
+  // ouvrirait une injection depuis leur boutique.
+  const html = await readFile(path.join(root, 'site/index.html'), 'utf8');
+  assert.match(html, /statusEl\.replaceChildren\(\.\.\.nodes\)/);
+  assert.doesNotMatch(html, /statusEl\.innerHTML/);
 });
 
 test('la barre des totaux disparaît vraiment quand elle est masquée', async () => {
