@@ -404,6 +404,11 @@
     "currency": "CAD",
     "fetchedAt": "2026-08-07T03:51:39.890Z"
   },
+  "11380": {
+    "price": 179.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-08-20T22:08:44.377Z"
+  },
   "11384": {
     "price": 179.99,
     "currency": "CAD",
@@ -1513,6 +1518,11 @@
     "price": 219.99,
     "currency": "CAD",
     "fetchedAt": "2026-07-26T13:33:14.358Z"
+  },
+  "76473": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-08-20T22:08:44.377Z"
   },
   "76964": {
     "price": 49.99,
