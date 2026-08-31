@@ -289,6 +289,11 @@
     "currency": "CAD",
     "fetchedAt": "2026-07-26T13:33:14.358Z"
   },
+  "10341": {
+    "price": 339.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-08-31T13:50:47.796Z"
+  },
   "10343": {
     "price": 39.99,
     "currency": "CAD",
@@ -707,17 +712,17 @@
   "40588": {
     "price": null,
     "currency": null,
-    "fetchedAt": "2026-07-26T13:33:14.358Z"
+    "fetchedAt": "2026-08-31T13:50:47.796Z"
   },
   "40693": {
     "price": null,
     "currency": null,
-    "fetchedAt": "2026-07-26T13:33:14.358Z"
+    "fetchedAt": "2026-08-31T13:50:47.796Z"
   },
   "40761": {
     "price": null,
     "currency": null,
-    "fetchedAt": "2026-07-26T13:33:14.358Z"
+    "fetchedAt": "2026-08-31T13:50:47.796Z"
   },
   "40805": {
     "price": 54.99,
@@ -1404,6 +1409,11 @@
     "currency": "CAD",
     "fetchedAt": "2026-07-26T13:33:14.358Z"
   },
+  "76300": {
+    "price": 379.99,
+    "currency": "CAD",
+    "fetchedAt": "2026-08-31T13:50:47.796Z"
+  },
   "76326": {
     "price": 79.99,
     "currency": "CAD",
@@ -1597,6 +1607,6 @@
   "5004590": {
     "price": null,
     "currency": null,
-    "fetchedAt": "2026-07-26T13:33:14.358Z"
+    "fetchedAt": "2026-08-31T13:50:47.796Z"
   }
 }
