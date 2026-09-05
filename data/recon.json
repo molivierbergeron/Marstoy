@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-08-31T13:45:24.859Z",
+  "startedAt": "2026-09-05T21:11:10.306Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -15,16 +15,16 @@
   ],
   "counts": {
     "products.json": 0,
-    "sitemapProductUrls": 2955,
-    "sitemapWithLastmod": 2955,
-    "sitemapCodesFromUrl": 320,
-    "pagesFetched": 2955,
-    "marstoyOwnMocs": 2627,
-    "sitemap": 323,
-    "unique": 322,
-    "legoPricesCached": 320,
-    "legoPricesFetched": 6,
-    "legoPricesResolved": 2
+    "sitemapProductUrls": 2994,
+    "sitemapWithLastmod": 2994,
+    "sitemapCodesFromUrl": 332,
+    "pagesFetched": 2994,
+    "marstoyOwnMocs": 2650,
+    "sitemap": 335,
+    "unique": 334,
+    "legoPricesCached": 322,
+    "legoPricesFetched": 11,
+    "legoPricesResolved": 10
   },
   "samples": {
     "sitemap": "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><!--This is the parent sitemap linking to additional sitemaps for products, collections and pages as shown below. The sitemap can not be edited manually, but is kept up to date in real time.--><sitemap><loc>https://www.marstoy.com/sitemap_page_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_blogs_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_products_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_collections_1.xml</loc></sitemap></sitemapindex>",
@@ -38,6 +38,11 @@
         "parts": 3146
       },
       {
+        "url": "https://www.marstoy.com/products/the-rack-railway",
+        "title": "The Rack Railway",
+        "parts": 1987
+      },
+      {
         "url": "https://www.marstoy.com/products/the-1087x-modified-fleet-maintenance-vehicle",
         "title": "The 1087x Modified Fleet Maintenance Vehicle",
         "parts": 604
@@ -48,29 +53,9 @@
         "parts": 392
       },
       {
-        "url": "https://www.marstoy.com/products/the-rack-railway",
-        "title": "The Rack Railway",
-        "parts": 1987
-      },
-      {
         "url": "https://www.marstoy.com/products/the-60tp-tank",
         "title": "The 60tp Tank",
         "parts": 1128
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-su-7",
-        "title": "The Su 7",
-        "parts": 725
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-mill-house",
-        "title": "The Mill House",
-        "parts": 1873
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-rolling-waves-ride",
-        "title": "The Rolling Waves Ride",
-        "parts": 2118
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-jeep",
@@ -78,14 +63,29 @@
         "parts": 522
       },
       {
+        "url": "https://www.marstoy.com/products/the-block-gun",
+        "title": "The Block Gun",
+        "parts": 307
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-su-7",
+        "title": "The Su 7",
+        "parts": 725
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-rolling-waves-ride",
+        "title": "The Rolling Waves Ride",
+        "parts": 2118
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-mill-house",
+        "title": "The Mill House",
+        "parts": 1873
+      },
+      {
         "url": "https://www.marstoy.com/products/the-bumper-boats",
         "title": "The Bumper Boats",
         "parts": 2044
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-whirl-wind-coaster",
-        "title": "The Whirl Wind Coaster",
-        "parts": 1707
       },
       {
         "url": "https://www.marstoy.com/products/the-chinese-style-garage",
@@ -93,14 +93,9 @@
         "parts": 763
       },
       {
-        "url": "https://www.marstoy.com/products/the-great-white",
-        "title": "The Great White",
-        "parts": 2932
-      },
-      {
-        "url": "https://www.marstoy.com/products/moc-the-jesus-the-shepherd",
-        "title": "Moc The Jesus the Shepherd",
-        "parts": null
+        "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
+        "title": "The Castle Roller Coaster",
+        "parts": 2584
       },
       {
         "url": "https://www.marstoy.com/products/moc-the-st-joseph",
@@ -108,9 +103,14 @@
         "parts": null
       },
       {
-        "url": "https://www.marstoy.com/products/the-block-gun",
-        "title": "The Block Gun",
-        "parts": 307
+        "url": "https://www.marstoy.com/products/the-whirl-wind-coaster",
+        "title": "The Whirl Wind Coaster",
+        "parts": 1707
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-great-white",
+        "title": "The Great White",
+        "parts": 2932
       },
       {
         "url": "https://www.marstoy.com/products/the-1-20-fierce-chariot",
@@ -123,24 +123,14 @@
         "parts": null
       },
       {
-        "url": "https://www.marstoy.com/products/the-1-20-extreme-speed",
-        "title": "The 1:20 Extreme Speed",
+        "url": "https://www.marstoy.com/products/the-1-20-sports-car",
+        "title": "The 1:20 Sports Car",
         "parts": 391
       },
       {
-        "url": "https://www.marstoy.com/products/the-atlantic-defensive-position",
-        "title": "The Atlantic Defensive Position",
-        "parts": 1232
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
-        "title": "The Dragon Motobcycle",
-        "parts": 585
-      },
-      {
-        "url": "https://www.marstoy.com/products/the-castle-roller-coaster",
-        "title": "The Castle Roller Coaster",
-        "parts": 2584
+        "url": "https://www.marstoy.com/products/the-1-20-extreme-speed",
+        "title": "The 1:20 Extreme Speed",
+        "parts": 391
       },
       {
         "url": "https://www.marstoy.com/products/the-harley-motorcycle",
@@ -148,25 +138,35 @@
         "parts": 467
       },
       {
+        "url": "https://www.marstoy.com/products/moc-the-jesus-the-shepherd",
+        "title": "Moc The Jesus the Shepherd",
+        "parts": null
+      },
+      {
+        "url": "https://www.marstoy.com/products/the-dragon-motobcycle",
+        "title": "The Dragon Motobcycle",
+        "parts": 585
+      },
+      {
         "url": "https://www.marstoy.com/products/the-wukongs-car",
         "title": "The Wukong's Car",
         "parts": 716
       },
       {
-        "url": "https://www.marstoy.com/products/the-air-glider",
-        "title": "The Air Glider",
-        "parts": 900
+        "url": "https://www.marstoy.com/products/the-atlantic-defensive-position",
+        "title": "The Atlantic Defensive Position",
+        "parts": 1232
       }
     ]
   },
   "strategyUsed": "sitemap",
   "error": null,
   "httpErrors": {
-    "403": 5
+    "403": 9
   },
-  "finishedAt": "2026-08-31T13:50:39.634Z",
+  "finishedAt": "2026-09-05T21:17:17.536Z",
   "bricksetStatus": {
-    "ok": 9
+    "ok": 8
   },
   "unresolved": [],
   "rejected": [
