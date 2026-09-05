@@ -3,9 +3,10 @@
  * métro ou en magasin). Réseau d'abord pour rester à jour, cache en secours.
  */
 
-const CACHE = 'marstoy-real-v2';
+const CACHE = 'marstoy-real-v3';
 const SHELL = [
-  './', './index.html', './manifest.webmanifest', './data/catalog.json',
+  './', './index.html', './analytics.js', './manifest.webmanifest',
+  './data/catalog.json',
   './icon.svg', './icon-192.png', './icon-512.png',
 ];
 
