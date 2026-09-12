@@ -1,6 +1,6 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-09-11T21:54:23.051Z",
+  "startedAt": "2026-09-12T18:10:03.714Z",
   "attempts": [
     {
       "strategy": "products.json",
@@ -30,17 +30,14 @@
     "sitemap": 0,
     "collections": 0,
     "unique": 0,
-    "legoPricesCached": 333,
-    "legoPricesFetched": 4599,
-    "legoPricesResolved": 3590
+    "legoPricesCached": 4932,
+    "legoPricesFetched": 0
   },
   "samples": {},
   "strategyUsed": null,
   "error": null,
-  "finishedAt": "2026-09-11T21:54:23.504Z",
-  "bricksetStatus": {
-    "ok": 47
-  },
+  "finishedAt": "2026-09-12T18:10:04.099Z",
+  "bricksetStatus": {},
   "unresolved": [],
   "rejected": []
 }
