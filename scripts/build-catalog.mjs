@@ -17,6 +17,7 @@ import { fileURLToPath } from 'node:url';
 import { discoverCatalog } from './lib/marstoy.mjs';
 import { loadLegoIndex, resolveFromIndex } from './lib/legodata.mjs';
 import { buildFromLegoIndex } from './lib/reverse-catalog.mjs';
+import { chooseCatalogSource } from './lib/fallback.mjs';
 import { fetchCadRate, toCad } from './lib/fx.mjs';
 import { loadLegoPrices } from './lib/legoprice.mjs';
 
@@ -125,15 +126,51 @@ for (const item of products) {
   }
 }
 
-// Marstoy nous a fermé la porte (protection anti-robot, changement de site) :
-// on retourne le problème et on part du catalogue LEGO, dont on déduit la
-// référence Marstoy. On perd les prix et la certitude que le set est en vente,
-// mais on garde l'essentiel : chercher par vrai nom et obtenir le code.
+// Marstoy nous a fermé la porte (protection anti-robot, changement de site).
+// Deux situations très différentes, à ne pas traiter pareil :
+//
+//  - un catalogue issu de la boutique est déjà publié. On le garde. Le
+//    remplacer par des références calculées perdrait les titres, les prix et
+//    la certitude que le set est en vente : ce serait une dégradation déguisée
+//    en rafraîchissement. Des données d'il y a une semaine valent mieux que des
+//    suppositions d'aujourd'hui.
+//  - il n'y a rien à préserver (premier run, ou catalogue déjà dégradé). Là, on
+//    retourne le problème et on part du catalogue LEGO, dont on déduit la
+//    référence Marstoy. On perd les prix, mais on garde l'essentiel : chercher
+//    par vrai nom et obtenir le code à taper dans leur recherche.
 let mode = 'catalogue Marstoy';
 let products_ = resolved;
 
 if (!resolved.length) {
-  log('Aucun produit Marstoy exploitable — repli sur le catalogue LEGO complet.');
+  const previous = await readJson('site/data/catalog.json', null);
+
+  if (chooseCatalogSource({ resolvedCount: resolved.length, previous }) === 'preserve') {
+    log(`Aucun produit Marstoy exploitable — catalogue publié conservé tel quel (${previous.counts.resolved} références du ${previous.generatedAt}).`);
+    // Le catalogue n'est pas réécrit : ni son contenu ni sa date ne doivent
+    // bouger. Le rapport, lui, dit que ce run n'a rien pu rafraîchir.
+    await writeJson(
+      'data/recon.json',
+      {
+        ...recon,
+        preservedCatalog: {
+          generatedAt: previous.generatedAt ?? null,
+          resolved: previous.counts.resolved,
+          reason: 'marstoy.com inaccessible — aucune référence lue',
+        },
+        unresolved: unresolved.slice(0, 200),
+        rejected: rejected.slice(0, 100),
+      },
+      { pretty: true },
+    );
+    console.warn(
+      "\n⚠ marstoy.com n'a rien livré : le catalogue déjà publié est conservé, sans\n" +
+        'rafraîchissement. Voir data/recon.json (`attempts`, `samples.blockedResponse`)\n' +
+        'pour les codes HTTP obtenus et adapter le scraper.',
+    );
+    process.exit(0);
+  }
+
+  log('Aucun produit Marstoy exploitable et rien à préserver — repli sur le catalogue LEGO complet.');
   products_ = buildFromLegoIndex(index);
   mode = 'catalogue LEGO (Marstoy inaccessible)';
   log(`  ${products_.length} sets retenus (≥ 200 pièces, depuis 1998)`);
@@ -201,18 +238,29 @@ if (!process.env.BRICKSET_API_KEY) {
 // ce qui donne un classement utile dès le premier passage et exact ensuite.
 const firstSeen = await readJson('data/first-seen.json', {});
 const today = new Date().toISOString();
+// Le registre atteste d'une arrivée *chez Marstoy*. Un repli sur le catalogue
+// LEGO n'a rien observé en boutique : il n'a donc rien à y inscrire. Le run du
+// 11 septembre 2026 y avait daté 4570 références jamais vues en vente, ce qui
+// aurait privé chacune d'elles de son statut de nouveauté le jour venu.
+const fromMarstoy = mode === 'catalogue Marstoy';
 let newcomers = 0;
 
 for (const item of products_) {
   if (!firstSeen[item.code]) {
-    firstSeen[item.code] = item.lastmod || today;
-    newcomers += 1;
+    if (fromMarstoy) {
+      firstSeen[item.code] = item.lastmod || today;
+      newcomers += 1;
+    }
   }
-  item.addedAt = firstSeen[item.code];
+  item.addedAt = firstSeen[item.code] ?? null;
   delete item.lastmod;
 }
-await writeJson('data/first-seen.json', firstSeen, { pretty: true });
-log(`Arrivées : ${newcomers} référence(s) vue(s) pour la première fois`);
+if (fromMarstoy) await writeJson('data/first-seen.json', firstSeen, { pretty: true });
+log(
+  fromMarstoy
+    ? `Arrivées : ${newcomers} référence(s) vue(s) pour la première fois`
+    : 'Arrivées : registre laissé intact (aucune observation en boutique)',
+);
 
 // Les arrivées récentes d'abord. L'année du set départage tant que le registre
 // n'a pas d'historique, sinon tout serait à égalité au premier passage.

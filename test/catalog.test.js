@@ -394,4 +394,26 @@ test('le registre des arrivées est tenu d\'un passage à l\'autre', async () =>
 
   const workflow = await readFile(path.join(root, '.github/workflows/build-catalog.yml'), 'utf8');
   assert.match(workflow, /data\/first-seen\.json/, 'le registre doit être commité, sinon il repart de zéro');
+
+  // Le registre atteste d'une arrivée chez Marstoy. Un repli sur le catalogue
+  // LEGO n'observe rien en boutique : il ne doit rien y inscrire, sinon il
+  // date des milliers de références jamais vues en vente et leur vole leur
+  // statut de nouveauté le jour où elles arrivent vraiment.
+  assert.match(build, /if \(fromMarstoy\) await writeJson\('data\/first-seen\.json'/);
+});
+
+test('le workflow ne fait échouer que sur un catalogue réellement vide', async () => {
+  const workflow = await readFile(path.join(root, '.github/workflows/build-catalog.yml'), 'utf8');
+
+  // Marstoy muet n'est pas un catalogue vide : échouer là-dessus sautait les
+  // étapes suivantes, si bien que Pages n'était plus publié du tout — une
+  // panne au lieu d'une dégradation.
+  assert.match(workflow, /if: steps\.summary\.outputs\.published == '0'/);
+  assert.doesNotMatch(
+    workflow,
+    /Échouer si le catalogue est vide[\s\S]{0,200}?resolved == '0'/,
+    "le garde-fou doit regarder ce qui est publié, pas ce que Marstoy a livré",
+  );
+  // La dégradation doit rester visible : une alerte, pas un silence.
+  assert.match(workflow, /::warning::marstoy\.com/);
 });

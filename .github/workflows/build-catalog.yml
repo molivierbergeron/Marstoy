@@ -148,10 +148,21 @@ jobs:
               console.log('resolved=' + c.counts.resolved);
               console.log(JSON.stringify(c.products.slice(0, 8), null, 2));
             " | tee /tmp/head.txt
-            echo "resolved=$(node -p "require('./site/data/catalog.json').counts.resolved")" >> "$GITHUB_OUTPUT"
+            # `resolved` = références venues de marstoy.com ; `published` = ce
+            # que le site contient réellement, repli sur le catalogue LEGO
+            # compris. Les deux sont nécessaires : l'une dit si la boutique a
+            # répondu, l'autre si le site est publiable.
+            {
+              echo "resolved=$(node -p "require('./site/data/catalog.json').counts.resolved ?? 0")"
+              echo "published=$(node -p "require('./site/data/catalog.json').counts.published ?? 0")"
+            } >> "$GITHUB_OUTPUT"
           else
-            echo "resolved=0" >> "$GITHUB_OUTPUT"
+            { echo 'resolved=0'; echo 'published=0'; } >> "$GITHUB_OUTPUT"
           fi
+
+          # Le build a-t-il gardé le catalogue précédent faute de mieux ? Ce cas
+          # ne se lit pas dans catalog.json — justement parce qu'il n'y touche pas.
+          echo "preserved=$(node -p "Boolean(require('./data/recon.json').preservedCatalog)" 2>/dev/null || echo false)" >> "$GITHUB_OUTPUT"
 
       - name: Commiter le catalogue et le rapport
         if: always()
@@ -193,10 +204,44 @@ jobs:
             sleep $((attempt * 3))
           done
 
-      - name: Échouer si le catalogue est vide
-        if: steps.summary.outputs.resolved == '0'
+      # Marstoy inaccessible n'est pas un catalogue vide. Le build a deux
+      # réponses (garder le catalogue précédent, ou se replier sur le catalogue
+      # LEGO) et le site reste publiable dans les deux cas. Faire échouer le job
+      # ici sautait toutes les étapes suivantes : Pages n'était plus publié du
+      # tout, ce qui remplaçait une dégradation par une panne. On signale fort,
+      # sans faire échouer.
+      - name: Signaler un rafraîchissement dégradé
+        if: steps.summary.outputs.preserved == 'true' || (steps.summary.outputs.resolved == '0' && steps.summary.outputs.published != '0')
+        env:
+          PRESERVED: ${{ steps.summary.outputs.preserved }}
+          PUBLISHED: ${{ steps.summary.outputs.published }}
         run: |
-          echo "::error::Aucun produit résolu — voir data/recon.json dans le dépôt."
+          say() { echo "$1" >> "$GITHUB_STEP_SUMMARY"; }
+          if [ "$PRESERVED" = 'true' ]; then
+            echo "::warning::marstoy.com inaccessible — catalogue précédent conservé, aucun rafraîchissement."
+            say '## ⚠ Catalogue non rafraîchi — marstoy.com inaccessible'
+            say ''
+            say "Aucune référence n'a pu être lue sur la boutique. Le catalogue déjà publié"
+            say '(**'"$PUBLISHED"'** références, issues d'"'"'un run où la boutique répondait) est **conservé tel quel** :'
+            say 'le remplacer par des références calculées ferait perdre les titres, les prix et'
+            say 'la certitude que le set est en vente.'
+          else
+            echo "::warning::marstoy.com n'a rien livré — site publié depuis le catalogue LEGO ($PUBLISHED sets)."
+            say '## ⚠ Mode dégradé — repli sur le catalogue LEGO'
+            say ''
+            say "Aucune référence n'a pu être lue sur la boutique, et aucun catalogue antérieur"
+            say "n'était préservable : le site est publié depuis le catalogue LEGO (**$PUBLISHED** sets),"
+            say 'avec la référence Marstoy calculée. Manquent alors les prix Marstoy et la'
+            say 'certitude que le set est en vente.'
+          fi
+          say ''
+          say 'Le détail des refus est dans `data/recon.json` : `attempts`, `counts.forbidden`, et'
+          say '`samples.blockedResponse` — le corps de la première réponse refusée, qui dit *qui* bloque.'
+
+      - name: Échouer si le catalogue est vide
+        if: steps.summary.outputs.published == '0'
+        run: |
+          echo "::error::Aucun set publié, même en repli — voir data/recon.json dans le dépôt."
           exit 1
 
       # Tant que Pages n'est pas activé (Settings → Pages → Source : GitHub
