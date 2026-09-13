@@ -54,6 +54,12 @@ function describe(body, contentType) {
 }
 
 const results = [];
+// robots.txt passe là où tout le reste est défié : c'est le seul document que
+// la boutique nous laisse lire, et il déclare ses propres sitemaps. On le garde
+// en entier pour sonder ensuite exactement les adresses qu'il annonce — suivre
+// robots.txt, c'est la manière la plus canonique de lire un site.
+const declaredSitemaps = new Set();
+let robotsShown = false;
 
 for (const host of HOSTS) {
   for (const path of PATHS) {
@@ -63,6 +69,17 @@ for (const host of HOSTS) {
     try {
       const response = await get(url, { retries: 0, accept: ACCEPT[path] || '*/*' });
       const body = await response.text();
+
+      if (path === '/robots.txt' && response.status === 200) {
+        for (const match of body.matchAll(/^\s*sitemap:\s*(\S+)/gim)) declaredSitemaps.add(match[1]);
+        if (!robotsShown) {
+          console.log(`=== robots.txt intégral (${url}) ===\n`);
+          console.log(body.trim());
+          console.log();
+          robotsShown = true;
+        }
+      }
+
       results.push({
         url,
         status: response.status,
@@ -73,6 +90,36 @@ for (const host of HOSTS) {
     } catch (error) {
       results.push({ url, status: 'erreur', server: '', challenged: false, note: String(error?.message || error).slice(0, 90) });
     }
+  }
+}
+
+// Les sitemaps que la boutique déclare elle-même. Ils peuvent vivre ailleurs
+// que sur les hôtes devinés plus haut — c'est tout l'intérêt de les lire.
+const alreadyTried = new Set(HOSTS.flatMap((h) => PATHS.map((p) => h + p)));
+if (declaredSitemaps.size) {
+  console.log('=== Sitemaps déclarés par robots.txt ===\n');
+  for (const url of declaredSitemaps) {
+    console.log(`  ${url}${alreadyTried.has(url) ? '  (déjà dans la liste ci-dessous)' : ''}`);
+  }
+  console.log();
+} else {
+  console.log('robots.txt ne déclare aucun sitemap.\n');
+}
+
+for (const url of declaredSitemaps) {
+  if (alreadyTried.has(url)) continue;
+  try {
+    const response = await get(url, { retries: 0, accept: 'application/xml' });
+    const body = await response.text();
+    results.push({
+      url: `${url}  (déclaré par robots.txt)`,
+      status: response.status,
+      server: response.headers.get('server') || '',
+      challenged: /just a moment|challenges\.cloudflare\.com/i.test(body),
+      note: describe(body, response.headers.get('content-type')),
+    });
+  } catch (error) {
+    results.push({ url: `${url}  (déclaré par robots.txt)`, status: 'erreur', server: '', challenged: false, note: String(error?.message || error).slice(0, 90) });
   }
 }
 
