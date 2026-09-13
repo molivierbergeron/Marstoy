@@ -4,10 +4,33 @@
  * fonctionné (`data/recon.json`) pour pouvoir affiner ensuite.
  */
 
-import { get, mapLimit, sleep } from './fetch-util.mjs';
+import { forbiddenCount, get, mapLimit, sleep } from './fetch-util.mjs';
 import { extractCodes } from '../../lib/setnum.js';
 
 const ORIGIN = process.env.MARSTOY_ORIGIN || 'https://www.marstoy.com';
+
+/**
+ * Un 403 sans son corps ne dit pas qui refuse : Cloudflare, le WAF de ShopLine,
+ * une page de défi JavaScript ? On garde le premier rencontré — c'est la seule
+ * pièce à conviction disponible après coup, depuis le dépôt.
+ */
+export async function noteBlocked(recon, response, where) {
+  if (recon.samples.blockedResponse) return;
+  let body = null;
+  try {
+    body = (await response.text()).slice(0, 1200);
+  } catch {
+    // Corps illisible : le statut et les en-têtes restent parlants.
+  }
+  recon.samples.blockedResponse = {
+    where,
+    status: response.status,
+    server: response.headers?.get?.('server') ?? null,
+    cfRay: response.headers?.get?.('cf-ray') ?? null,
+    contentType: response.headers?.get?.('content-type') ?? null,
+    body,
+  };
+}
 
 /** Produit normalisé, quelle que soit la stratégie. */
 const product = ({ code, title, url, image, price, currency, marstoyParts, lastmod, source }) => ({
@@ -38,6 +61,7 @@ async function fromShopifyJson(recon) {
     const response = await get(url, { accept: 'application/json' });
     if (!response.ok) {
       recon.attempts.push({ strategy: 'products.json', page, status: response.status });
+      if (response.status === 403) await noteBlocked(recon, response, url);
       break;
     }
 
@@ -173,7 +197,10 @@ async function fromSitemap(recon) {
   for (const root of roots) {
     const response = await get(root, { accept: 'application/xml' });
     recon.attempts.push({ strategy: 'sitemap', url: root, status: response.status });
-    if (!response.ok) continue;
+    if (!response.ok) {
+      if (response.status === 403) await noteBlocked(recon, response, root);
+      continue;
+    }
     const xml = await response.text();
     if (!recon.samples.sitemap) recon.samples.sitemap = xml.slice(0, 1500);
     const locs = [...xml.matchAll(/<loc>\s*([^<\s]+)\s*<\/loc>/g)].map((match) => match[1]);
@@ -184,11 +211,24 @@ async function fromSitemap(recon) {
     if (productSitemaps.length) break;
   }
 
+  // L'index peut être refusé alors que les sitemaps produits, eux, répondent —
+  // ils ne sont pas servis par la même règle. Leurs noms ne sont pas devinés :
+  // c'est la numérotation que l'index lui-même affichait quand il répondait
+  // encore (`sitemap_products_1.xml`, gardée dans data/recon.json).
+  if (!productSitemaps.length) {
+    for (let i = 1; i <= 3; i += 1) productSitemaps.push(`${ORIGIN}/sitemap_products_${i}.xml`);
+    recon.attempts.push({ strategy: 'sitemap', url: 'sitemap_products_N.xml', status: 'essai direct' });
+  }
+
   // url -> lastmod, en lisant chaque bloc <url> plutôt que les <loc> isolées.
   const urls = new Map();
   for (const sitemap of [...new Set(productSitemaps)].slice(0, 20)) {
     const response = await get(sitemap, { accept: 'application/xml' });
-    if (!response.ok) continue;
+    if (!response.ok) {
+      recon.attempts.push({ strategy: 'sitemap-produits', url: sitemap, status: response.status });
+      if (response.status === 403) await noteBlocked(recon, response, sitemap);
+      continue;
+    }
     const xml = await response.text();
     if (!recon.samples.productSitemap) recon.samples.productSitemap = xml.slice(0, 1200);
 
@@ -222,9 +262,12 @@ async function fromSitemap(recon) {
 
   const fetched = await mapLimit(targets, 4, async (url) => {
     try {
-      const response = await get(url, { accept: 'text/html' });
+      // Une fiche s'ouvre normalement depuis la boutique : le dire évite de
+      // ressembler à un robot qui tire des URL de nulle part.
+      const response = await get(url, { accept: 'text/html', referer: `${ORIGIN}/` });
       if (!response.ok) {
         httpErrors.set(response.status, (httpErrors.get(response.status) || 0) + 1);
+        if (response.status === 403) await noteBlocked(recon, response, url);
         return null;
       }
       const html = await response.text();
@@ -265,7 +308,10 @@ async function fromCollections(recon) {
     const url = `${ORIGIN}/collections/all?page=${page}`;
     const response = await get(url, { accept: 'text/html' });
     recon.attempts.push({ strategy: 'collections', page, status: response.status });
-    if (!response.ok) break;
+    if (!response.ok) {
+      if (response.status === 403) await noteBlocked(recon, response, url);
+      break;
+    }
     const html = await response.text();
     if (page === 1 && !recon.samples.collectionPage) recon.samples.collectionPage = html.slice(0, 6000);
 
@@ -329,6 +375,10 @@ export async function discoverCatalog() {
   }
 
   recon.counts.unique = byCode.size;
+  // Un catalogue vide avec des 403 partout n'a pas la même cause qu'un
+  // catalogue vide sans aucun refus : la distinction se lit ici.
+  recon.counts.forbidden = forbiddenCount();
+  recon.blocked = byCode.size === 0 && forbiddenCount() > 0;
   recon.finishedAt = new Date().toISOString();
   return { products: [...byCode.values()], recon };
 }
