@@ -96,6 +96,16 @@ for (const host of HOSTS) {
 // Les sitemaps que la boutique déclare elle-même. Ils peuvent vivre ailleurs
 // que sur les hôtes devinés plus haut — c'est tout l'intérêt de les lire.
 const alreadyTried = new Set(HOSTS.flatMap((h) => PATHS.map((p) => h + p)));
+if (declaredSitemaps.size) {
+  console.log('=== Sitemaps déclarés par robots.txt ===\n');
+  for (const url of declaredSitemaps) {
+    console.log(`  ${url}${alreadyTried.has(url) ? '  (déjà dans la liste ci-dessous)' : ''}`);
+  }
+  console.log();
+} else {
+  console.log('robots.txt ne déclare aucun sitemap.\n');
+}
+
 for (const url of declaredSitemaps) {
   if (alreadyTried.has(url)) continue;
   try {
