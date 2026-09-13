@@ -1,0 +1,31 @@
+name: Sonder les portes d'entrée Marstoy
+
+# Le conteneur de développement n'a pas d'accès sortant vers marstoy.com : ce
+# runner est la seule fenêtre d'où constater ce qui répond encore. À relancer
+# chaque fois que la boutique change ses défenses — la sortie dit quelle
+# adresse utiliser, ou qu'il n'y en a aucune.
+
+on:
+  workflow_dispatch:
+    inputs:
+      store_id:
+        description: Identifiant de boutique ShopLine (laisser vide pour celui connu)
+        required: false
+        default: ''
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Sonder
+        env:
+          SHOPLINE_STORE_ID: ${{ inputs.store_id }}
+        run: |
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          node scripts/probe-origins.mjs | tee -a "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
