@@ -128,11 +128,56 @@ et le jeton reste sur ton téléphone.
 Un `204` sans contenu veut dire que c'est parti ; le catalogue est à jour ~4
 minutes plus tard.
 
-### Si le catalogue sort vide
+### Si le catalogue ne se rafraîchit plus
 
-Le workflow écrit `data/recon.json` dans le dépôt : il contient les stratégies
-tentées, les codes HTTP obtenus et des extraits des réponses de marstoy.com.
-C'est fait pour ça — ouvre-le, ou donne-le moi, et on adapte le scraper.
+Le workflow écrit `data/recon.json` dans le dépôt : stratégies tentées, codes
+HTTP obtenus, et — depuis septembre 2026 — le corps de la première réponse
+refusée (`samples.blockedResponse`), qui dit *qui* bloque. Ouvre-le, ou
+donne-le moi.
+
+**Depuis le 11 septembre 2026, marstoy.com est derrière un défi JavaScript
+Cloudflare** (« Just a moment... »). Il vise les IP de centre de données, donc
+les runners GitHub le prennent de plein fouet : le build ne lit plus rien de la
+boutique. Il ne se dégrade pas pour autant — il **conserve le catalogue déjà
+publié** et signale le run en jaune. Le site continue de servir les dernières
+vraies données, simplement elles vieillissent.
+
+Pour vérifier si une autre porte s'est rouverte : Actions → **« Sonder les
+portes d'entrée Marstoy »** → *Run workflow*. La sortie dit quelle adresse
+utiliser, ou qu'il n'y en a aucune.
+
+#### Rafraîchir depuis ta machine
+
+Ton navigateur, lui, passe le défi : ton IP est résidentielle. Le même build
+lancé depuis ton Mac a donc toutes les chances d'aboutir là où le runner échoue.
+
+```sh
+npm ci
+node scripts/build-catalog.mjs        # ~3 min, va chercher Marstoy puis Rebrickable
+git add data site/data && git commit -m 'Rafraîchit le catalogue Marstoy'
+git push
+```
+
+Puis Actions → « Construire le catalogue et publier le site » → *Run workflow*,
+qui publiera le catalogue que tu viens de pousser. Le runner réessaiera Marstoy,
+échouera, **et conservera ton catalogue frais** — c'est exactement ce que fait
+la règle de préservation. Un simple `git push` ne suffit pas à republier : le
+workflow ignore volontairement les modifications de `site/data/**`, sans quoi il
+se relancerait sur ses propres commits.
+
+Si le build échoue aussi chez toi, `data/recon.json` le dira, et le défi vise
+alors autre chose que l'IP.
+
+#### Les autres voies
+
+- Demander à Marstoy un flux produits, ou la mise en liste blanche du runner.
+- Un **runner auto-hébergé** sur une machine à toi : c'est la version
+  automatique du paragraphe ci-dessus, le planning hebdomadaire retrouve son
+  sens.
+- Rester en mode LEGO calculé (`buildFromLegoIndex`) : on garde la recherche
+  par vrai nom et le code à taper chez Marstoy, on perd les prix et la
+  certitude que le set est en vente. C'est le repli automatique **quand il n'y
+  a aucun catalogue à préserver**, pas un remplacement de données réelles.
 
 ---
 
