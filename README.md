@@ -157,13 +157,30 @@ réglages HTTP/2, capacité à exécuter le JavaScript du défi. `node` n'a rien
 navigateur sur aucun de ces points, et aucun en-tête ajouté n'y change quoi que
 ce soit — d'où l'inutilité d'insister de ce côté.
 
-Reste une question ouverte, tranchée par `scripts/try-browser.sh` : un **vrai**
-navigateur, piloté depuis la même machine, passe-t-il ? Le défi est fait pour
-les laisser passer. Si oui, la collecte redevient possible sur cette base ; si
-non, la porte est close et il faut demander un accès à Marstoy.
+**Ce qui passe, en revanche : un vrai Chrome avec fenêtre.** Vérifié le
+14 septembre 2026. Le détail compte — un Chrome *sans* interface (headless) est
+défié lui aussi ; c'est la fenêtre visible, le profil persistant et le Chrome du
+système qui font la différence.
+
+La collecte passe donc par là (`scripts/lib/marstoy-browser.mjs`) : on ouvre la
+page d'accueil jusqu'à ce que le défi tombe, puis on emprunte le canal HTTP du
+navigateur, qui porte le cookie obtenu. Les pages ne sont pas chargées dans un
+onglet — c'est inutilement lent, et Chrome enveloppe le XML dans sa visionneuse,
+si bien qu'on récupérerait ce cadre au lieu du document.
+
+Deux conséquences à connaître :
+
+- **Ça ne peut pas tourner sur un runner GitHub**, qui n'a pas de session
+  graphique. Le workflow hebdomadaire continue donc d'échouer à lire la
+  boutique, de conserver le catalogue publié, et de passer au vert avec une
+  alerte. Le rafraîchissement, lui, se fait depuis la machine de l'auteur.
+- `products.json` est définitivement mort : Marstoy tourne sur **ShopLine**, pas
+  Shopify, et cette adresse rend du HTML. Seul le sitemap compte.
+
+Pour re-vérifier l'état du mur à tout moment :
 
 ```sh
-bash ~/Marstoy/scripts/try-browser.sh
+curl -fsSL https://raw.githubusercontent.com/molivierbergeron/Marstoy/refs/heads/claude/marstoy-iphone-lego-images-r7u3nd/scripts/try-browser.sh | bash
 ```
 
 #### Rafraîchir depuis ta machine — une seule commande

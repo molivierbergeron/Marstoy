@@ -42,7 +42,27 @@ async function writeJson(file, data, { pretty = false } = {}) {
 // La découverte passe d'abord et son rapport est écrit tout de suite : même si
 // le téléchargement Rebrickable échoue ensuite, on garde de quoi diagnostiquer.
 log('Découverte du catalogue Marstoy…');
-const { products, recon } = await discoverCatalog();
+
+// Depuis septembre 2026, Cloudflare défie tout ce qui n'est pas un navigateur :
+// `fetch` est refusé aussi bien depuis un runner GitHub que depuis une machine
+// personnelle. MARSTOY_BROWSER=1 fait passer la découverte par un vrai Chrome,
+// seul capable de franchir le défi. Le reste du build (Rebrickable, taux de
+// change, prix LEGO) n'est pas concerné et garde `fetch`.
+let transport = null;
+if (process.env.MARSTOY_BROWSER) {
+  const { ouvrirTransport } = await import('./lib/marstoy-browser.mjs');
+  transport = await ouvrirTransport({ log: (message) => log(`  ${message}`) });
+}
+
+let products;
+let recon;
+try {
+  ({ products, recon } = await discoverCatalog(transport ? { get: transport.get } : {}));
+} finally {
+  // Une fenêtre de navigateur laissée ouverte survivrait au script.
+  await transport?.close();
+}
+
 log(`  stratégie retenue : ${recon.strategyUsed || 'aucune'} — ${products.length} référence(s)`);
 await writeJson('data/recon.json', recon, { pretty: true });
 

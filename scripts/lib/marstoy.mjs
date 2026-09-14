@@ -4,7 +4,7 @@
  * fonctionné (`data/recon.json`) pour pouvoir affiner ensuite.
  */
 
-import { forbiddenCount, get, mapLimit, sleep } from './fetch-util.mjs';
+import { forbiddenCount, get as getParDefaut, mapLimit, sleep } from './fetch-util.mjs';
 import { extractCodes } from '../../lib/setnum.js';
 
 const ORIGIN = process.env.MARSTOY_ORIGIN || 'https://www.marstoy.com';
@@ -54,7 +54,7 @@ const product = ({ code, title, url, image, price, currency, marstoyParts, lastm
  * Stratégie 1 — `products.json` (Shopify). La plus riche : titres, images,
  * prix, handles, en une poignée de requêtes.
  */
-async function fromShopifyJson(recon) {
+async function fromShopifyJson(recon, get) {
   const products = [];
   for (let page = 1; page <= 40; page += 1) {
     const url = `${ORIGIN}/products.json?limit=250&page=${page}`;
@@ -190,7 +190,7 @@ export function extractProductDetails(html, url) {
  * Stratégie 2 — sitemap produits, puis fiche de chaque produit. Plus lente mais
  * quasi universelle (et le sitemap est fait pour être lu par des robots).
  */
-async function fromSitemap(recon) {
+async function fromSitemap(recon, get) {
   const roots = [`${ORIGIN}/sitemap.xml`, `${ORIGIN}/sitemap_index.xml`];
   const productSitemaps = [];
 
@@ -302,7 +302,7 @@ async function fromSitemap(recon) {
 }
 
 /** Stratégie 3 — pages collection en HTML, dernier recours. */
-async function fromCollections(recon) {
+async function fromCollections(recon, get) {
   const products = [];
   for (let page = 1; page <= 30; page += 1) {
     const url = `${ORIGIN}/collections/all?page=${page}`;
@@ -333,7 +333,14 @@ async function fromCollections(recon) {
 }
 
 /** Lance les stratégies dans l'ordre et garde la première qui donne du volume. */
-export async function discoverCatalog() {
+/**
+ * @param {{ get?: Function }} options — `get` permet de brancher un autre
+ *   transport que `fetch`. Depuis septembre 2026, Cloudflare défie tout ce qui
+ *   n'est pas un navigateur : la seule façon de lire la boutique est de passer
+ *   par le canal HTTP d'un vrai Chrome (voir marstoy-browser.mjs), qui porte le
+ *   cookie obtenu en franchissant le défi.
+ */
+export async function discoverCatalog({ get = getParDefaut } = {}) {
   const recon = {
     origin: ORIGIN,
     startedAt: new Date().toISOString(),
@@ -353,7 +360,7 @@ export async function discoverCatalog() {
   let products = [];
   for (const [name, run] of strategies) {
     try {
-      const found = await run(recon);
+      const found = await run(recon, get);
       recon.counts[name] = found.length;
       if (found.length > products.length) {
         products = found;
