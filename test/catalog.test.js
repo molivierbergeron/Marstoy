@@ -417,3 +417,34 @@ test('le workflow ne fait échouer que sur un catalogue réellement vide', async
   // La dégradation doit rester visible : une alerte, pas un silence.
   assert.match(workflow, /::warning::marstoy\.com/);
 });
+
+test('le catalogue n\'efface pas ce que seul le runner sait', async () => {
+  const build = await readFile(path.join(root, 'scripts/build-catalog.mjs'), 'utf8');
+
+  // L'adresse du Worker des favoris vient d'une variable de dépôt, absente
+  // d'un build local. Publier `null` couperait le site de son Worker : les
+  // listes synchronisées disparaîtraient de l'écran alors qu'elles sont
+  // intactes côté Cloudflare. On hérite du dernier catalogue publié.
+  assert.match(
+    build,
+    /favorites: process\.env\.FAVORIS_API_URL \|\| previous\?\.api\?\.favorites \|\| null/,
+  );
+  // Même chose pour le dépôt : sans lui, le bouton de reconstruction du site
+  // ne sait plus quoi déclencher.
+  assert.match(build, /process\.env\.GITHUB_REPOSITORY \|\| previous\?\.repo\?\.slug \|\| null/);
+  assert.match(build, /process\.env\.GITHUB_REF_NAME \|\| previous\?\.repo\?\.ref \|\| null/);
+});
+
+test('le catalogue livré garde l\'adresse du Worker des favoris', async () => {
+  const catalog = JSON.parse(await readFile(path.join(root, 'site/data/catalog.json'), 'utf8'));
+
+  // Le 14 septembre 2026, un build local l'a publié à null et les favoris ont
+  // disparu de l'écran. Ce test regarde le fichier réellement livré, pas
+  // seulement le code qui le produit.
+  assert.ok(
+    catalog.api?.favorites,
+    'api.favorites est vide : le site rangera les favoris dans le navigateur seulement',
+  );
+  assert.match(catalog.api.favorites, /^https:\/\//);
+  assert.ok(catalog.repo?.slug, 'repo.slug est vide : la reconstruction depuis le site ne marchera pas');
+});

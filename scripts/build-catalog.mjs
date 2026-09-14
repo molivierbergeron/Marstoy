@@ -164,9 +164,11 @@ for (const item of products) {
 let mode = 'catalogue Marstoy';
 let products_ = resolved;
 
-if (!resolved.length) {
-  const previous = await readJson('site/data/catalog.json', null);
+// Le catalogue déjà publié sert deux fois : à décider s'il faut le préserver,
+// et à hériter de ce que l'environnement du runner est seul à savoir.
+const previous = await readJson('site/data/catalog.json', null);
 
+if (!resolved.length) {
   if (chooseCatalogSource({ resolvedCount: resolved.length, previous }) === 'preserve') {
     log(`Aucun produit Marstoy exploitable — catalogue publié conservé tel quel (${previous.counts.resolved} références du ${previous.generatedAt}).`);
     // Le catalogue n'est pas réécrit : ni son contenu ni sa date ne doivent
@@ -299,11 +301,19 @@ const catalog = {
   mode,
   // Adresse du Worker des favoris. Absente, le site range les listes dans le
   // navigateur seulement — rien ne casse, la synchronisation disparaît.
-  api: { favorites: process.env.FAVORIS_API_URL || null },
+  // Adresse du Worker des favoris. Elle vient d'une variable de dépôt, que seul
+  // le runner possède : un build local la trouverait vide et publierait `null`.
+  // Le site se couperait alors de son Worker et rangerait les listes dans le
+  // navigateur seulement — les favoris synchronisés disparaîtraient de l'écran
+  // alors qu'ils sont intacts côté Cloudflare. On hérite donc du dernier
+  // catalogue publié plutôt que d'effacer ce qu'on ne sait pas.
+  api: { favorites: process.env.FAVORIS_API_URL || previous?.api?.favorites || null },
   // De quoi laisser le site déclencher une reconstruction à la demande.
   repo: {
-    slug: process.env.GITHUB_REPOSITORY || null,
-    ref: process.env.GITHUB_REF_NAME || null,
+    // Même raison : hors runner, GITHUB_* n'existe pas, et sans ces valeurs le
+    // bouton de reconstruction du site ne sait plus quoi déclencher.
+    slug: process.env.GITHUB_REPOSITORY || previous?.repo?.slug || null,
+    ref: process.env.GITHUB_REF_NAME || previous?.repo?.ref || null,
     workflow: 'build-catalog.yml',
     approxMinutes: 4,
   },
