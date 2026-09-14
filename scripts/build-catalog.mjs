@@ -57,7 +57,10 @@ if (process.env.MARSTOY_BROWSER) {
 let products;
 let recon;
 try {
-  ({ products, recon } = await discoverCatalog(transport ? { get: transport.get } : {}));
+  ({ products, recon } = await discoverCatalog({
+    ...(transport ? { get: transport.get } : {}),
+    log: (message) => log(`  ${message}`),
+  }));
 } finally {
   // Une fenêtre de navigateur laissée ouverte survivrait au script.
   await transport?.close();
