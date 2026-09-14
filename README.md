@@ -199,6 +199,23 @@ une à deux minutes plus tard.
 **Rien à installer** : le build n'utilise que des modules Node natifs, aucun
 paquet npm. (`npm ci` n'a rien à faire ici et échouerait hors du dépôt.)
 
+#### La clé Brickset, pour les prix des nouveautés
+
+Les prix de détail LEGO viennent de l'API Brickset. Le workflow lit le secret
+GitHub ; un rafraîchissement local, lui, ne le voit pas — les prix déjà connus
+restent affichés (ils sont dans `data/lego-prices.json`), mais ceux des
+nouveaux sets ne sont pas cherchés.
+
+Pour la donner au script, une fois pour toutes :
+
+```sh
+echo 'BRICKSET_API_KEY=ta_clé' >> ~/Marstoy/.env
+```
+
+`.env` est ignoré par git — **c'est le seul endroit correct pour une clé dans un
+dépôt public.** Ne la colle ni dans un fichier suivi, ni dans une conversation :
+les journaux se gardent, les dépôts publics s'indexent.
+
 #### Un raccourci sur le Bureau
 
 À installer une fois :

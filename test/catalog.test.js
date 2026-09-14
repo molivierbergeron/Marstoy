@@ -448,3 +448,18 @@ test('le catalogue livré garde l\'adresse du Worker des favoris', async () => {
   assert.match(catalog.api.favorites, /^https:\/\//);
   assert.ok(catalog.repo?.slug, 'repo.slug est vide : la reconstruction depuis le site ne marchera pas');
 });
+
+test('une clé locale ne peut pas partir dans le dépôt', async () => {
+  const gitignore = await readFile(path.join(root, '.gitignore'), 'utf8');
+  const lignes = gitignore.split('\n').map((l) => l.trim());
+
+  // Le dépôt est public : un fichier de clés qui ne serait pas ignoré partirait
+  // en ligne au premier `git add -A`. refresh-local.sh lit `.env`, donc c'est
+  // lui qui doit être couvert.
+  assert.ok(lignes.includes('.env'), '.env doit être ignoré : refresh-local.sh y lit la clé Brickset');
+
+  const script = await readFile(path.join(root, 'scripts/refresh-local.sh'), 'utf8');
+  assert.match(script, /if \[ -f \.env \]/, 'le script doit charger .env');
+  // La valeur ne doit jamais être affichée, même en aide.
+  assert.doesNotMatch(script, /echo.*\$\{?BRICKSET_API_KEY/);
+});
