@@ -74,4 +74,7 @@ if [ ! -d node_modules/playwright ]; then
 fi
 
 echo
+echo "▸ Une fenêtre de navigateur va s'ouvrir. Laisse-la travailler ;"
+echo "  elle se fermera toute seule à la fin."
+echo
 node scripts/probe-browser.mjs

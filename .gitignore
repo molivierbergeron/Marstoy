@@ -10,3 +10,6 @@ node_modules/
 # Rapport de reconnaissance : produit par le workflow (qui le force-add),
 # pas par les exécutions locales.
 data/recon.json
+
+# Profil du navigateur de la sonde (scripts/probe-browser.mjs).
+.profil-navigateur/

@@ -7,16 +7,32 @@
  * jugée, mais le client — Node annonce une signature TLS/HTTP qui n'est pas
  * celle d'un navigateur, et aucun en-tête n'y change quoi que ce soit.
  *
- * Reste une question, et une seule : un Chrome réel, piloté depuis cette même
- * machine, obtient-il les pages ? Le défi Cloudflare est *fait* pour laisser
- * passer les vrais navigateurs — si celui-ci passe, la collecte redevient
- * possible ; sinon, la porte est définitivement close et on arrête d'y croire.
+ * Premier essai : Chrome **sans interface** (headless), refusé lui aussi. Ce
+ * n'est pas concluant pour autant — un Chrome headless se détecte à des dizaines
+ * de détails et se fait défier là où le même Chrome, avec fenêtre, passe.
  *
- * Ce script ne collecte rien. Il charge trois adresses et dit ce qu'il a reçu.
+ * D'où cet essai-ci, le dernier de cette piste, au plus près d'une navigation
+ * ordinaire :
+ *   - une vraie fenêtre, visible ;
+ *   - le Google Chrome de la machine quand il est installé, pas le Chromium de
+ *     test ;
+ *   - un profil persistant, comme un navigateur qu'on rouvre ;
+ *   - le temps de résoudre le défi (jusqu'à 60 s), au lieu de 15 s chrono ;
+ *   - la page d'accueil d'abord : une fois le défi passé, le cookie obtenu vaut
+ *     pour les adresses suivantes.
+ *
+ * Le script ne collecte rien et ne publie rien. Il charge trois adresses et dit
+ * ce qu'il a reçu. Si ça échoue encore, la piste du navigateur est close.
  */
 
-const CIBLES = [
-  'https://www.marstoy.com/',
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const racine = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const PROFIL = path.join(racine, '.profil-navigateur');
+
+const ACCUEIL = 'https://www.marstoy.com/';
+const SUITE = [
   'https://www.marstoy.com/sitemap_products_1.xml',
   'https://www.marstoy.com/products.json?limit=1',
 ];
@@ -29,61 +45,101 @@ try {
   process.exit(2);
 }
 
-console.log('\n▸ Ouverture d\'un vrai navigateur…\n');
+const defie = (html) => /just a moment|challenges\.cloudflare\.com|cf-browser-verification/i.test(html);
 
-const navigateur = await chromium.launch({ headless: true });
-const contexte = await navigateur.newContext({
-  locale: 'en-US',
-  timezoneId: 'America/Toronto',
-  viewport: { width: 1280, height: 800 },
-});
-const page = await contexte.newPage();
+/** Ouvre une vraie fenêtre, avec le Chrome du système si on en trouve un. */
+async function ouvrir() {
+  const commun = {
+    headless: false,
+    viewport: { width: 1280, height: 820 },
+    locale: 'en-US',
+    timezoneId: 'America/Toronto',
+  };
+  try {
+    const contexte = await chromium.launchPersistentContext(PROFIL, { ...commun, channel: 'chrome' });
+    console.log('  (Google Chrome du système)\n');
+    return contexte;
+  } catch {
+    const contexte = await chromium.launchPersistentContext(PROFIL, commun);
+    console.log('  (Chromium fourni par Playwright — Chrome introuvable)\n');
+    return contexte;
+  }
+}
+
+console.log('\n▸ Ouverture d\'une vraie fenêtre de navigateur…');
+console.log('  Une fenêtre va s\'afficher. Laisse-la travailler, ne la ferme pas.\n');
+
+const contexte = await ouvrir();
+const page = contexte.pages()[0] ?? (await contexte.newPage());
+
+// --- La page d'accueil, avec le temps qu'il faut -------------------------
+
+console.log(`  ${ACCUEIL}`);
+let passe = false;
+try {
+  await page.goto(ACCUEIL, { waitUntil: 'domcontentloaded', timeout: 60000 });
+
+  // Le défi se résout tout seul, mais pas en un temps fixe. On regarde toutes
+  // les 3 secondes plutôt que de parier sur une durée.
+  for (let essai = 0; essai < 20; essai += 1) {
+    if (!defie(await page.content())) {
+      passe = true;
+      break;
+    }
+    if (essai === 0) process.stdout.write('    défi en cours');
+    process.stdout.write('.');
+    await page.waitForTimeout(3000);
+  }
+  console.log();
+  console.log(passe ? '    ✓ défi franchi\n' : '    ✗ défi toujours affiché après 60 s\n');
+} catch (error) {
+  console.log(`\n    ✗ ${String(error?.message || error).split('\n')[0].slice(0, 110)}\n`);
+}
+
+// --- Les adresses qui nous intéressent vraiment --------------------------
 
 let reussites = 0;
 
-for (const url of CIBLES) {
-  process.stdout.write(`  ${url}\n`);
-  try {
-    const reponse = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
-    const statut = reponse?.status() ?? 0;
+if (passe) {
+  for (const url of SUITE) {
+    console.log(`  ${url}`);
+    try {
+      const reponse = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
+      const statut = reponse?.status() ?? 0;
+      let contenu = await page.content();
 
-    // Le défi s'affiche puis se résout tout seul en quelques secondes : on lui
-    // laisse le temps avant de conclure.
-    let contenu = await page.content();
-    if (/just a moment|challenges\.cloudflare\.com/i.test(contenu)) {
-      process.stdout.write('    défi en cours, on patiente 15 s…\n');
-      await page.waitForTimeout(15000);
-      contenu = await page.content();
+      for (let essai = 0; essai < 10 && defie(contenu); essai += 1) {
+        await page.waitForTimeout(3000);
+        contenu = await page.content();
+      }
+
+      if (defie(contenu)) {
+        console.log(`    ✗ HTTP ${statut} — toujours le défi\n`);
+      } else {
+        reussites += 1;
+        console.log(`    ✓ HTTP ${statut} — ${contenu.replace(/\s+/g, ' ').slice(0, 110)}…\n`);
+      }
+    } catch (error) {
+      console.log(`    ✗ ${String(error?.message || error).split('\n')[0].slice(0, 110)}\n`);
     }
-
-    const encoreDefie = /just a moment|challenges\.cloudflare\.com/i.test(contenu);
-    const apercu = contenu.replace(/\s+/g, ' ').slice(0, 110);
-
-    if (encoreDefie) {
-      console.log(`    ✗ HTTP ${statut} — toujours le défi Cloudflare\n`);
-    } else {
-      reussites += 1;
-      console.log(`    ✓ HTTP ${statut} — ${apercu}…\n`);
-    }
-  } catch (error) {
-    console.log(`    ✗ ${String(error?.message || error).split('\n')[0].slice(0, 110)}\n`);
+    await page.waitForTimeout(2000);
   }
-  // Rythme poli : on n'est pas pressé, la boutique non plus.
-  await page.waitForTimeout(2000);
 }
 
-await navigateur.close();
+await contexte.close();
 
 console.log('=== Verdict ===\n');
-if (reussites === CIBLES.length) {
-  console.log('✓ Un vrai navigateur passe. La collecte automatique redevient possible :');
-  console.log('  envoie-moi cette sortie et je réécris le scraper sur cette base.\n');
-} else if (reussites > 0) {
-  console.log(`~ ${reussites} adresse(s) sur ${CIBLES.length} sont passées. Envoie-moi cette sortie,`);
-  console.log('  le détail décide de ce qui est récupérable.\n');
+if (passe && reussites === SUITE.length) {
+  console.log('✓ Un vrai navigateur passe, et les adresses utiles répondent.');
+  console.log('  La collecte redevient possible : envoie-moi cette sortie et je');
+  console.log('  réécris la découverte sur cette base.\n');
+} else if (passe) {
+  console.log(`~ Le défi est franchi, mais ${SUITE.length - reussites} adresse(s) sur ${SUITE.length} résistent.`);
+  console.log('  Envoie-moi cette sortie : le détail décide de ce qui est récupérable.\n');
 } else {
-  console.log('✗ Même un vrai navigateur est refusé depuis cette machine.');
-  console.log('  La porte est close : il faudra demander un accès à Marstoy.\n');
+  console.log('✗ Même une vraie fenêtre de Chrome est refusée depuis cette machine.');
+  console.log('  Cette fois la piste du navigateur est close pour de bon.');
+  console.log('  La suite n\'est plus technique : il faut demander un accès à Marstoy.\n');
 }
 
-process.exit(reussites === 0 ? 1 : 0);
+process.exit(passe ? 0 : 1);
