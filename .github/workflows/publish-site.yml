@@ -1,0 +1,56 @@
+name: Publier le site (catalogue déjà construit)
+
+# Le catalogue construit à la main, depuis une machine personnelle, arrive ici
+# par un simple `git push`. Sans ce workflow il ne serait jamais publié : celui
+# qui construit le catalogue ignore volontairement `site/data/**`, sinon il se
+# relancerait sur ses propres commits.
+#
+# On ne reconstruit rien : marstoy.com étant inaccessible depuis un runner, une
+# reconstruction ne ferait que constater le blocage. On publie ce qui a été
+# poussé, point.
+#
+# Les commits automatiques du build portent « [skip ci] » et ne déclenchent donc
+# pas ce workflow — seul un push humain le réveille.
+
+on:
+  push:
+    paths:
+      - 'site/data/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: catalog
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dire ce qu'on publie
+        run: |
+          node -e "
+            const c = require('./site/data/catalog.json');
+            const say = (s) => { console.log(s); require('node:fs').appendFileSync(process.env.GITHUB_STEP_SUMMARY, s + '\n'); };
+            say('## Catalogue publié');
+            say('');
+            say('- Construit le : **' + c.generatedAt + '**');
+            say('- Mode : ' + c.mode);
+            say('- Références : **' + c.counts.published + '** (dont ' + c.counts.resolved + ' lues chez Marstoy)');
+          "
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+      - id: deploy
+        uses: actions/deploy-pages@v4
