@@ -1,145 +1,77 @@
 #!/usr/bin/env node
 /**
- * Un vrai navigateur passe-t-il là où `fetch` échoue ?
+ * La boutique est-elle lisible, par le chemin exact qu'emprunte le build ?
  *
- * Constat du 14 septembre 2026 : le défi Cloudflare refuse aussi bien un runner
- * GitHub qu'une connexion résidentielle. Ce n'est donc pas l'adresse IP qui est
- * jugée, mais le client — Node annonce une signature TLS/HTTP qui n'est pas
- * celle d'un navigateur, et aucun en-tête n'y change quoi que ce soit.
+ * Version précédente de cette sonde : elle chargeait les adresses avec
+ * `page.goto` et concluait « ça passe ». Le build, lui, utilisait
+ * `contexte.request` — un client HTTP Node qui partage les cookies du
+ * navigateur mais pas sa pile réseau. Il s'est fait refuser alors que la sonde
+ * avait dit oui. Une sonde qui teste autre chose que le code réel ne prédit
+ * rien du tout.
  *
- * Premier essai : Chrome **sans interface** (headless), refusé lui aussi. Ce
- * n'est pas concluant pour autant — un Chrome headless se détecte à des dizaines
- * de détails et se fait défier là où le même Chrome, avec fenêtre, passe.
- *
- * D'où cet essai-ci, le dernier de cette piste, au plus près d'une navigation
- * ordinaire :
- *   - une vraie fenêtre, visible ;
- *   - le Google Chrome de la machine quand il est installé, pas le Chromium de
- *     test ;
- *   - un profil persistant, comme un navigateur qu'on rouvre ;
- *   - le temps de résoudre le défi (jusqu'à 60 s), au lieu de 15 s chrono ;
- *   - la page d'accueil d'abord : une fois le défi passé, le cookie obtenu vaut
- *     pour les adresses suivantes.
- *
- * Le script ne collecte rien et ne publie rien. Il charge trois adresses et dit
- * ce qu'il a reçu. Si ça échoue encore, la piste du navigateur est close.
+ * Celle-ci passe donc par `ouvrirTransport`, le transport du build lui-même.
+ * Ce qu'elle constate vaut pour la collecte.
  */
 
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { ouvrirTransport } from './lib/marstoy-browser.mjs';
 
-const racine = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const PROFIL = path.join(racine, '.profil-navigateur');
-
-const ACCUEIL = 'https://www.marstoy.com/';
-const SUITE = [
-  'https://www.marstoy.com/sitemap_products_1.xml',
-  'https://www.marstoy.com/products.json?limit=1',
+const ORIGIN = process.env.MARSTOY_ORIGIN || 'https://www.marstoy.com';
+const CIBLES = [
+  { url: `${ORIGIN}/sitemap.xml`, accept: 'application/xml', attendu: /<sitemapindex|<urlset/i },
+  { url: `${ORIGIN}/sitemap_products_1.xml`, accept: 'application/xml', attendu: /<urlset|<loc>/i },
 ];
 
-let chromium;
+const estDefi = (texte) => /just a moment|challenges\.cloudflare\.com/i.test(texte);
+
+console.log('\n▸ Ouverture du navigateur (le build fait exactement pareil)');
+console.log('  Une fenêtre va s\'afficher. Laisse-la travailler.\n');
+
+let transport;
 try {
-  ({ chromium } = await import('playwright'));
-} catch {
-  console.error("✗ Playwright n'est pas installé. Lance plutôt scripts/try-browser.sh.");
-  process.exit(2);
-}
-
-const defie = (html) => /just a moment|challenges\.cloudflare\.com|cf-browser-verification/i.test(html);
-
-/** Ouvre une vraie fenêtre, avec le Chrome du système si on en trouve un. */
-async function ouvrir() {
-  const commun = {
-    headless: false,
-    viewport: { width: 1280, height: 820 },
-    locale: 'en-US',
-    timezoneId: 'America/Toronto',
-  };
-  try {
-    const contexte = await chromium.launchPersistentContext(PROFIL, { ...commun, channel: 'chrome' });
-    console.log('  (Google Chrome du système)\n');
-    return contexte;
-  } catch {
-    const contexte = await chromium.launchPersistentContext(PROFIL, commun);
-    console.log('  (Chromium fourni par Playwright — Chrome introuvable)\n');
-    return contexte;
-  }
-}
-
-console.log('\n▸ Ouverture d\'une vraie fenêtre de navigateur…');
-console.log('  Une fenêtre va s\'afficher. Laisse-la travailler, ne la ferme pas.\n');
-
-const contexte = await ouvrir();
-const page = contexte.pages()[0] ?? (await contexte.newPage());
-
-// --- La page d'accueil, avec le temps qu'il faut -------------------------
-
-console.log(`  ${ACCUEIL}`);
-let passe = false;
-try {
-  await page.goto(ACCUEIL, { waitUntil: 'domcontentloaded', timeout: 60000 });
-
-  // Le défi se résout tout seul, mais pas en un temps fixe. On regarde toutes
-  // les 3 secondes plutôt que de parier sur une durée.
-  for (let essai = 0; essai < 20; essai += 1) {
-    if (!defie(await page.content())) {
-      passe = true;
-      break;
-    }
-    if (essai === 0) process.stdout.write('    défi en cours');
-    process.stdout.write('.');
-    await page.waitForTimeout(3000);
-  }
-  console.log();
-  console.log(passe ? '    ✓ défi franchi\n' : '    ✗ défi toujours affiché après 60 s\n');
+  transport = await ouvrirTransport({ log: (message) => console.log(`  ${message}`) });
 } catch (error) {
-  console.log(`\n    ✗ ${String(error?.message || error).split('\n')[0].slice(0, 110)}\n`);
+  console.error(`\n✗ ${error?.message || error}\n`);
+  process.exit(1);
 }
 
-// --- Les adresses qui nous intéressent vraiment --------------------------
-
+console.log();
 let reussites = 0;
 
-if (passe) {
-  for (const url of SUITE) {
+try {
+  for (const { url, accept, attendu } of CIBLES) {
     console.log(`  ${url}`);
     try {
-      const reponse = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45000 });
-      const statut = reponse?.status() ?? 0;
-      let contenu = await page.content();
+      const reponse = await transport.get(url, { accept });
+      const corps = await reponse.text();
 
-      for (let essai = 0; essai < 10 && defie(contenu); essai += 1) {
-        await page.waitForTimeout(3000);
-        contenu = await page.content();
-      }
-
-      if (defie(contenu)) {
-        console.log(`    ✗ HTTP ${statut} — toujours le défi\n`);
+      if (estDefi(corps)) {
+        console.log(`    ✗ HTTP ${reponse.status} — défi Cloudflare\n`);
+      } else if (!reponse.ok) {
+        console.log(`    ✗ HTTP ${reponse.status}\n`);
+      } else if (!attendu.test(corps)) {
+        // Un 200 qui ne contient pas ce qu'on attend est un piège : la page
+        // d'erreur d'une boutique répond souvent 200.
+        console.log(`    ✗ HTTP 200 mais pas le document attendu — ${corps.replace(/\s+/g, ' ').slice(0, 90)}…\n`);
       } else {
         reussites += 1;
-        console.log(`    ✓ HTTP ${statut} — ${contenu.replace(/\s+/g, ' ').slice(0, 110)}…\n`);
+        const liens = (corps.match(/<loc>/g) || []).length;
+        console.log(`    ✓ HTTP 200 — ${corps.length} octets${liens ? `, ${liens} adresse(s)` : ''}\n`);
       }
     } catch (error) {
       console.log(`    ✗ ${String(error?.message || error).split('\n')[0].slice(0, 110)}\n`);
     }
-    await page.waitForTimeout(2000);
   }
+} finally {
+  await transport.close();
 }
-
-await contexte.close();
 
 console.log('=== Verdict ===\n');
-if (passe && reussites === SUITE.length) {
-  console.log('✓ Un vrai navigateur passe, et les adresses utiles répondent.');
-  console.log('  La collecte redevient possible : envoie-moi cette sortie et je');
-  console.log('  réécris la découverte sur cette base.\n');
-} else if (passe) {
-  console.log(`~ Le défi est franchi, mais ${SUITE.length - reussites} adresse(s) sur ${SUITE.length} résistent.`);
-  console.log('  Envoie-moi cette sortie : le détail décide de ce qui est récupérable.\n');
+if (reussites === CIBLES.length) {
+  console.log('✓ La boutique répond par le chemin exact du build.');
+  console.log('  Lance le rafraîchissement : il empruntera le même transport.\n');
 } else {
-  console.log('✗ Même une vraie fenêtre de Chrome est refusée depuis cette machine.');
-  console.log('  Cette fois la piste du navigateur est close pour de bon.');
-  console.log('  La suite n\'est plus technique : il faut demander un accès à Marstoy.\n');
+  console.log(`✗ ${CIBLES.length - reussites} adresse(s) sur ${CIBLES.length} ne répondent pas.`);
+  console.log('  Envoie-moi cette sortie plutôt que de lancer une collecte de dix minutes.\n');
 }
 
-process.exit(passe ? 0 : 1);
+process.exit(reussites === CIBLES.length ? 0 : 1);
