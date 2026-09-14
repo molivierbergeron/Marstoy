@@ -146,27 +146,42 @@ Pour vérifier si une autre porte s'est rouverte : Actions → **« Sonder les
 portes d'entrée Marstoy »** → *Run workflow*. La sortie dit quelle adresse
 utiliser, ou qu'il n'y en a aucune.
 
-#### Rafraîchir depuis ta machine
+#### Rafraîchir depuis ta machine — une seule commande
 
-Ton navigateur, lui, passe le défi : ton IP est résidentielle. Le même build
-lancé depuis ton Mac a donc toutes les chances d'aboutir là où le runner échoue.
+Ton navigateur passe le défi Cloudflare parce que ta connexion est
+résidentielle. Le même build lancé depuis ton Mac aboutit donc là où le runner
+échoue. Colle ceci dans le Terminal, **depuis n'importe quel dossier** :
 
 ```sh
-npm ci
-node scripts/build-catalog.mjs        # ~3 min, va chercher Marstoy puis Rebrickable
-git add data site/data && git commit -m 'Rafraîchit le catalogue Marstoy'
-git push
+curl -fsSL https://raw.githubusercontent.com/molivierbergeron/Marstoy/refs/heads/claude/marstoy-iphone-lego-images-r7u3nd/scripts/refresh-local.sh | bash
 ```
 
-Puis Actions → « Construire le catalogue et publier le site » → *Run workflow*,
-qui publiera le catalogue que tu viens de pousser. Le runner réessaiera Marstoy,
-échouera, **et conservera ton catalogue frais** — c'est exactement ce que fait
-la règle de préservation. Un simple `git push` ne suffit pas à republier : le
-workflow ignore volontairement les modifications de `site/data/**`, sans quoi il
-se relancerait sur ses propres commits.
+Le script clone le dépôt s'il n'existe pas (dans `~/Marstoy`), le met à jour
+sinon, construit le catalogue, puis le pousse. Le site se met à jour tout seul
+une à deux minutes plus tard.
 
-Si le build échoue aussi chez toi, `data/recon.json` le dira, et le défi vise
-alors autre chose que l'IP.
+**Rien à installer** : le build n'utilise que des modules Node natifs, aucun
+paquet npm. (`npm ci` n'a rien à faire ici et échouerait hors du dépôt.)
+
+Si tu as déjà un clone ailleurs :
+
+```sh
+MARSTOY_DIR=~/chemin/vers/Marstoy bash ~/Marstoy/scripts/refresh-local.sh
+```
+
+Le script refuse de publier un catalogue dégradé. Trois issues possibles :
+
+| il affiche | ce que ça veut dire |
+| --- | --- |
+| `✓ N références lues` | la boutique a répondu, le catalogue est publié |
+| `✗ marstoy.com n'a rien livré` | le défi bloque aussi ta machine — rien n'est touché, `data/recon.json` dit pourquoi |
+| `✗ reparti du catalogue LEGO` | références calculées, sans prix : non publiées |
+
+Attention au piège si tu fais les étapes à la main : quand la boutique refuse,
+le build **ne réécrit pas** `site/data/catalog.json` — il préserve l'existant.
+Compter ses références renverrait l'ancien chiffre et laisserait croire à une
+réussite. C'est `data/recon.json` (`preservedCatalog`) qui dit la vérité sur le
+run qui vient d'avoir lieu.
 
 #### Les autres voies
 
