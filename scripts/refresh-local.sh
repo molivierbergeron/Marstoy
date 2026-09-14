@@ -81,6 +81,27 @@ fi
 
 export MARSTOY_BROWSER=1
 
+# --- Clés locales ----------------------------------------------------------
+#
+# `.env` est ignoré par git (voir .gitignore) : c'est le seul endroit correct
+# pour une clé dans un dépôt public. Le workflow, lui, lit les secrets GitHub —
+# les deux chemins n'ont pas à se connaître.
+if [ -f .env ]; then
+  set -a
+  # shellcheck disable=SC1091
+  . ./.env
+  set +a
+fi
+
+if [ -z "${BRICKSET_API_KEY:-}" ]; then
+  echo "  ℹ Sans BRICKSET_API_KEY, les prix de détail LEGO déjà connus restent"
+  echo "    affichés, mais ceux des nouveautés ne seront pas cherchés."
+  echo "    Pour l'ajouter, une fois pour toutes :"
+  echo "        echo 'BRICKSET_API_KEY=ta_clé' >> $DEPOT/.env"
+  echo "    (ce fichier est ignoré par git, la clé ne partira jamais en ligne)"
+  echo
+fi
+
 echo
 echo "▸ Construction du catalogue"
 echo "  Une fenêtre de navigateur va s'ouvrir : laisse-la travailler, ne la"
