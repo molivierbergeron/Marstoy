@@ -81,3 +81,31 @@ test('sans transport injecté, la découverte retombe sur fetch', async () => {
   assert.ok(appels > 0, 'le transport par défaut doit rester utilisable');
   assert.equal(recon.blocked, true);
 });
+
+test('la progression est annoncée exactement une fois par fiche', async () => {
+  const FICHES = 12;
+  const locs = Array.from(
+    { length: FICHES },
+    (_, i) => `<url><loc>https://www.marstoy.com/products/moc-m7033${i}-parts-kit</loc></url>`,
+  ).join('');
+
+  let echecs = 0;
+  const get = async (url) => {
+    if (url.endsWith('/sitemap.xml')) {
+      return reponse('<urlset>' + locs + '</urlset>');
+    }
+    if (url.includes('/products/')) {
+      // Une fiche sur trois casse : le compteur ne doit pas décrocher pour
+      // autant, ni compter deux fois celles qui aboutissent.
+      if (echecs++ % 3 === 0) throw new Error('connexion perdue');
+      return reponse('<html><head><title>MOC-marstoy</title></head></html>', { type: 'text/html' });
+    }
+    return reponse('', { status: 404 });
+  };
+
+  const messages = [];
+  await discoverCatalog({ get, log: (m) => messages.push(m) });
+
+  const final = messages.filter((m) => m.includes(`${FICHES}/${FICHES} fiches`));
+  assert.equal(final.length, 1, `attendu un seul « ${FICHES}/${FICHES} », vu : ${messages.join(' | ')}`);
+});

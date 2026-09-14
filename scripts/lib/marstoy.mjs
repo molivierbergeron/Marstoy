@@ -54,7 +54,7 @@ const product = ({ code, title, url, image, price, currency, marstoyParts, lastm
  * Stratégie 1 — `products.json` (Shopify). La plus riche : titres, images,
  * prix, handles, en une poignée de requêtes.
  */
-async function fromShopifyJson(recon, get) {
+async function fromShopifyJson(recon, get, log) {
   const products = [];
   for (let page = 1; page <= 40; page += 1) {
     const url = `${ORIGIN}/products.json?limit=250&page=${page}`;
@@ -190,7 +190,7 @@ export function extractProductDetails(html, url) {
  * Stratégie 2 — sitemap produits, puis fiche de chaque produit. Plus lente mais
  * quasi universelle (et le sitemap est fait pour être lu par des robots).
  */
-async function fromSitemap(recon, get) {
+async function fromSitemap(recon, get, log) {
   const roots = [`${ORIGIN}/sitemap.xml`, `${ORIGIN}/sitemap_index.xml`];
   const productSitemaps = [];
 
@@ -260,6 +260,23 @@ async function fromSitemap(recon, get) {
   // faite de leurs propres MOC, sans équivalent LEGO.
   let withoutCodeTotal = 0;
 
+  // Trois mille fiches à travers un navigateur, ça prend le temps que ça
+  // prend — mais un run muet est indiscernable d'un run planté. On dit où on
+  // en est, et à quel rythme, pour que l'attente reste une attente.
+  const debut = Date.now();
+  let faites = 0;
+  const avancer = () => {
+    faites += 1;
+    if (faites % 250 && faites !== targets.length) return;
+    const ecoule = (Date.now() - debut) / 1000;
+    const parSeconde = faites / Math.max(ecoule, 1);
+    const restant = Math.round((targets.length - faites) / Math.max(parSeconde, 0.01));
+    log(
+      `${faites}/${targets.length} fiches` +
+        (faites === targets.length ? '' : ` — encore ~${Math.ceil(restant / 60)} min`),
+    );
+  };
+
   const fetched = await mapLimit(targets, 4, async (url) => {
     try {
       // Une fiche s'ouvre normalement depuis la boutique : le dire évite de
@@ -291,6 +308,10 @@ async function fromSitemap(recon, get) {
     } catch (error) {
       httpErrors.set(String(error?.message || error).slice(0, 60), 1);
       return null;
+    } finally {
+      // Dans un `finally` : une fiche qui casse compte quand même, et une qui
+      // casse *après* la requête ne compte pas deux fois.
+      avancer();
     }
   });
 
@@ -302,7 +323,7 @@ async function fromSitemap(recon, get) {
 }
 
 /** Stratégie 3 — pages collection en HTML, dernier recours. */
-async function fromCollections(recon, get) {
+async function fromCollections(recon, get, log) {
   const products = [];
   for (let page = 1; page <= 30; page += 1) {
     const url = `${ORIGIN}/collections/all?page=${page}`;
@@ -340,7 +361,7 @@ async function fromCollections(recon, get) {
  *   par le canal HTTP d'un vrai Chrome (voir marstoy-browser.mjs), qui porte le
  *   cookie obtenu en franchissant le défi.
  */
-export async function discoverCatalog({ get = getParDefaut } = {}) {
+export async function discoverCatalog({ get = getParDefaut, log = () => {} } = {}) {
   const recon = {
     origin: ORIGIN,
     startedAt: new Date().toISOString(),
@@ -360,7 +381,7 @@ export async function discoverCatalog({ get = getParDefaut } = {}) {
   let products = [];
   for (const [name, run] of strategies) {
     try {
-      const found = await run(recon, get);
+      const found = await run(recon, get, log);
       recon.counts[name] = found.length;
       if (found.length > products.length) {
         products = found;
