@@ -26,18 +26,6 @@ const PROFIL_PAR_DEFAUT = path.join(racine, '.profil-navigateur');
 const estDefi = (texte) =>
   /just a moment|challenges\.cloudflare\.com|cf-browser-verification/i.test(texte);
 
-/** Adapte une réponse Playwright à ce que marstoy.mjs attend de `fetch`. */
-function adapter(reponse) {
-  const entetes = reponse.headers();
-  return {
-    ok: reponse.ok(),
-    status: reponse.status(),
-    headers: { get: (nom) => entetes[String(nom).toLowerCase()] ?? null },
-    text: () => reponse.text(),
-    json: () => reponse.json(),
-  };
-}
-
 /**
  * Ouvre un navigateur, franchit le défi, et rend un `get` utilisable par
  * `discoverCatalog`. Toujours refermer avec `close()`.
@@ -106,17 +94,55 @@ export async function ouvrirTransport({
   }
   log('défi Cloudflare franchi');
 
-  /** Même signature que le `get` de fetch-util, en passant par le navigateur. */
+  /**
+   * Même signature que le `get` de fetch-util, mais la requête part **de la
+   * page elle-même**.
+   *
+   * Le premier essai passait par `contexte.request` : il partage bien les
+   * cookies du navigateur, mais pas sa pile réseau — c'est un client HTTP Node
+   * déguisé. Résultat observé le 14 septembre 2026 : le défi était franchi sur
+   * l'accueil, et malgré cela chaque requête repartait en 403. Le cookie seul
+   * ne suffit pas, c'est l'empreinte du client qui est jugée.
+   *
+   * Un `fetch` exécuté dans la page emprunte au contraire la vraie pile de
+   * Chrome, avec son empreinte TLS et ses cookies. Et comme il rend le corps
+   * brut, il règle du même coup l'enveloppe de la visionneuse XML.
+   */
   async function get(url, { accept = '*/*', timeoutMs = 45000, referer = null } = {}) {
-    const entetes = { Accept: accept };
-    if (referer) entetes.Referer = referer;
-    const reponse = await contexte.request.get(url, {
-      headers: entetes,
-      timeout: timeoutMs,
-      // On veut lire le refus, pas lever dessus : marstoy.mjs le consigne.
-      failOnStatusCode: false,
-    });
-    return adapter(reponse);
+    const resultat = await page.evaluate(
+      async ({ url, accept, referer, timeoutMs }) => {
+        const arret = AbortSignal.timeout(timeoutMs);
+        const entetes = { Accept: accept };
+        if (referer) entetes.Referer = referer;
+        try {
+          const reponse = await fetch(url, {
+            headers: entetes,
+            credentials: 'include',
+            redirect: 'follow',
+            signal: arret,
+          });
+          return {
+            status: reponse.status,
+            ok: reponse.ok,
+            entetes: Object.fromEntries(reponse.headers.entries()),
+            corps: await reponse.text(),
+          };
+        } catch (error) {
+          return { erreur: String(error?.message || error) };
+        }
+      },
+      { url, accept, referer, timeoutMs },
+    );
+
+    if (resultat.erreur) throw new Error(`${url} : ${resultat.erreur}`);
+
+    return {
+      ok: resultat.ok,
+      status: resultat.status,
+      headers: { get: (nom) => resultat.entetes[String(nom).toLowerCase()] ?? null },
+      text: async () => resultat.corps,
+      json: async () => JSON.parse(resultat.corps),
+    };
   }
 
   return { get, close: () => contexte.close() };
