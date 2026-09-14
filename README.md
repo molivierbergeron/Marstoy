@@ -146,11 +146,30 @@ Pour vérifier si une autre porte s'est rouverte : Actions → **« Sonder les
 portes d'entrée Marstoy »** → *Run workflow*. La sortie dit quelle adresse
 utiliser, ou qu'il n'y en a aucune.
 
+#### Ce qui est jugé, c'est le client — pas l'adresse IP
+
+Essai du 14 septembre 2026 : le build lancé depuis une connexion résidentielle
+est refusé **exactement comme** depuis un runner GitHub. L'hypothèse « une IP
+domestique passera » est donc fausse, et il faut la dire fausse.
+
+Ce que Cloudflare examine, c'est la signature du client : empreinte TLS,
+réglages HTTP/2, capacité à exécuter le JavaScript du défi. `node` n'a rien d'un
+navigateur sur aucun de ces points, et aucun en-tête ajouté n'y change quoi que
+ce soit — d'où l'inutilité d'insister de ce côté.
+
+Reste une question ouverte, tranchée par `scripts/try-browser.sh` : un **vrai**
+navigateur, piloté depuis la même machine, passe-t-il ? Le défi est fait pour
+les laisser passer. Si oui, la collecte redevient possible sur cette base ; si
+non, la porte est close et il faut demander un accès à Marstoy.
+
+```sh
+bash ~/Marstoy/scripts/try-browser.sh
+```
+
 #### Rafraîchir depuis ta machine — une seule commande
 
-Ton navigateur passe le défi Cloudflare parce que ta connexion est
-résidentielle. Le même build lancé depuis ton Mac aboutit donc là où le runner
-échoue. Colle ceci dans le Terminal, **depuis n'importe quel dossier** :
+Utile dès que la boutique redevient lisible. Colle ceci dans le Terminal,
+**depuis n'importe quel dossier** :
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/molivierbergeron/Marstoy/refs/heads/claude/marstoy-iphone-lego-images-r7u3nd/scripts/refresh-local.sh | bash
@@ -162,6 +181,20 @@ une à deux minutes plus tard.
 
 **Rien à installer** : le build n'utilise que des modules Node natifs, aucun
 paquet npm. (`npm ci` n'a rien à faire ici et échouerait hors du dépôt.)
+
+#### Un raccourci sur le Bureau
+
+À installer une fois :
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/molivierbergeron/Marstoy/refs/heads/claude/marstoy-iphone-lego-images-r7u3nd/scripts/install-shortcut.sh | bash
+```
+
+Pose sur le Bureau un fichier **« Rafraîchir le catalogue Marstoy »**. Un
+double-clic ouvre le Terminal et lance le rafraîchissement ; la fenêtre reste
+ouverte jusqu'à ce que tu appuies sur une touche. Le raccourci va chercher la
+dernière version du script à chaque lancement, donc il n'est jamais à
+réinstaller, et retombe sur la copie de `~/Marstoy` s'il n'y a pas de réseau.
 
 Si tu as déjà un clone ailleurs :
 
