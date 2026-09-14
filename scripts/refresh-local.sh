@@ -65,8 +65,27 @@ fi
 
 # --- Le build --------------------------------------------------------------
 
+# --- Le navigateur, seul capable de lire la boutique -----------------------
+#
+# Cloudflare défie tout ce qui n'est pas un navigateur. Constaté le 14 septembre
+# 2026 : `fetch` est refusé depuis un runner GitHub comme depuis cette machine,
+# un Chrome sans interface aussi ; un Chrome ordinaire passe.
+
+if [ ! -d node_modules/playwright ]; then
+  echo
+  echo "▸ Première fois : installation de Playwright (~150 Mo, quelques minutes)"
+  echo
+  npm install --no-save --no-audit --no-fund playwright
+  npx --yes playwright install chromium
+fi
+
+export MARSTOY_BROWSER=1
+
 echo
-echo "▸ Construction du catalogue (~3 minutes : Marstoy, puis Rebrickable)"
+echo "▸ Construction du catalogue"
+echo "  Une fenêtre de navigateur va s'ouvrir : laisse-la travailler, ne la"
+echo "  ferme pas. Elle se referme toute seule à la fin."
+echo "  Compte une dizaine de minutes — près de 3000 fiches à parcourir."
 echo
 if ! node scripts/build-catalog.mjs; then
   echo
