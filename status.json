@@ -1,0 +1,675 @@
+{
+ "schema": 4,
+ "id": "marstoy",
+ "repo": "Marstoy",
+ "name": "Marstoy réel",
+ "one_liner": "Rend lisible le catalogue Marstoy : vrai nom du set LEGO, image officielle, prix en dollars canadiens et liste de souhaits partagée.",
+ "status": "actif",
+ "version": "Catalogue du 13 sept.",
+ "posture": {
+  "verdict": "Entretenir",
+  "why": "Le site fait ce qu'on attend. Depuis le 11 septembre, Marstoy bloque les robots : le catalogue ne se rafraîchit plus que depuis ton Mac. Pas de nouveau chantier tant qu'on ne sait pas si la liste sert à acheter."
+ },
+ "doing": "Rien en cours. Le catalogue a deux semaines ; les prix n'ont jamais été vérifiés contre un vrai panier.",
+ "headline": "Le site marche pour trois personnes. Le catalogue date du 13 septembre, parce que Marstoy bloque la mise à jour automatique. Les pourcentages d'économie affichés reposent sur une conversion de prix jamais vérifiée.",
+ "resume": [
+  "Le site affiche le dernier catalogue récupéré ; il ne se met plus à jour seul.",
+  "Rafraîchir : double-clic sur « Rafraîchir le catalogue Marstoy » sur le Bureau du Mac.",
+  "Les favoris sont partagés entre trois personnes, sans mot de passe."
+ ],
+ "links": [
+  {
+   "label": "Ouvrir le catalogue",
+   "url": "https://molivierbergeron.github.io/Marstoy/",
+   "kind": "app"
+  },
+  {
+   "label": "Statistiques de visite",
+   "url": "https://mobergeron.goatcounter.com/",
+   "kind": "stats"
+  },
+  {
+   "label": "Code sur GitHub",
+   "url": "https://github.com/molivierbergeron/Marstoy",
+   "kind": "code"
+  }
+ ],
+ "phases": [
+  {
+   "id": "idee",
+   "name": "Idée",
+   "goal": "Lire le catalogue sans décoder les références.",
+   "exit": "—",
+   "status": "fait",
+   "done_on": "2026-07-25"
+  },
+  {
+   "id": "poc",
+   "name": "Preuve de concept",
+   "goal": "Associer chaque référence à son set LEGO.",
+   "exit": "302 correspondances vérifiées.",
+   "status": "fait",
+   "done_on": "2026-07-28"
+  },
+  {
+   "id": "proto",
+   "name": "Prototype",
+   "goal": "Site avec images, prix et favoris.",
+   "exit": "Utilisable sur iPhone.",
+   "status": "fait",
+   "done_on": "2026-08-02"
+  },
+  {
+   "id": "lancement",
+   "name": "Lancement",
+   "goal": "Utilisé par trois personnes.",
+   "exit": "Mise à jour chaque semaine.",
+   "status": "fait",
+   "done_on": "2026-08-02"
+  },
+  {
+   "id": "amelioration",
+   "name": "Amélioration",
+   "goal": "Des prix fiables et un catalogue à jour.",
+   "exit": "Prix vérifié ; rafraîchissement régulier.",
+   "status": "en cours"
+  },
+  {
+   "id": "maturite",
+   "name": "Maturité",
+   "goal": "Alerte quand un favori baisse de prix.",
+   "exit": "—",
+   "status": "à venir"
+  }
+ ],
+ "objectives": [
+  {
+   "id": "O1",
+   "title": "Commander au bon prix, sans surprise au paiement",
+   "why": "Les « % d'économie » sont la raison d'utiliser le site. Ils reposent sur un prix relevé depuis les États-Unis puis converti.",
+   "benefit": "precision",
+   "measure": "Écart entre prix affiché et prix payé",
+   "now": "Jamais mesuré",
+   "target": "Écart connu, idéalement moins de 5 %",
+   "strategies": [
+    {
+     "id": "O1.S1",
+     "title": "Comparer à un vrai panier",
+     "why": "Dix minutes de ta part tranchent la question.",
+     "state": "active",
+     "initiatives": [
+      {
+       "id": "m-prix",
+       "title": "Comparer le prix affiché au prix d'un vrai panier",
+       "status": "à faire",
+       "owner": "marco",
+       "benefit": "precision",
+       "phase": "amelioration",
+       "effort": "XS",
+       "minutes": 10
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": "O2",
+   "title": "Un catalogue qui a moins d'un mois",
+   "why": "Un prix ou une disponibilité périmés font commander à tort.",
+   "benefit": "fiabilite",
+   "measure": "Âge du catalogue",
+   "now": "2 semaines (13 sept.)",
+   "target": "Moins d'un mois",
+   "strategies": [
+    {
+     "id": "O2.S1",
+     "title": "Rafraîchir depuis le Mac",
+     "why": "Seul un vrai Chrome avec fenêtre passe le blocage de Marstoy.",
+     "state": "active",
+     "initiatives": [
+      {
+       "id": "m-chrome",
+       "title": "Rafraîchissement par un vrai Chrome sur le Mac",
+       "status": "fait",
+       "owner": "ia",
+       "benefit": "fiabilite",
+       "phase": "amelioration",
+       "done_on": "2026-09-14"
+      },
+      {
+       "id": "m-refresh",
+       "title": "Rafraîchir le catalogue",
+       "status": "à faire",
+       "owner": "marco",
+       "benefit": "fiabilite",
+       "phase": "amelioration",
+       "effort": "XS",
+       "minutes": 5,
+       "detail": "Double-clic sur le raccourci du Bureau. Une fois par mois, ou avant une commande."
+      },
+      {
+       "id": "m-menage",
+       "title": "Retirer une clé d'API qui ne sert plus",
+       "status": "à faire",
+       "owner": "ia",
+       "benefit": "fiabilite",
+       "phase": "amelioration",
+       "effort": "XS"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "id": "dec:m-liste",
+   "question": "La liste sert-elle à acheter bientôt, ou à garder des envies ?",
+   "stakes": "Historique des prix et alertes de baisse n'ont de valeur que si vous achetez.",
+   "options": [
+    "Acheter bientôt",
+    "Garder des envies"
+   ],
+   "recommendation": "Garder des envies, jusqu'à preuve du contraire : le produit est alors complet, il suffit de l'entretenir.",
+   "minutes": 1,
+   "unblocks": []
+  },
+  {
+   "id": "dec:m-moc",
+   "question": "Ajoutes-tu les 2 609 créations maison de Marstoy ?",
+   "stakes": "89 % du catalogue ; change l'outil de « traducteur de références » en « catalogue complet ».",
+   "options": [
+    "Oui",
+    "Non"
+   ],
+   "recommendation": "Non. Sans set LEGO derrière, il n'y a rien à rendre lisible.",
+   "minutes": 1,
+   "unblocks": []
+  }
+ ],
+ "packages": [],
+ "opportunities": [
+  {
+   "title": "Vérifier le prix contre un vrai panier",
+   "value": 3,
+   "effort": "XS",
+   "context": "À ta prochaine visite sur marstoy.com",
+   "verdict": "Maintenant",
+   "why": "Tous les chiffres affichés en dépendent.",
+   "benefit": "precision"
+  },
+  {
+   "title": "Historique des prix et alerte de baisse",
+   "value": 2,
+   "effort": "M",
+   "context": "Si la liste sert à acheter",
+   "verdict": "À décider",
+   "why": "Utile pour commander au bon moment.",
+   "benefit": "experience"
+  },
+  {
+   "title": "Signaler les produits retirés",
+   "value": 1,
+   "effort": "S",
+   "context": "Si ça arrive souvent",
+   "verdict": "Plus tard",
+   "why": "Évite de cliquer sur une page morte.",
+   "benefit": "experience"
+  },
+  {
+   "title": "Alerte si le catalogue perd des produits",
+   "value": 1,
+   "effort": "S",
+   "context": "—",
+   "verdict": "Non",
+   "why": "Le rafraîchissement local refuse déjà de publier un catalogue dégradé.",
+   "benefit": "fiabilite"
+  },
+  {
+   "title": "Publier les 2 609 créations maison",
+   "value": 1,
+   "effort": "L",
+   "context": "—",
+   "verdict": "Non",
+   "why": "Rien à traduire ; change la nature de l'outil.",
+   "benefit": "experience"
+  },
+  {
+   "title": "Rafraîchissement rapide (seulement les fiches modifiées)",
+   "value": 1,
+   "effort": "L",
+   "context": "—",
+   "verdict": "Non",
+   "why": "Le rafraîchissement est manuel et mensuel : sa durée ne gêne plus.",
+   "benefit": "experience"
+  }
+ ],
+ "next": {
+  "type": "initiative",
+  "ref": "m-prix",
+  "why": "Dix minutes pour savoir si les chiffres affichés sont justes."
+ },
+ "chain": [
+  {
+   "label": "Catalogue Marstoy",
+   "state": "en cours",
+   "sub": "bloqué aux robots ; rafraîchi depuis le Mac",
+   "note": ""
+  },
+  {
+   "label": "Correspondance LEGO",
+   "state": "fait",
+   "sub": "302 sets vérifiés",
+   "note": ""
+  },
+  {
+   "label": "Prix en CAD",
+   "state": "fait",
+   "sub": "conversion au taux BCE",
+   "note": ""
+  },
+  {
+   "label": "Site et favoris partagés",
+   "state": "fait",
+   "sub": "3 personnes",
+   "note": ""
+  },
+  {
+   "label": "Prix vérifié",
+   "state": "manquant",
+   "sub": "jamais comparé à un vrai panier",
+   "note": ""
+  },
+  {
+   "label": "Alerte de baisse",
+   "state": "plus tard",
+   "sub": "historique des prix",
+   "note": ""
+  }
+ ],
+ "evolutions": [
+  {
+   "id": "me-prix",
+   "title": "Un prix auquel se fier",
+   "pitch": "Le « % d'économie » affiché correspond à ce que tu paies.",
+   "goal": "Commander au bon prix",
+   "benefit": "precision",
+   "value": 3,
+   "sessions": 0.5,
+   "horizon": "Maintenant",
+   "first_step": "Comparer une fiche à un vrai panier (10 min).",
+   "objective": "O1",
+   "depends": [],
+   "source": "repo",
+   "mode": "toi",
+   "why": "Tous les « % d'économie » affichés en dépendent.",
+   "implies": "10 minutes sur marstoy.com."
+  },
+  {
+   "id": "me-auto",
+   "title": "Rafraîchir sans y penser",
+   "pitch": "Le Mac rafraîchit le catalogue seul chaque semaine, avec Chrome, pendant la nuit.",
+   "goal": "Un catalogue à jour",
+   "benefit": "fiabilite",
+   "value": 2,
+   "sessions": 2,
+   "horizon": "Ensuite",
+   "first_step": "Demander à l'IA un lancement planifié (launchd) du rafraîchissement local.",
+   "objective": "O2",
+   "depends": [],
+   "source": "Claude",
+   "mode": "ia",
+   "why": "Aujourd'hui il faut penser à double-cliquer ; le catalogue vieillit sinon.",
+   "implies": "Le Mac doit être allumé la nuit du rafraîchissement."
+  },
+  {
+   "id": "me-baisse",
+   "title": "Alerte quand un favori baisse",
+   "pitch": "Vous commandez au bon moment, sans surveiller.",
+   "goal": "Commander au bon prix",
+   "benefit": "experience",
+   "value": 2,
+   "sessions": 3,
+   "horizon": "Plus tard",
+   "first_step": "Seulement si la liste sert à acheter.",
+   "objective": null,
+   "depends": [
+    "me-auto"
+   ],
+   "source": "repo",
+   "mode": "ia",
+   "why": "Commander au bon moment sans surveiller.",
+   "implies": "Seulement si la liste sert à acheter."
+  }
+ ],
+ "plan": {
+  "version": 4,
+  "updated_at": "2026-09-28T01:00",
+  "updated_by": "Claude",
+  "priorities_validated": false,
+  "changes": [
+   {
+    "version": 3,
+    "date": "2026-09-27",
+    "summary": "Analyse produit refaite : cap, objectifs sur mesure, décisions, lots d'une heure, idées triées."
+   },
+   {
+    "version": 4,
+    "date": "2026-09-28",
+    "summary": "Chaîne de valeur et évolutions majeures en séquence (maintenant, ensuite, plus tard)."
+   }
+  ]
+ },
+ "history": [
+  {
+   "date": "2026-09-13",
+   "title": "Lire la clé Brickset depuis un .env local",
+   "pr": 12
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Rétablir les favoris, et ne plus effacer ce que seul le runner sait",
+   "pr": 11
+  },
+  {
+   "date": "2026-09-14",
+   "title": "Ne plus effacer ce que seul le runner sait",
+   "pr": null
+  },
+  {
+   "date": "2026-09-14",
+   "title": "Rétablit l'adresse du Worker des favoris dans le catalogue publié",
+   "pr": null
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Dire où en est la collecte",
+   "pr": 10
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Faire partir les requêtes de la page, pas d'à côté",
+   "pr": 9
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Lire la boutique à travers un vrai navigateur",
+   "pr": 8
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Sonde navigateur : une vraie fenêtre, pas un headless",
+   "pr": 7
+  },
+  {
+   "date": "2026-09-13",
+   "title": "try-browser : se débrouiller depuis un clone périmé",
+   "pr": 6
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Raccourci de Bureau, et l'essai qui tranchera vraiment",
+   "pr": 5
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Une seule commande pour rafraîchir, depuis n'importe où",
+   "pr": 4
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Suivre les sitemaps déclarés par robots.txt",
+   "pr": 3
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Dire ce que robots.txt déclare, plutôt que de le sonder en silence",
+   "pr": null
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Suivre les sitemaps que robots.txt déclare",
+   "pr": null
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Sonder les portes restantes, et documenter le rafraîchissement local",
+   "pr": 2
+  },
+  {
+   "date": "2026-09-13",
+   "title": "Ne plus échouer, ni écraser le catalogue, quand marstoy.com refuse le runner",
+   "pr": 1
+  },
+  {
+   "date": "2026-08-19",
+   "title": "Remplace l'onglet des écartées par un lien dans la ligne de statut",
+   "pr": null
+  },
+  {
+   "date": "2026-08-17",
+   "title": "Affiche les références écartées dans l'app",
+   "pr": null
+  },
+  {
+   "date": "2026-08-17",
+   "title": "Montre l'URL finale après redirection dans le diagnostic",
+   "pr": null
+  },
+  {
+   "date": "2026-08-17",
+   "title": "Ajoute un diagnostic pour une fiche Marstoy isolée",
+   "pr": null
+  },
+  {
+   "date": "2026-08-16",
+   "title": "Répare l'export : le bouton ne faisait rien quand la copie échouait",
+   "pr": null
+  },
+  {
+   "date": "2026-08-16",
+   "title": "N'exporte pas le lien d'un produit retiré du catalogue",
+   "pr": null
+  },
+  {
+   "date": "2026-08-16",
+   "title": "Exporte la short list en colonnes collables dans un tableur",
+   "pr": null
+  },
+  {
+   "date": "2026-08-13",
+   "title": "Signale les favoris retirés du catalogue Marstoy : badge visuel, prix et référence LEGO conservés, lien Commander retiré (évite le 404)",
+   "pr": null
+  },
+  {
+   "date": "2026-08-10",
+   "title": "Épure le bandeau de statut : retire l'avertissement de tri bêta, condense la note de conversion CAD, retire la mention du prix LEGO, ajoute la date du dernier scan",
+   "pr": null
+  },
+  {
+   "date": "2026-08-07",
+   "title": "Renvoie la vision vers la page Notion où vit l'état courant",
+   "pr": null
+  },
+  {
+   "date": "2026-08-07",
+   "title": "Consigne la vision produit et trie par arrivée par défaut",
+   "pr": null
+  },
+  {
+   "date": "2026-08-01",
+   "title": "Rétablit « Plus récents » et isole les arrivées en bêta",
+   "pr": null
+  },
+  {
+   "date": "2026-08-01",
+   "title": "Trie par arrivée chez Marstoy plutôt que par année du set",
+   "pr": null
+  },
+  {
+   "date": "2026-08-01",
+   "title": "Répare le workflow rendu invalide par une condition interdite",
+   "pr": null
+  },
+  {
+   "date": "2026-08-01",
+   "title": "Vérifie le Worker des favoris depuis le runner",
+   "pr": null
+  },
+  {
+   "date": "2026-08-01",
+   "title": "Rend visible l'absence de FAVORIS_API_URL",
+   "pr": null
+  },
+  {
+   "date": "2026-08-01",
+   "title": "Fixe l'identifiant du namespace KV des favoris",
+   "pr": null
+  },
+  {
+   "date": "2026-08-01",
+   "title": "Crée les comptes par défaut sans variable à configurer",
+   "pr": null
+  },
+  {
+   "date": "2026-08-01",
+   "title": "Pré-inscrit les comptes et détaille le déploiement Cloudflare",
+   "pr": null
+  },
+  {
+   "date": "2026-08-01",
+   "title": "Ajoute les short lists partagées, avec comptes",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Adopte l'icône brique et loupe, et ferme un trou du contrôle des pièces",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Refond la ligne de prix et ajoute deux tris par économie",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Rend le commit du robot résistant aux courses, et le diagnostic lisible",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Retire le numéro de set de la ligne d'information",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Rend visible l'absence de clé Brickset",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Prend les prix de détail LEGO chez Brickset",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Raccourcit la mention de l'écart de prix",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Simplifie les cartes et ajoute la reconstruction à la demande",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Lève l'ambiguïté du symbole monétaire et contient les images manquantes",
+   "pr": null
+  },
+  {
+   "date": "2026-07-26",
+   "title": "Affiche les prix en dollars canadiens",
+   "pr": null
+  },
+  {
+   "date": "2026-07-25",
+   "title": "Documente la fraîcheur du catalogue et le rafraîchissement à la demande",
+   "pr": null
+  },
+  {
+   "date": "2026-07-25",
+   "title": "Affiche la couverture réelle du catalogue",
+   "pr": null
+  },
+  {
+   "date": "2026-07-25",
+   "title": "Ne retient que les correspondances LEGO réellement fiables",
+   "pr": null
+  },
+  {
+   "date": "2026-07-25",
+   "title": "Ne fait plus échouer le run quand GitHub Pages n'est pas activé",
+   "pr": null
+  },
+  {
+   "date": "2026-07-25",
+   "title": "Exploite le vrai catalogue Marstoy observé par le workflow",
+   "pr": null
+  },
+  {
+   "date": "2026-07-25",
+   "title": "Documente les deux voies dans le README",
+   "pr": null
+  },
+  {
+   "date": "2026-07-25",
+   "title": "Ajoute un site statique GitHub Pages construit par GitHub Actions",
+   "pr": null
+  },
+  {
+   "date": "2026-07-25",
+   "title": "Ajoute un diagnostic de référence utilisable sans déploiement",
+   "pr": null
+  },
+  {
+   "date": "2026-07-25",
+   "title": "Proxy Marstoy affichant les vrais noms et visuels LEGO",
+   "pr": null
+  }
+ ],
+ "git": {
+  "_generated": "AUTO — généré par tools/git_facts.py (future Action). Ne pas éditer à la main.",
+  "generated_at": "2026-09-27",
+  "last_commit": {
+   "sha": "c09660a",
+   "date": "2026-09-21",
+   "author": "github-actions[bot]",
+   "subject": "Rafraîchit le catalogue Marstoy [skip ci]"
+  },
+  "last_human_commit": {
+   "sha": "6bfeacd",
+   "date": "2026-09-13",
+   "subject": "Lire la clé Brickset depuis un .env local (#12)"
+  },
+  "commits_30d": 66,
+  "human_commits_30d": 33,
+  "auto_commits_30d": 33,
+  "active_days_30d": 3,
+  "human_commits_per_week_8w": [
+   2,
+   5,
+   4,
+   0,
+   1,
+   18,
+   14,
+   0
+  ],
+  "workflows": [
+   "build-catalog.yml",
+   "diagnose-product.yml",
+   "probe-origins.yml",
+   "publish-site.yml"
+  ]
+ }
+}
