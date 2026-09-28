@@ -216,6 +216,39 @@ echo 'BRICKSET_API_KEY=ta_clé' >> ~/Marstoy/.env
 dépôt public.** Ne la colle ni dans un fichier suivi, ni dans une conversation :
 les journaux se gardent, les dépôts publics s'indexent.
 
+#### Remettre le rafraîchissement en automatique
+
+Le workflow hebdomadaire ne peut plus lire la boutique : un runner GitHub n'a
+pas de session graphique, donc pas de Chrome, donc pas de franchissement du
+défi. L'automatisation doit tourner là où un navigateur peut s'ouvrir — sur le
+Mac.
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/molivierbergeron/Marstoy/refs/heads/claude/marstoy-iphone-lego-images-r7u3nd/scripts/install-schedule.sh | bash
+```
+
+Installe un **LaunchAgent** — le planificateur de macOS, dans la session de
+l'utilisateur. C'est un *Agent* et non un *Daemon* précisément pour ça : un
+service système n'aurait pas d'écran où ouvrir Chrome.
+
+Par défaut le lundi à 9 h 17. Pour choisir :
+
+```sh
+JOUR=3 HEURE=20 MINUTE=0 bash ~/Marstoy/scripts/install-schedule.sh   # mercredi 20 h
+```
+
+`JOUR` va de 0 (dimanche) à 6 (samedi). Si le Mac dort à l'heure dite, launchd
+lance la tâche **au réveil** plutôt que de sauter la semaine.
+
+| | |
+| --- | --- |
+| Essayer tout de suite | `launchctl start com.marstoy.refresh` |
+| Voir ce qui s'est passé | `cat ~/Marstoy/refresh.log` |
+| Arrêter | `bash ~/Marstoy/scripts/install-schedule.sh --remove` |
+
+Une fenêtre Chrome s'ouvre pendant la collecte. Elle ne peut pas être évitée :
+c'est elle qui passe le contrôle Cloudflare.
+
 #### Un raccourci sur le Bureau
 
 À installer une fois :

@@ -13,3 +13,6 @@ data/recon.json
 
 # Profil du navigateur de la sonde (scripts/probe-browser.mjs).
 .profil-navigateur/
+
+# Journal du rafraîchissement automatique (LaunchAgent).
+refresh.log

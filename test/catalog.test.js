@@ -463,3 +463,27 @@ test('une clé locale ne peut pas partir dans le dépôt', async () => {
   // La valeur ne doit jamais être affichée, même en aide.
   assert.doesNotMatch(script, /echo.*\$\{?BRICKSET_API_KEY/);
 });
+
+test('le planificateur local inscrit un PATH utilisable', async () => {
+  const script = await readFile(path.join(root, 'scripts/install-schedule.sh'), 'utf8');
+
+  // launchd ne transmet presque aucun PATH : sans les dossiers réels de node
+  // et git, la tâche échouerait chaque semaine en silence. C'est le piège
+  // classique des LaunchAgents, et il ne se voit qu'au bout d'un mois.
+  assert.match(script, /for outil in node git npm/);
+  assert.match(script, /<key>PATH<\/key>/);
+
+  // Un LaunchAgent, pas un LaunchDaemon : il faut la session graphique de
+  // l'utilisateur, sinon Chrome n'a pas d'écran où s'ouvrir et le défi
+  // Cloudflare ne peut pas être franchi.
+  assert.match(script, /LaunchAgents/);
+  assert.doesNotMatch(script, /LaunchDaemons/);
+
+  // Réinstaller ne doit pas empiler deux tâches concurrentes.
+  assert.match(script, /launchctl bootout/);
+});
+
+test('le journal du planificateur ne part pas dans le dépôt', async () => {
+  const gitignore = await readFile(path.join(root, '.gitignore'), 'utf8');
+  assert.ok(gitignore.split('\n').map((l) => l.trim()).includes('refresh.log'));
+});
