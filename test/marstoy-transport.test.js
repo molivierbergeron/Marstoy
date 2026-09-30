@@ -109,3 +109,55 @@ test('la progression est annoncée exactement une fois par fiche', async () => {
   const final = messages.filter((m) => m.includes(`${FICHES}/${FICHES} fiches`));
   assert.equal(final.length, 1, `attendu un seul « ${FICHES}/${FICHES} », vu : ${messages.join(' | ')}`);
 });
+
+test('le registre épargne les créations maison sans perdre une seule copie', async () => {
+  // 1 copie dont le code est dans l'URL, 1 dont il n'est que dans le titre
+  // (le cas que le raccourci « filtrer sur l'URL » aurait sacrifié), 6 MOC.
+  const FICHES = {
+    'https://www.marstoy.com/products/moc-m70334-parts-kit': 'MOC M70334 Parts Kit',
+    'https://www.marstoy.com/products/death-star-clone': 'MOC M95157 Parts Kit',
+    'https://www.marstoy.com/products/the-rack-railway': 'The Rack Railway',
+    'https://www.marstoy.com/products/moc-the-jeep': 'Moc The JEEP',
+    'https://www.marstoy.com/products/the-windmill': 'The Windmill',
+    'https://www.marstoy.com/products/the-tractor': 'The Tractor',
+    'https://www.marstoy.com/products/the-barn': 'The Barn',
+    'https://www.marstoy.com/products/the-bridge': 'The Bridge',
+  };
+
+  let chargees = [];
+  const get = async (url) => {
+    if (url.endsWith('/sitemap.xml')) {
+      const locs = Object.keys(FICHES).map((u) => `<url><loc>${u}</loc></url>`).join('');
+      return reponse(`<urlset>${locs}</urlset>`);
+    }
+    if (url.includes('/products/')) {
+      chargees.push(url);
+      return reponse(
+        `<html><head><meta property="og:title" content="${FICHES[url]}-marstoy"></head></html>`,
+        { type: 'text/html' },
+      );
+    }
+    return reponse('', { status: 404 });
+  };
+
+  // --- Premier passage : tout est inconnu, tout est chargé ---------------
+  let registre = {};
+  const un = await discoverCatalog({ get, registre, surRegistre: (s) => { registre = s; } });
+
+  assert.equal(chargees.length, 8, 'le premier passage doit tout ouvrir');
+  const codesUn = un.products.map((p) => p.code).sort();
+  assert.deepEqual(codesUn, ['M70334', 'M95157']);
+  assert.equal(Object.keys(registre).length, 6, 'les 6 créations maison sont mémorisées');
+
+  // --- Deuxième passage : les créations maison ne sont plus rouvertes ----
+  chargees = [];
+  const deux = await discoverCatalog({ get, registre, surRegistre: (s) => { registre = s; } });
+
+  assert.equal(chargees.length, 2, 'seules les deux copies sont rechargées');
+  assert.deepEqual(
+    deux.products.map((p) => p.code).sort(),
+    codesUn,
+    'le catalogue doit être identique — y compris la copie dont le code n\'est que dans le titre',
+  );
+  assert.equal(deux.recon.counts.fichesIgnorees, 6);
+});

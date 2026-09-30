@@ -54,12 +54,22 @@ if (process.env.MARSTOY_BROWSER) {
   transport = await ouvrirTransport({ log: (message) => log(`  ${message}`) });
 }
 
+// Mémoire des fiches sans équivalent LEGO, d'un passage à l'autre. Sans elle,
+// les deux tiers du catalogue — les créations maison de Marstoy — seraient
+// rechargés chaque semaine pour être écartés chaque semaine.
+const registre = await readJson('data/moc-urls.json', {});
+let registreSuivant = registre;
+
 let products;
 let recon;
 try {
   ({ products, recon } = await discoverCatalog({
     ...(transport ? { get: transport.get } : {}),
     log: (message) => log(`  ${message}`),
+    registre,
+    surRegistre: (suivant) => {
+      registreSuivant = suivant;
+    },
   }));
 } finally {
   // Une fenêtre de navigateur laissée ouverte survivrait au script.
@@ -68,6 +78,10 @@ try {
 
 log(`  stratégie retenue : ${recon.strategyUsed || 'aucune'} — ${products.length} référence(s)`);
 await writeJson('data/recon.json', recon, { pretty: true });
+
+// Écrit seulement quand la boutique a répondu : un passage bloqué ne doit pas
+// effacer ce que les précédents avaient appris.
+if (products.length) await writeJson('data/moc-urls.json', registreSuivant, { pretty: true });
 
 log('Téléchargement des exports Rebrickable…');
 let index;
