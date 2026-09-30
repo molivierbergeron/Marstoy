@@ -6,6 +6,7 @@
 
 import { forbiddenCount, get as getParDefaut, mapLimit, sleep } from './fetch-util.mjs';
 import { extractCodes } from '../../lib/setnum.js';
+import { choisirFiches, elaguer, majRegistre } from './moc-registry.mjs';
 
 const ORIGIN = process.env.MARSTOY_ORIGIN || 'https://www.marstoy.com';
 
@@ -190,7 +191,7 @@ export function extractProductDetails(html, url) {
  * Stratégie 2 — sitemap produits, puis fiche de chaque produit. Plus lente mais
  * quasi universelle (et le sitemap est fait pour être lu par des robots).
  */
-async function fromSitemap(recon, get, log) {
+async function fromSitemap(recon, get, log, registre, surRegistre) {
   const roots = [`${ORIGIN}/sitemap.xml`, `${ORIGIN}/sitemap_index.xml`];
   const productSitemaps = [];
 
@@ -247,12 +248,26 @@ async function fromSitemap(recon, get, log) {
     (url) => extractCodes(url.split('/').pop().replaceAll('-', ' ')).length,
   ).length;
 
-  // On charge chaque fiche : c'est le seul endroit où se trouvent le titre, la
-  // photo, le prix, et — pour la majorité du catalogue — la référence elle-même.
-  const limit = Number(process.env.MARSTOY_PAGE_LIMIT || 0);
+  // La fiche est le seul endroit où se trouvent le titre, la photo, le prix, et
+  // — pour une partie du catalogue — la référence elle-même. Mais les deux tiers
+  // de ces pages sont des créations maison sans équivalent LEGO : le registre
+  // évite de les rouvrir semaine après semaine pour les jeter à nouveau.
   const allUrls = [...urls.keys()];
-  const targets = limit > 0 ? allUrls.slice(0, limit) : allUrls;
+  const tri = choisirFiches(allUrls, registre);
+  recon.counts.fichesIgnorees = tri.ignorees;
+  recon.counts.fichesRevisitees = tri.revisitees;
+  recon.counts.fichesNouvelles = tri.nouvelles;
+
+  const limit = Number(process.env.MARSTOY_PAGE_LIMIT || 0);
+  const targets = limit > 0 ? tri.aCharger.slice(0, limit) : tri.aCharger;
   recon.counts.pagesFetched = targets.length;
+
+  if (tri.ignorees) {
+    log(`${tri.ignorees} créations maison déjà connues, non rechargées`);
+  }
+
+  // Ce que ce passage aura appris sur chaque fiche ouverte.
+  const constats = [];
 
   const httpErrors = new Map();
   const withoutCode = [];
@@ -299,6 +314,8 @@ async function fromSitemap(recon, get, log) {
         recon.samples.productPageWithoutCode = html.slice(0, 12000);
       }
 
+      constats.push({ url, aCode: Boolean(details.code) });
+
       if (!details.code) {
         withoutCodeTotal += 1;
         if (withoutCode.length < 60) withoutCode.push({ url, title: details.title, parts: details.marstoyParts });
@@ -318,6 +335,10 @@ async function fromSitemap(recon, get, log) {
   recon.counts.marstoyOwnMocs = withoutCodeTotal;
   recon.httpErrors = Object.fromEntries(httpErrors);
   recon.samples.urlsWithoutCode = withoutCode.slice(0, 25);
+
+  // Le registre ne doit retenir que ce que ce passage a réellement constaté, et
+  // élaguer ce que la boutique ne vend plus.
+  surRegistre?.(elaguer(majRegistre(registre, constats), allUrls));
 
   return fetched.filter(Boolean);
 }
@@ -361,7 +382,15 @@ async function fromCollections(recon, get, log) {
  *   par le canal HTTP d'un vrai Chrome (voir marstoy-browser.mjs), qui porte le
  *   cookie obtenu en franchissant le défi.
  */
-export async function discoverCatalog({ get = getParDefaut, log = () => {} } = {}) {
+export async function discoverCatalog({
+  get = getParDefaut,
+  log = () => {},
+  // Mémoire des fiches sans équivalent LEGO, tenue d'un passage à l'autre par
+  // l'appelant (c'est lui qui sait où la ranger). Absente, tout est rechargé —
+  // le comportement d'avant, et celui du tout premier passage.
+  registre = {},
+  surRegistre = null,
+} = {}) {
   const recon = {
     origin: ORIGIN,
     startedAt: new Date().toISOString(),
@@ -381,7 +410,7 @@ export async function discoverCatalog({ get = getParDefaut, log = () => {} } = {
   let products = [];
   for (const [name, run] of strategies) {
     try {
-      const found = await run(recon, get, log);
+      const found = await run(recon, get, log, registre, surRegistre);
       recon.counts[name] = found.length;
       if (found.length > products.length) {
         products = found;
