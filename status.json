@@ -311,7 +311,7 @@
     {
       "id": "me-auto",
       "title": "Rafraîchir sans y penser",
-      "pitch": "Le Mac rafraîchit le catalogue seul chaque semaine, avec Chrome, pendant la nuit.",
+      "pitch": "Le Mac rafraîchit le catalogue seul, et rattrape tout seul les jours où il était fermé.",
       "goal": "Un catalogue à jour",
       "benefit": "fiabilite",
       "value": 2,
@@ -323,8 +323,8 @@
       "source": "Claude",
       "mode": "ia",
       "why": "Aujourd'hui il faut penser à double-cliquer ; le catalogue vieillit sinon.",
-      "implies": "Le Mac doit être allumé la nuit du rafraîchissement.",
-      "note": "L'outillage est prêt et fusionné : planificateur macOS, collecte allégée. Il reste à l'installer sur le Mac."
+      "implies": "Le Mac doit être ouvert au moins une fois par semaine — pas à une heure précise.",
+      "note": "L'outillage est prêt et fusionné : vérification quotidienne et à l'ouverture de session, collecte seulement au-delà de sept jours. Il reste à installer sur le Mac."
     },
     {
       "id": "me-baisse",
@@ -347,8 +347,8 @@
     }
   ],
   "plan": {
-    "version": 5,
-    "updated_at": "2026-09-30T12:39",
+    "version": 6,
+    "updated_at": "2026-09-30T12:46",
     "updated_by": "Claude",
     "priorities_validated": false,
     "changes": [
@@ -366,10 +366,20 @@
         "version": 5,
         "date": "2026-09-30",
         "summary": "Rafraîchissement hebdomadaire sur le Mac (planificateur macOS) et collecte allégée : les créations maison ne sont plus rechargées, ~2 min au lieu de 22. Décision prise : on ne les ajoute pas au catalogue."
+      },
+      {
+        "version": 6,
+        "date": "2026-09-30",
+        "summary": "Le rafraîchissement rattrape les jours où le Mac était fermé : il vérifie chaque jour et à chaque ouverture de session, mais ne collecte qu'au-delà de sept jours."
       }
     ]
   },
   "history": [
+    {
+      "date": "2026-09-30",
+      "title": "Ne plus recharger les créations maison à chaque passage",
+      "pr": null
+    },
     {
       "date": "2026-09-28",
       "title": "Remettre le rafraîchissement en automatique, sur le Mac",
@@ -454,16 +464,6 @@
       "date": "2026-09-05",
       "title": "Mesure d'audience GoatCounter",
       "pr": null
-    },
-    {
-      "date": "2026-08-19",
-      "title": "Remplace l'onglet des écartées par un lien dans la ligne de statut",
-      "pr": null
-    },
-    {
-      "date": "2026-08-17",
-      "title": "Affiche les références écartées dans l'app",
-      "pr": null
     }
   ],
   "git": {
@@ -476,8 +476,8 @@
       "subject": "Rafraîchit le catalogue Marstoy [skip ci]"
     },
     "last_human_commit": {
-      "sha": "cac0f21",
-      "date": "2026-09-28",
+      "sha": "7f221e5",
+      "date": "2026-09-30",
       "subject": "Rafraîchit le catalogue Marstoy [skip ci]"
     },
     "commits_30d": 66,

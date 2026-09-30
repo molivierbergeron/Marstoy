@@ -11,8 +11,14 @@
 # d'écran où ouvrir Chrome. Si le Mac dort à l'heure dite, launchd lance la
 # tâche au réveil plutôt que de sauter la semaine.
 #
-#   bash install-schedule.sh              # installe (lundi 9 h 17)
-#   JOUR=3 HEURE=20 bash install-schedule.sh   # mercredi 20 h 00
+# La tâche se réveille chaque jour, et à chaque ouverture de session. Elle ne
+# collecte pas pour autant : elle ressort aussitôt si le catalogue a moins de
+# sept jours. C'est ce qui permet à un portable fermé le lundi de rattraper le
+# mardi, sans imposer une collecte quotidienne.
+#
+#   bash install-schedule.sh              # installe (vérification à 9 h 17)
+#   HEURE=20 bash install-schedule.sh     # vérification à 20 h 00
+#   AGE=14 bash install-schedule.sh       # rafraîchir au-delà de 14 jours
 #   bash install-schedule.sh --remove     # désinstalle
 #
 # Rien n'est envoyé à GitHub par ce script : il se contente de programmer
@@ -28,13 +34,12 @@ ETIQUETTE='com.marstoy.refresh'
 PLIST="$HOME/Library/LaunchAgents/$ETIQUETTE.plist"
 JOURNAL="$DEPOT/refresh.log"
 
-# Lundi 9 h 17 par défaut : la boutique bouge peu, et l'heure évite le creux de
-# la nuit où un portable est fermé. 0 = dimanche.
-JOUR="${JOUR:-1}"
+# 9 h 17 par défaut : une heure ouvrable, où un portable a des chances d'être
+# ouvert. Pas de jour de semaine à choisir — la vérification est quotidienne et
+# ne coûte qu'une seconde quand il n'y a rien à faire.
 HEURE="${HEURE:-9}"
 MINUTE="${MINUTE:-17}"
-
-JOURS=(dimanche lundi mardi mercredi jeudi vendredi samedi)
+AGE="${AGE:-7}"
 
 # --- Désinstallation -------------------------------------------------------
 
@@ -112,6 +117,7 @@ cat > "$PLIST" <<PLIST_FIN
   <array>
     <string>/bin/bash</string>
     <string>$DEPOT/scripts/refresh-local.sh</string>
+    <string>--si-perime</string>
   </array>
 
   <key>EnvironmentVariables</key>
@@ -122,12 +128,12 @@ cat > "$PLIST" <<PLIST_FIN
     <string>$HOME</string>
     <key>MARSTOY_DIR</key>
     <string>$DEPOT</string>
+    <key>MARSTOY_AGE_MAX_JOURS</key>
+    <string>$AGE</string>
   </dict>
 
   <key>StartCalendarInterval</key>
   <dict>
-    <key>Weekday</key>
-    <integer>$JOUR</integer>
     <key>Hour</key>
     <integer>$HEURE</integer>
     <key>Minute</key>
@@ -139,8 +145,12 @@ cat > "$PLIST" <<PLIST_FIN
   <key>StandardErrorPath</key>
   <string>$JOURNAL</string>
 
+  <!-- À l'ouverture de session aussi : un Mac resté fermé plusieurs jours
+       rattrape dès qu'on le rallume, sans attendre la prochaine heure dite.
+       Sans conséquence quand le catalogue est frais — le script ressort en
+       une seconde. -->
   <key>RunAtLoad</key>
-  <false/>
+  <true/>
 </dict>
 </plist>
 PLIST_FIN
@@ -154,12 +164,17 @@ if ! launchctl bootstrap "gui/$(id -u)" "$PLIST" 2> /dev/null; then
   launchctl load "$PLIST"
 fi
 
-echo "✓ Le catalogue se rafraîchira tout seul chaque ${JOURS[$JOUR]} à ${HEURE}h$(printf '%02d' "$MINUTE")."
+echo "✓ Le catalogue se rafraîchira tout seul, sans que tu y penses."
 echo
-echo "  Une fenêtre Chrome s'ouvrira le temps de la collecte — c'est elle qui"
-echo "  passe le contrôle Cloudflare, elle ne peut pas être évitée."
+echo "  Vérification chaque jour à ${HEURE}h$(printf '%02d' "$MINUTE"), et à chaque ouverture de session."
+echo "  Collecte seulement si le catalogue dépasse $AGE jours — sinon la tâche"
+echo "  ressort en une seconde."
 echo
-echo "  Si le Mac dort à cette heure-là, la tâche se lance au réveil."
+echo "  Mac fermé au moment prévu ? Il rattrape à la prochaine occasion : le"
+echo "  lendemain, ou dès que tu ouvres ta session."
+echo
+echo "  Une fenêtre Chrome s'ouvre pendant la collecte — c'est elle qui passe"
+echo "  le contrôle Cloudflare, elle ne peut pas être évitée."
 echo "  Journal : $JOURNAL"
 echo
 echo "  Lancer tout de suite pour vérifier :  launchctl start $ETIQUETTE"

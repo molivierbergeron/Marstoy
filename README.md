@@ -231,14 +231,19 @@ Installe un **LaunchAgent** — le planificateur de macOS, dans la session de
 l'utilisateur. C'est un *Agent* et non un *Daemon* précisément pour ça : un
 service système n'aurait pas d'écran où ouvrir Chrome.
 
-Par défaut le lundi à 9 h 17. Pour choisir :
+La tâche se réveille **chaque jour à 9 h 17, et à chaque ouverture de session**.
+Elle ne collecte pas pour autant : elle ressort en une seconde si le catalogue a
+moins de sept jours. C'est ce qui permet à un portable fermé le lundi de
+rattraper le mardi — ou l'après-midi même, dès l'ouverture de session — sans
+imposer une collecte quotidienne.
 
 ```sh
-JOUR=3 HEURE=20 MINUTE=0 bash ~/Marstoy/scripts/install-schedule.sh   # mercredi 20 h
+HEURE=20 bash ~/Marstoy/scripts/install-schedule.sh    # vérifier à 20 h
+AGE=14 bash ~/Marstoy/scripts/install-schedule.sh      # rafraîchir au-delà de 14 jours
 ```
 
-`JOUR` va de 0 (dimanche) à 6 (samedi). Si le Mac dort à l'heure dite, launchd
-lance la tâche **au réveil** plutôt que de sauter la semaine.
+Un rendez-vous hebdomadaire manqué coûtait une semaine entière ; c'est la raison
+de ce réveil fréquent doublé d'un garde-fou, plutôt qu'un jour fixe.
 
 | | |
 | --- | --- |
