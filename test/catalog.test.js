@@ -483,6 +483,27 @@ test('le planificateur local inscrit un PATH utilisable', async () => {
   assert.match(script, /launchctl bootout/);
 });
 
+test('un Mac fermé rattrape le passage manqué', async () => {
+  const plan = await readFile(path.join(root, 'scripts/install-schedule.sh'), 'utf8');
+  const refresh = await readFile(path.join(root, 'scripts/refresh-local.sh'), 'utf8');
+
+  // Un rendez-vous hebdomadaire manqué parce que le portable était fermé
+  // coûtait une semaine entière. La tâche se réveille donc chaque jour et à
+  // chaque ouverture de session — sans Weekday dans le calendrier.
+  assert.doesNotMatch(plan, /<key>Weekday<\/key>/);
+  assert.match(plan, /<key>RunAtLoad<\/key>\s*\n\s*<true\/>/);
+
+  // Se réveiller souvent n'a de sens que si la tâche sait ne rien faire :
+  // sinon on collecterait à chaque ouverture de session.
+  assert.match(plan, /<string>--si-perime<\/string>/);
+  assert.match(refresh, /SI_PERIME=1/);
+  assert.match(refresh, /AGE_MAX_JOURS/);
+
+  // Catalogue illisible ou absent : on travaille, on ne saute pas. Une panne
+  // de lecture ne doit pas se traduire par un catalogue figé pour toujours.
+  assert.match(refresh, /console\.log\(9999\)/);
+});
+
 test('le journal du planificateur ne part pas dans le dépôt', async () => {
   const gitignore = await readFile(path.join(root, '.gitignore'), 'utf8');
   assert.ok(gitignore.split('\n').map((l) => l.trim()).includes('refresh.log'));

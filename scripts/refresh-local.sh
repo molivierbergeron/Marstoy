@@ -9,7 +9,8 @@
 #
 # Il se lance de n'importe où, y compris sans clone préalable :
 #
-#   bash refresh-local.sh
+#   bash refresh-local.sh                 # rafraîchit, quoi qu'il arrive
+#   bash refresh-local.sh --si-perime     # ne travaille que si le catalogue a vieilli
 #
 # Rien à installer : le build n'utilise que des modules Node natifs.
 
@@ -18,6 +19,16 @@ set -euo pipefail
 DEPOT="${MARSTOY_DIR:-$HOME/Marstoy}"
 URL='https://github.com/molivierbergeron/Marstoy.git'
 BRANCHE='claude/marstoy-iphone-lego-images-r7u3nd'
+
+# Au-delà de cet âge, le catalogue mérite un vrai passage. En deçà, `--si-perime`
+# ressort sans rien faire : c'est ce qui permet au planificateur de se réveiller
+# souvent — chaque jour, et à chaque ouverture de session — sans relancer une
+# collecte pour autant. Un portable qu'on ouvre le mardi rattrape ainsi le lundi
+# manqué, au lieu d'attendre huit jours.
+AGE_MAX_JOURS="${MARSTOY_AGE_MAX_JOURS:-7}"
+
+SI_PERIME=0
+[ "${1:-}" = '--si-perime' ] && SI_PERIME=1
 
 echo
 echo "▸ Catalogue Marstoy — rafraîchissement local"
@@ -61,6 +72,31 @@ else
   echo "▸ Aucun dépôt dans $DEPOT — clonage"
   git clone --quiet --branch "$BRANCHE" "$URL" "$DEPOT"
   cd "$DEPOT"
+fi
+
+# --- Faut-il seulement travailler ? ----------------------------------------
+#
+# Le test vient après la mise à jour du dépôt : c'est la date du catalogue
+# réellement publié qui tranche, pas celle d'une copie locale en retard.
+
+if [ "$SI_PERIME" = '1' ]; then
+  age=$(node -e "
+    const fs = require('node:fs');
+    try {
+      const c = JSON.parse(fs.readFileSync('site/data/catalog.json', 'utf8'));
+      const jours = (Date.now() - new Date(c.generatedAt)) / 86400000;
+      console.log(Number.isFinite(jours) ? Math.floor(jours) : 9999);
+    } catch {
+      // Pas de catalogue lisible : on considère qu'il faut travailler.
+      console.log(9999);
+    }
+  ")
+
+  if [ "$age" -lt "$AGE_MAX_JOURS" ]; then
+    echo "▸ Catalogue vieux de $age jour(s) — rien à faire (seuil : $AGE_MAX_JOURS)."
+    exit 0
+  fi
+  echo "▸ Catalogue vieux de $age jour(s) — rafraîchissement."
 fi
 
 # --- Le build --------------------------------------------------------------
