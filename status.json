@@ -10,8 +10,8 @@
     "verdict": "Entretenir",
     "why": "Le site fait ce qu'on attend. Depuis le 11 septembre, Marstoy bloque les robots : le catalogue ne se rafraîchit plus que depuis ton Mac. Pas de nouveau chantier tant qu'on ne sait pas si la liste sert à acheter."
   },
-  "doing": "Le rafraîchissement automatique est construit et attend son installation sur le Mac.",
-  "headline": "Le site marche pour trois personnes. Le catalogue date du 14 septembre. Tout est prêt pour qu'il se rafraîchisse seul chaque semaine : il reste une commande à coller sur le Mac. Les pourcentages d'économie reposent toujours sur une conversion jamais vérifiée.",
+  "doing": "Le rafraîchissement se débloque tout seul en cas de clone divergent. Reste à le lancer.",
+  "headline": "Le site marche pour trois personnes. Le catalogue date du 14 septembre — près d'un mois : le rafraîchissement automatique n'a jamais été installé sur le Mac, et le clone local avait divergé, ce qui bloquait même le lancement manuel. C'est réparé. Les pourcentages d'économie reposent toujours sur une conversion jamais vérifiée.",
   "resume": [
     "Le site affiche le dernier catalogue récupéré ; il ne se met plus à jour seul.",
     "Rafraîchir : double-clic sur « Rafraîchir le catalogue Marstoy » sur le Bureau du Mac.",
@@ -347,8 +347,8 @@
     }
   ],
   "plan": {
-    "version": 6,
-    "updated_at": "2026-09-30T12:46",
+    "version": 7,
+    "updated_at": "2026-10-12T00:18",
     "updated_by": "Claude",
     "priorities_validated": false,
     "changes": [
@@ -371,10 +371,20 @@
         "version": 6,
         "date": "2026-09-30",
         "summary": "Le rafraîchissement rattrape les jours où le Mac était fermé : il vérifie chaque jour et à chaque ouverture de session, mais ne collecte qu'au-delà de sept jours."
+      },
+      {
+        "version": 7,
+        "date": "2026-10-12",
+        "summary": "Un clone local divergent bloquait le rafraîchissement avec « règle-la à la main ». Il se recale maintenant seul quand seuls des fichiers produits diffèrent, et refuse toujours quand du vrai code est en jeu."
       }
     ]
   },
   "history": [
+    {
+      "date": "2026-09-30",
+      "title": "Rattraper les jours où le Mac était fermé",
+      "pr": null
+    },
     {
       "date": "2026-09-30",
       "title": "Ne plus recharger les créations maison à chaque passage",
@@ -468,7 +478,7 @@
   ],
   "git": {
     "_generated": "AUTO — généré par tools/git_facts.py (future Action). Ne pas éditer à la main.",
-    "generated_at": "2026-09-30",
+    "generated_at": "2026-10-12",
     "last_commit": {
       "sha": "c09660a",
       "date": "2026-09-21",
@@ -476,8 +486,8 @@
       "subject": "Rafraîchit le catalogue Marstoy [skip ci]"
     },
     "last_human_commit": {
-      "sha": "7f221e5",
-      "date": "2026-09-30",
+      "sha": "7ce06ca",
+      "date": "2026-10-05",
       "subject": "Rafraîchit le catalogue Marstoy [skip ci]"
     },
     "commits_30d": 66,

@@ -30,6 +30,10 @@ AGE_MAX_JOURS="${MARSTOY_AGE_MAX_JOURS:-7}"
 SI_PERIME=0
 [ "${1:-}" = '--si-perime' ] && SI_PERIME=1
 
+# Où atterrit l'état local quand il faut se recaler : rien n'est jamais perdu,
+# même si ce qu'on écarte n'est qu'un catalogue périmé.
+SAUVEGARDE='sauvegarde-avant-recalage'
+
 echo
 echo "▸ Catalogue Marstoy — rafraîchissement local"
 echo
@@ -63,10 +67,29 @@ if [ -d "$DEPOT/.git" ]; then
     echo "  ⚠ Des modifications locales sont en cours : je ne touche à rien d'autre."
   else
     git checkout --quiet "$BRANCHE"
-    git merge --ff-only --quiet "origin/$BRANCHE" || {
-      echo "  ⚠ La branche locale a divergé. Règle-la à la main, puis relance."
-      exit 1
-    }
+    if ! git merge --ff-only --quiet "origin/$BRANCHE" 2> /dev/null; then
+      # Ce clone est un plan de travail, pas un dépôt de référence : un commit
+      # local qui ne touche que des fichiers produits par le build n'a rien à
+      # défendre — le passage qui suit les régénère. « Règle-la à la main »
+      # laissait l'utilisateur bloqué devant un git divergent, pour des données
+      # périmées dont personne ne voulait.
+      hors_donnees=$(git diff --name-only "origin/$BRANCHE...HEAD" \
+        -- . ':(exclude)data' ':(exclude)site/data' | head -1)
+      locaux=$(git rev-list --count "origin/$BRANCHE..HEAD")
+
+      if [ -z "$hors_donnees" ]; then
+        echo "  ⚠ $locaux commit(s) local(aux) ne touchant que des données produites."
+        echo "    Je me recale sur la version en ligne ; l'état d'avant reste"
+        echo "    accessible dans la branche « $SAUVEGARDE »."
+        git branch --force "$SAUVEGARDE" HEAD
+        git reset --hard --quiet "origin/$BRANCHE"
+      else
+        echo "  ⚠ Des commits locaux touchent autre chose que les données :"
+        git diff --name-only "origin/$BRANCHE...HEAD" | sed 's/^/        /'
+        echo "    Je n'y touche pas. Règle-les, puis relance."
+        exit 1
+      fi
+    fi
   fi
 else
   echo "▸ Aucun dépôt dans $DEPOT — clonage"
