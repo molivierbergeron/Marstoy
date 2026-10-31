@@ -1,76 +1,91 @@
 {
   "origin": "https://www.marstoy.com",
-  "startedAt": "2026-10-26T12:57:43.018Z",
+  "startedAt": "2026-10-31T13:32:10.493Z",
   "attempts": [
     {
       "strategy": "products.json",
-      "page": 1,
-      "status": 403
+      "error": "https://www.marstoy.com/products.json?limit=250&page=1 : Failed to fetch"
     },
     {
       "strategy": "sitemap",
       "url": "https://www.marstoy.com/sitemap.xml",
-      "status": 403
-    },
-    {
-      "strategy": "sitemap",
-      "url": "https://www.marstoy.com/sitemap_index.xml",
-      "status": 403
-    },
-    {
-      "strategy": "sitemap",
-      "url": "sitemap_products_N.xml",
-      "status": "essai direct"
-    },
-    {
-      "strategy": "sitemap-produits",
-      "url": "https://www.marstoy.com/sitemap_products_1.xml",
-      "status": 403
-    },
-    {
-      "strategy": "sitemap-produits",
-      "url": "https://www.marstoy.com/sitemap_products_2.xml",
-      "status": 403
-    },
-    {
-      "strategy": "sitemap-produits",
-      "url": "https://www.marstoy.com/sitemap_products_3.xml",
-      "status": 403
+      "status": 200
     },
     {
       "strategy": "collections",
-      "page": 1,
-      "status": 403
+      "error": "page.evaluate: Target page, context or browser has been closed"
     }
   ],
   "counts": {
-    "products.json": 0,
-    "sitemapProductUrls": 0,
-    "sitemapWithLastmod": 0,
-    "sitemap": 0,
-    "collections": 0,
-    "unique": 0,
-    "forbidden": 9
+    "sitemapProductUrls": 3120,
+    "sitemapWithLastmod": 3120,
+    "sitemapCodesFromUrl": 358,
+    "fichesIgnorees": 2720,
+    "fichesRevisitees": 0,
+    "fichesNouvelles": 400,
+    "pagesFetched": 400,
+    "marstoyOwnMocs": 0,
+    "sitemap": 58,
+    "unique": 58,
+    "forbidden": 0,
+    "legoPricesCached": 4932,
+    "legoPricesFetched": 49,
+    "legoPricesResolved": 49
   },
   "samples": {
-    "blockedResponse": {
-      "where": "https://www.marstoy.com/products.json?limit=250&page=1",
-      "status": 403,
-      "server": "cloudflare",
-      "cfRay": "a509a1038bd52adf-LAX",
-      "contentType": "text/html; charset=UTF-8",
-      "body": "<!DOCTYPE html><html lang=\"en-US\"><head><title>Just a moment...</title><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"><meta http-equiv=\"X-UA-Compatible\" content=\"IE=Edge\"><meta name=\"robots\" content=\"noindex,nofollow\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\"><meta http-equiv=\"content-security-policy\" content=\"default-src &#39;none&#39;; script-src &#39;nonce-AcxsmUo2dXQz60GoZW5JOg&#39; &#39;unsafe-eval&#39; https://challenges.cloudflare.com; script-src-attr &#39;none&#39;; style-src &#39;unsafe-inline&#39;; img-src &#39;self&#39; https://challenges.cloudflare.com; connect-src &#39;self&#39; https://challenges.cloudflare.com; frame-src &#39;self&#39; https://challenges.cloudflare.com blob:; child-src &#39;self&#39; https://challenges.cloudflare.com blob:; worker-src blob:; form-action http: https:; base-uri &#39;self&#39;\"><style>*{box-sizing:border-box;margin:0;padding:0}html{line-height:1.15;-webkit-text-size-adjust:100%;color:#313131;font-family:system-ui,-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,\"Helvetica Neue\",Arial,\"Noto Sans\",sans-serif,\"Apple Color Emoji\",\"Segoe UI Emoji\",\"Segoe UI Symbol\",\"Noto Color Emoji\"}body{displa"
-    }
+    "sitemap": "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><sitemapindex xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\"><!--This is the parent sitemap linking to additional sitemaps for products, collections and pages as shown below. The sitemap can not be edited manually, but is kept up to date in real time.--><sitemap><loc>https://www.marstoy.com/sitemap_page_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_blogs_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_products_1.xml</loc></sitemap><sitemap><loc>https://www.marstoy.com/sitemap_collections_1.xml</loc></sitemap></sitemapindex>",
+    "productSitemap": "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\" xmlns:image=\"http://www.google.com/schemas/sitemap-image/1.1\"><url><loc>https://www.marstoy.com</loc><changefreq>daily</changefreq></url><url><loc>https://www.marstoy.com/products/the-1087x-modified-fleet-maintenance-vehicle</loc><lastmod>2025-09-26T17:58:34+08:00</lastmod><changefreq>daily</changefreq><image:image><image:loc>https://img.myshopline.com/image/store/1752723592316/0def9648af3aa1fd954cf0f92f1cf8bc.jpeg?w=2000&amp;amp;h=2000</image:loc><image:caption>The 1087x Modified Fleet Maintenance Vehicle-marstoy</image:caption><image:title>The 1087x Modified Fleet Maintenance Vehicle</image:title></image:image></url><url><loc>https://www.marstoy.com/products/the-roman-colosseum</loc><lastmod>2026-03-31T18:19:44+08:00</lastmod><changefreq>daily</changefreq><image:image><image:loc>https://img.myshopline.com/image/store/1752723592316/9b8318eefca29d50b8ef40a434d9e0dc.jpeg?w=2000&amp;amp;h=2000</image:loc><image:caption>The Roman Colosseum-marstoy</image:caption><image:title>The Roman Colosseum</image:title></image:image></url><url><loc>https://www.marstoy.com/products/the-rack-railway</",
+    "productPageWithCode": "<!DOCTYPE html>\n<html lang=\"en\">\n  <head>\n    \n\n\n\n<meta charset=\"UTF-8\"/>\n<meta\n  name=\"viewport\"\n  content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no\"\n/>\n<meta http-equiv=\"x-dns-prefetch-control\" content=\"on\"/>\n\n\n  <meta name=\"description\" content=\"&lt;ul class=&#34;product-specs-list util-clearfix&#34;&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Pcs: About 2417 pcs&lt;/span&gt;&lt;/li&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Plastic Type:  &lt;/span&gt;&lt;span class=&#34;property-title&#34;&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Plastic&#34;&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;ABS&#34;&gt;ABS&lt;/span&gt;&lt;/span&gt; &lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Plastic&#34;&gt;Plastic&lt;/span&gt;&lt;/li&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Package: &lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Without Original Box&#34;&gt;Sealed in Box or Bag&lt;/span&gt;&lt;/li&gt; &lt;li class=&#34;product-prop line-limit-length&#34;&gt;&lt;span class=&#34;property-title&#34;&gt;Type: &lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;BLOCKS&#34;&gt;Block Parts, No sticker, No printed parts&lt;/span&gt;&lt;/li&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Block Size: &lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Small building block（Compatible with Lego）&#34;&gt;4.9mm brick (&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Small building block（Compatible with Lego）&#34;&gt;Compatible with &#39;Lego M&#39;)&lt;/span&gt;&lt;/li&gt; &lt;/ul&gt;-marstoy\"/>\n\n\n\n\n\n  <link rel=\"icon\" type=\"image/png\" href=\"https://img.myshopline.com/image/store/1752723592316/marstoy-logo.png?w=32&amp;h=32\"/>\n\n\n<link rel=\"canonical\" href=\"https://www.marstoy.com/products/m06301\"/>\n\n\n\n\n<meta property=\"og:site_name\" content=\"marstoy\" />\n<meta property=\"og:url\" content=\"https://www.marstoy.com/products/m06301\" />\n<meta property=\"og:title\" content=\"MOC M06301 Parts Kit-marstoy\" />\n<meta property=\"og:type\" content=\"product\" />\n<meta property=\"og:description\" content=\"&lt;ul class=&#34;product-specs-list util-clearfix&#34;&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Pcs: About 2417 pcs&lt;/span&gt;&lt;/li&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Plastic Type:  &lt;/span&gt;&lt;span class=&#34;property-title&#34;&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Plastic&#34;&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;ABS&#34;&gt;ABS&lt;/span&gt;&lt;/span&gt; &lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Plastic&#34;&gt;Plastic&lt;/span&gt;&lt;/li&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Package: &lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Without Original Box&#34;&gt;Sealed in Box or Bag&lt;/span&gt;&lt;/li&gt; &lt;li class=&#34;product-prop line-limit-length&#34;&gt;&lt;span class=&#34;property-title&#34;&gt;Type: &lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;BLOCKS&#34;&gt;Block Parts, No sticker, No printed parts&lt;/span&gt;&lt;/li&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Block Size: &lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Small building block（Compatible with Lego）&#34;&gt;4.9mm brick (&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Small building block（Compatible with Lego）&#34;&gt;Compatible with &#39;Lego M&#39;)&lt;/span&gt;&lt;/li&gt; &lt;/ul&gt;-marstoy\" />\n  <meta property=\"og:image\" content=\"https://img.myshopline.com/image/store/1752723592316/8dbe2c9e6faa2f12b192f315f499c3b1-1.jpg?w=800&amp;h=800\" />\n  <meta property=\"og:image:secure_url\" content=\"https://img.myshopline.com/image/store/1752723592316/8dbe2c9e6faa2f12b192f315f499c3b1-1.jpg?w=800&amp;h=800\" />\n  <meta property=\"og:image:width\" content=\"800\" />\n  <meta property=\"og:image:height\" content=\"800\" />\n\n  <meta property=\"og:price:amount\" content=\"25.00\" />\n  <meta property=\"og:price:currency\" content=\"\" />\n\n<meta name=\"twitter:card\" content=\"summary_large_image\" />\n<meta name=\"twitter:title\" content=\"MOC M06301 Parts Kit-marstoy\" />\n<meta name=\"twitter:description\" content=\"&lt;ul class=&#34;product-specs-list util-clearfix&#34;&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Pcs: About 2417 pcs&lt;/span&gt;&lt;/li&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Plastic Type:  &lt;/span&gt;&lt;span class=&#34;property-title&#34;&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Plastic&#34;&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;ABS&#34;&gt;ABS&lt;/span&gt;&lt;/span&gt; &lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Plastic&#34;&gt;Plastic&lt;/span&gt;&lt;/li&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Package: &lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Without Original Box&#34;&gt;Sealed in Box or Bag&lt;/span&gt;&lt;/li&gt; &lt;li class=&#34;product-prop line-limit-length&#34;&gt;&lt;span class=&#34;property-title&#34;&gt;Type: &lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;BLOCKS&#34;&gt;Block Parts, No sticker, No printed parts&lt;/span&gt;&lt;/li&gt; &lt;li&gt;&lt;span class=&#34;property-title&#34;&gt;Block Size: &lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Small building block（Compatible with Lego）&#34;&gt;4.9mm brick (&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;property-desc line-limit-length&#34; title=&#34;Small building block（Compatible with Lego）&#34;&gt;Compatible with &#39;Lego M&#39;)&lt;/span&gt;&lt;/li&gt; &lt;/ul&gt;-marstoy\" />\n\n<title>\n  MOC M06301 Parts Kit-marstoy\n  \n  \n</title>\n\n\n    \n<style>\n  @font-face {\n  font-family: 'Anton';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff') format('woff');\n}\n  \n  \n  \n  @font-face {\n  font-family: 'Anton';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 500;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:500_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:500_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 600;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:600_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:600_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 700;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:700_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:700_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff') format('woff');\n}\n\n  @font-face {\n  font-family: 'Anton';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff') format('woff');\n}\n  \n  \n  \n  @font-face {\n  font-family: 'Anton';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 500;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:500_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:500_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 600;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:600_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:600_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 700;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:700_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:700_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff') format('woff');\n}\n\n  @font-face {\n  font-family: 'Anton';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff') format('woff');\n}\n  \n  \n  \n  @font-face {\n  font-family: 'Anton';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Anton:regular_v25.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 400;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:regular_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 500;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:500_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:500_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 600;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:600_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:600_v21.woff') format('woff');\n}\n  @font-face {\n  font-family: 'Poppins';\n  font-weight: 700;\n  font-style: normal;\n  font-display: swap;\n  src: url('https://www.marstoy.com/cdn/shop/fonts/Poppins:700_v21.woff2') format('woff2'),\n        url('https://www.marstoy.com/cdn/shop/fonts/Poppins:700_v21.woff') format('woff');\n}\n  @font-face {\n  font-fami",
+    "urlsWithoutCode": []
   },
-  "strategyUsed": null,
+  "strategyUsed": "sitemap",
   "error": null,
-  "blocked": true,
-  "finishedAt": "2026-10-26T12:57:55.851Z",
-  "preservedCatalog": {
-    "generatedAt": "2026-10-22T17:33:41.470Z",
-    "resolved": 319,
-    "reason": "marstoy.com inaccessible — aucune référence lue"
+  "httpErrors": {
+    "https://www.marstoy.com/products/m94113 : signal timed out": 1,
+    "page.evaluate: Target page, context or browser has been clos": 1
+  },
+  "blocked": false,
+  "finishedAt": "2026-10-31T14:45:42.842Z",
+  "bricksetStatus": {
+    "ok": 17
   },
   "unresolved": [],
-  "rejected": []
+  "rejected": [
+    {
+      "code": "M33406",
+      "url": "https://www.marstoy.com/products/m33406-8amr",
+      "num": "60433",
+      "setNum": "60433-1",
+      "setUrl": "https://rebrickable.com/sets/60433-1/",
+      "name": "Modular Space Station",
+      "marstoyTitle": "MOC M24024 Parts Kit",
+      "marstoyParts": 1401,
+      "legoParts": 1099,
+      "reason": "nombre de pièces trop éloigné"
+    },
+    {
+      "code": "M142",
+      "url": "https://www.marstoy.com/products/the-m142",
+      "num": "241",
+      "setNum": "241-1",
+      "setUrl": "https://rebrickable.com/sets/241-1/",
+      "name": "4.5v Idea Book",
+      "marstoyTitle": "The M142",
+      "marstoyParts": 629,
+      "legoParts": 0,
+      "reason": "le set LEGO ne contient aucune pièce"
+    },
+    {
+      "code": "M760",
+      "url": "https://www.marstoy.com/products/the-m760",
+      "num": "670",
+      "setNum": "670-1",
+      "setUrl": "https://rebrickable.com/sets/670-1/",
+      "name": "Mobile Crane",
+      "marstoyTitle": "The M760",
+      "marstoyParts": 398,
+      "legoParts": 56,
+      "reason": "nombre de pièces trop éloigné"
+    }
+  ]
 }
