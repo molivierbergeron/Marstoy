@@ -10,8 +10,8 @@
     "verdict": "Entretenir",
     "why": "Le site fait ce qu'on attend. Depuis le 11 septembre, Marstoy bloque les robots : le catalogue ne se rafraîchit plus que depuis ton Mac. Pas de nouveau chantier tant qu'on ne sait pas si la liste sert à acheter."
   },
-  "doing": "Le rafraîchissement se débloque tout seul en cas de clone divergent. Reste à le lancer.",
-  "headline": "Le site marche pour trois personnes. Le catalogue date du 14 septembre — près d'un mois : le rafraîchissement automatique n'a jamais été installé sur le Mac, et le clone local avait divergé, ce qui bloquait même le lancement manuel. C'est réparé. Les pourcentages d'économie reposent toujours sur une conversion jamais vérifiée.",
+  "doing": "Catalogue rétabli au 22 octobre. Un rafraîchissement manuel le remettra à jour.",
+  "headline": "Le site marche pour trois personnes. Le rafraîchissement automatique fonctionne depuis le 12 octobre. Le passage du 31 octobre a cassé en cours de route et publié 55 références au lieu de 319 : le catalogue du 22 octobre est rétabli, et rien ne peut plus publier un catalogue effondré. Les pourcentages d’économie reposent toujours sur une conversion jamais vérifiée.",
   "resume": [
     "Le site affiche le dernier catalogue récupéré ; il ne se met plus à jour seul.",
     "Rafraîchir : double-clic sur « Rafraîchir le catalogue Marstoy » sur le Bureau du Mac.",
@@ -249,8 +249,8 @@
   ],
   "next": {
     "type": "initiative",
-    "ref": "me-auto",
-    "why": "Une commande à coller, et le catalogue cesse de vieillir."
+    "ref": "m-prix",
+    "why": "Dix minutes pour savoir si les chiffres affichés sont justes."
   },
   "chain": [
     {
@@ -324,7 +324,10 @@
       "mode": "ia",
       "why": "Aujourd'hui il faut penser à double-cliquer ; le catalogue vieillit sinon.",
       "implies": "Le Mac doit être ouvert au moins une fois par semaine — pas à une heure précise.",
-      "note": "L'outillage est prêt et fusionné : vérification quotidienne et à l'ouverture de session, collecte seulement au-delà de sept jours. Il reste à installer sur le Mac."
+      "note": "L'outillage est prêt et fusionné : vérification quotidienne et à l'ouverture de session, collecte seulement au-delà de sept jours. Il reste à installer sur le Mac.",
+      "statut": "fait",
+      "done_on": "2026-10-12",
+      "result": "Le Mac rafraîchit seul : 327 références le 12 octobre, 319 le 22."
     },
     {
       "id": "me-baisse",
@@ -347,8 +350,8 @@
     }
   ],
   "plan": {
-    "version": 7,
-    "updated_at": "2026-10-12T00:18",
+    "version": 8,
+    "updated_at": "2026-11-01T02:20",
     "updated_by": "Claude",
     "priorities_validated": false,
     "changes": [
@@ -376,10 +379,25 @@
         "version": 7,
         "date": "2026-10-12",
         "summary": "Un clone local divergent bloquait le rafraîchissement avec « règle-la à la main ». Il se recale maintenant seul quand seuls des fichiers produits diffèrent, et refuse toujours quand du vrai code est en jeu."
+      },
+      {
+        "version": 8,
+        "date": "2026-11-01",
+        "summary": "Le passage du 31 octobre a publié 55 références au lieu de 319 (navigateur fermé en cours de route). Catalogue rétabli, et deux garde-fous ajoutés : la collecte s'arrête si le navigateur meurt, et un catalogue qui perd plus de 30 % n'est plus publié."
       }
     ]
   },
   "history": [
+    {
+      "date": "2026-11-01",
+      "title": "Rétablit le catalogue du 22 octobre (319 références)",
+      "pr": null
+    },
+    {
+      "date": "2026-10-12",
+      "title": "Débloquer un clone local divergent au lieu de renvoyer à la main",
+      "pr": null
+    },
     {
       "date": "2026-09-30",
       "title": "Rattraper les jours où le Mac était fermé",
@@ -464,21 +482,11 @@
       "date": "2026-09-13",
       "title": "Sonder les portes restantes, et documenter le rafraîchissement local",
       "pr": null
-    },
-    {
-      "date": "2026-09-13",
-      "title": "Ne plus échouer, ni écraser le catalogue, quand marstoy.com refuse le runner",
-      "pr": null
-    },
-    {
-      "date": "2026-09-05",
-      "title": "Mesure d'audience GoatCounter",
-      "pr": null
     }
   ],
   "git": {
     "_generated": "AUTO — généré par tools/git_facts.py (future Action). Ne pas éditer à la main.",
-    "generated_at": "2026-10-12",
+    "generated_at": "2026-11-01",
     "last_commit": {
       "sha": "c09660a",
       "date": "2026-09-21",
@@ -486,9 +494,9 @@
       "subject": "Rafraîchit le catalogue Marstoy [skip ci]"
     },
     "last_human_commit": {
-      "sha": "7ce06ca",
-      "date": "2026-10-05",
-      "subject": "Rafraîchit le catalogue Marstoy [skip ci]"
+      "sha": "7e5182c",
+      "date": "2026-11-01",
+      "subject": "Rétablit le catalogue du 22 octobre (319 références)"
     },
     "commits_30d": 66,
     "human_commits_30d": 33,

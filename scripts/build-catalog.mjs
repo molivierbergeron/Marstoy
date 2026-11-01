@@ -182,9 +182,18 @@ let products_ = resolved;
 // et à hériter de ce que l'environnement du runner est seul à savoir.
 const previous = await readJson('site/data/catalog.json', null);
 
-if (!resolved.length) {
-  if (chooseCatalogSource({ resolvedCount: resolved.length, previous }) === 'preserve') {
-    log(`Aucun produit Marstoy exploitable — catalogue publié conservé tel quel (${previous.counts.resolved} références du ${previous.generatedAt}).`);
+const issue = chooseCatalogSource({ resolvedCount: resolved.length, previous });
+
+if (issue === 'preserve' || issue === 'effondrement') {
+  {
+    if (issue === 'effondrement') {
+      log(
+        `Effondrement : ${resolved.length} références lues contre ${previous.counts.resolved} au passage précédent. ` +
+          'La collecte a échoué en cours de route — catalogue publié conservé tel quel.',
+      );
+    } else {
+      log(`Aucun produit Marstoy exploitable — catalogue publié conservé tel quel (${previous.counts.resolved} références du ${previous.generatedAt}).`);
+    }
     // Le catalogue n'est pas réécrit : ni son contenu ni sa date ne doivent
     // bouger. Le rapport, lui, dit que ce run n'a rien pu rafraîchir.
     await writeJson(
@@ -194,7 +203,10 @@ if (!resolved.length) {
         preservedCatalog: {
           generatedAt: previous.generatedAt ?? null,
           resolved: previous.counts.resolved,
-          reason: 'marstoy.com inaccessible — aucune référence lue',
+          reason: issue === 'effondrement'
+            ? `collecte incomplète — ${resolved.length} références lues contre ${previous.counts.resolved}`
+            : 'marstoy.com inaccessible — aucune référence lue',
+          lues: resolved.length,
         },
         unresolved: unresolved.slice(0, 200),
         rejected: rejected.slice(0, 100),
@@ -202,13 +214,23 @@ if (!resolved.length) {
       { pretty: true },
     );
     console.warn(
-      "\n⚠ marstoy.com n'a rien livré : le catalogue déjà publié est conservé, sans\n" +
-        'rafraîchissement. Voir data/recon.json (`attempts`, `samples.blockedResponse`)\n' +
-        'pour les codes HTTP obtenus et adapter le scraper.',
+      issue === 'effondrement'
+        ? `\n⚠ Collecte incomplète : ${resolved.length} références lues contre ` +
+            `${previous.counts.resolved} au passage précédent. Le catalogue publié est\n` +
+            'conservé — publier celui-ci aurait fait disparaître la majorité des sets.\n' +
+            'Voir data/recon.json (`httpErrors`) : le plus probable est que le navigateur\n' +
+            'se soit fermé en cours de route. Relance le rafraîchissement.'
+        : "\n⚠ marstoy.com n'a rien livré : le catalogue déjà publié est conservé, sans\n" +
+            'rafraîchissement. Voir data/recon.json (`attempts`, `samples.blockedResponse`)\n' +
+            'pour les codes HTTP obtenus et adapter le scraper.',
     );
-    process.exit(0);
+    // Code 1 sur un effondrement : c'est un échec, pas un passage à vide, et
+    // refresh-local.sh doit s'arrêter là plutôt que de pousser.
+    process.exit(issue === 'effondrement' ? 1 : 0);
   }
+}
 
+if (issue === 'lego') {
   log('Aucun produit Marstoy exploitable et rien à préserver — repli sur le catalogue LEGO complet.');
   products_ = buildFromLegoIndex(index);
   mode = 'catalogue LEGO (Marstoy inaccessible)';
