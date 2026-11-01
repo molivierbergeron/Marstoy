@@ -45,3 +45,45 @@ test('un catalogue vide ne se préserve pas, quoi que disent ses compteurs', () 
     'lego',
   );
 });
+
+test('un effondrement n\'écrase pas le catalogue publié', () => {
+  // Le 31 octobre 2026 : le navigateur s'est fermé après 58 fiches, les 342
+  // suivantes ont échoué une à une, et 55 références ont remplacé 319.
+  // 55 n'étant pas zéro, le garde-fou d'alors a laissé passer.
+  const publie = { counts: { resolved: 319 }, products: new Array(319).fill({}) };
+
+  assert.equal(
+    chooseCatalogSource({ resolvedCount: 55, previous: publie }),
+    'effondrement',
+  );
+});
+
+test('la variation ordinaire d\'une boutique reste publiable', () => {
+  // Vraies valeurs successives du catalogue : 313, 324, 328, 327, 319.
+  // Aucune ne doit être prise pour un effondrement.
+  const suite = [313, 324, 328, 327, 319];
+  for (let i = 1; i < suite.length; i += 1) {
+    const avant = { counts: { resolved: suite[i - 1] }, products: new Array(suite[i - 1]).fill({}) };
+    assert.equal(
+      chooseCatalogSource({ resolvedCount: suite[i], previous: avant }),
+      'marstoy',
+      `${suite[i - 1]} → ${suite[i]} doit rester publiable`,
+    );
+  }
+});
+
+test('une vraie fonte progressive finit par passer', () => {
+  // Une boutique peut réellement rétrécir. Le seuil laisse passer -30 % d'un
+  // coup : on bloque l'accident, pas la décroissance.
+  const avant = { counts: { resolved: 100 }, products: new Array(100).fill({}) };
+  assert.equal(chooseCatalogSource({ resolvedCount: 71, previous: avant }), 'marstoy');
+  assert.equal(chooseCatalogSource({ resolvedCount: 69, previous: avant }), 'effondrement');
+});
+
+test('le premier catalogue ne peut pas s\'effondrer', () => {
+  assert.equal(chooseCatalogSource({ resolvedCount: 5, previous: null }), 'marstoy');
+  assert.equal(
+    chooseCatalogSource({ resolvedCount: 5, previous: { counts: { resolved: 0 }, products: [] } }),
+    'marstoy',
+  );
+});

@@ -161,3 +161,45 @@ test('le registre épargne les créations maison sans perdre une seule copie', a
   );
   assert.equal(deux.recon.counts.fichesIgnorees, 6);
 });
+
+test('le navigateur qui meurt arrête la collecte au lieu de la vider', async () => {
+  // Reproduction du 31 octobre 2026 : la fenêtre se ferme après quelques
+  // fiches, et tout le reste échoue sur « Target page… has been closed ».
+  // Avant, chaque échec était rattrapé un à un : la collecte se terminait
+  // « normalement » avec une poignée de produits, et les publiait.
+  const urls = Array.from(
+    { length: 40 },
+    (_, i) => `https://www.marstoy.com/products/moc-m7${String(i).padStart(4, '0')}-parts-kit`,
+  );
+
+  let servies = 0;
+  const get = async (url) => {
+    if (url.endsWith('/sitemap.xml')) {
+      return reponse(`<urlset>${urls.map((u) => `<url><loc>${u}</loc></url>`).join('')}</urlset>`);
+    }
+    if (url.includes('/products/')) {
+      servies += 1;
+      if (servies > 5) {
+        throw new Error(
+          "Le navigateur s'est fermé pendant la collecte — passage interrompu. " +
+            'Vérifie que le Mac ne se met pas en veille et que la fenêtre reste ouverte, puis relance.',
+        );
+      }
+      return reponse(
+        '<html><head><meta property="og:title" content="MOC M70000 Parts Kit-marstoy"></head></html>',
+        { type: 'text/html' },
+      );
+    }
+    return reponse('', { status: 404 });
+  };
+
+  await assert.rejects(
+    () => discoverCatalog({ get }),
+    /passage interrompu/,
+    'la découverte doit lever, pas rendre un catalogue tronqué',
+  );
+
+  // Et elle doit s'arrêter vite : sans cela on rejouerait les 40 fiches, puis
+  // la stratégie suivante, pour le même résultat.
+  assert.ok(servies < urls.length, `arrêt attendu avant la fin, ${servies} fiches servies`);
+});

@@ -323,7 +323,17 @@ async function fromSitemap(recon, get, log, registre, surRegistre) {
       }
       return product({ ...details, url, lastmod: urls.get(url), source: 'sitemap-page' });
     } catch (error) {
-      httpErrors.set(String(error?.message || error).slice(0, 60), 1);
+      const message = String(error?.message || error);
+
+      // Le navigateur mort n'est pas un incident de fiche : plus rien
+      // n'aboutira. On laisse remonter pour arrêter le passage, au lieu de
+      // collectionner trois cents échecs et de publier un catalogue amputé.
+      if (message.includes('passage interrompu')) throw error;
+
+      const cle = message.slice(0, 60);
+      // `set(cle, 1)` écrasait : trois cents fois la même panne s'affichaient
+      // comme une seule, ce qui a caché l'ampleur de l'échec du 31 octobre.
+      httpErrors.set(cle, (httpErrors.get(cle) || 0) + 1);
       return null;
     } finally {
       // Dans un `finally` : une fiche qui casse compte quand même, et une qui
@@ -419,7 +429,16 @@ export async function discoverCatalog({
       // Un catalogue conséquent : pas besoin d'insister avec les suivantes.
       if (products.length >= 200) break;
     } catch (error) {
-      recon.attempts.push({ strategy: name, error: String(error?.message || error) });
+      const message = String(error?.message || error);
+      // Même raison qu'au niveau de la fiche : navigateur parti, plus aucune
+      // stratégie ne peut aboutir. Enchaîner sur la suivante ne ferait que
+      // produire un catalogue amputé avec l'air d'avoir réussi.
+      if (message.includes('passage interrompu')) {
+        recon.attempts.push({ strategy: name, error: message });
+        recon.interrompu = true;
+        throw error;
+      }
+      recon.attempts.push({ strategy: name, error: message });
     }
   }
 

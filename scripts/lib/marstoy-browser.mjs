@@ -27,6 +27,14 @@ const estDefi = (texte) =>
   /just a moment|challenges\.cloudflare\.com|cf-browser-verification/i.test(texte);
 
 /**
+ * Message unique pour la mort du navigateur. Reconnaissable par l'appelant, qui
+ * doit interrompre la collecte au lieu de la laisser se vider fiche par fiche.
+ */
+export const ERREUR_NAVIGATEUR_PERDU =
+  'Le navigateur s\'est fermé pendant la collecte — passage interrompu. ' +
+  'Vérifie que le Mac ne se met pas en veille et que la fenêtre reste ouverte, puis relance.';
+
+/**
  * Ouvre un navigateur, franchit le défi, et rend un `get` utilisable par
  * `discoverCatalog`. Toujours refermer avec `close()`.
  *
@@ -65,6 +73,13 @@ export async function ouvrirTransport({
   }
 
   const page = contexte.pages()[0] ?? (await contexte.newPage());
+
+  // Une fois constaté, l'état est définitif : inutile de retenter trois cents
+  // fois une page qui n'existe plus.
+  let perdu = false;
+  contexte.on('close', () => {
+    perdu = true;
+  });
 
   // --- Franchir le défi une fois, sur l'accueil ---------------------------
   //
@@ -109,7 +124,18 @@ export async function ouvrirTransport({
    * brut, il règle du même coup l'enveloppe de la visionneuse XML.
    */
   async function get(url, { accept = '*/*', timeoutMs = 45000, referer = null } = {}) {
-    const resultat = await page.evaluate(
+    // Le 31 octobre 2026, le navigateur s'est fermé au milieu d'un passage. Les
+    // 342 fiches suivantes ont toutes échoué sur « Target page, context or
+    // browser has been closed » — chacune rattrapée une à une, si bien que la
+    // collecte s'est terminée « normalement » avec 58 produits sur 358.
+    //
+    // Une fois le navigateur parti, plus rien ne peut aboutir : il faut arrêter
+    // le passage, pas continuer à échouer en silence trois cents fois.
+    if (perdu) throw new Error(ERREUR_NAVIGATEUR_PERDU);
+
+    let resultat;
+    try {
+      resultat = await page.evaluate(
       async ({ url, accept, referer, timeoutMs }) => {
         const arret = AbortSignal.timeout(timeoutMs);
         const entetes = { Accept: accept };
@@ -131,8 +157,16 @@ export async function ouvrirTransport({
           return { erreur: String(error?.message || error) };
         }
       },
-      { url, accept, referer, timeoutMs },
-    );
+        { url, accept, referer, timeoutMs },
+      );
+    } catch (error) {
+      const message = String(error?.message || error);
+      if (/target page, context or browser has been closed|browser has been closed|Target closed|Session closed/i.test(message)) {
+        perdu = true;
+        throw new Error(ERREUR_NAVIGATEUR_PERDU);
+      }
+      throw error;
+    }
 
     if (resultat.erreur) throw new Error(`${url} : ${resultat.erreur}`);
 
